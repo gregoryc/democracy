@@ -21,7 +21,9 @@ generate_encoding_data 'image/png'
 end
 end
 
-system 'which convert || echo Need convert'
+
+system "which convert                                 >/dev/null  "      , exception: true
+#system 'which convert || echo Need convert'
 eval(%w[Dir.chdir Dir.glob File.write].map do |i|
 <<~EOF
 def #{i.split('.').pop}(*args)
@@ -52,8 +54,6 @@ p `convert -size 800x120  xc:white -font Ubuntu   \
 +repage #{f}`
 # p e
 i = i.undump
-puts i.send color
-#orig = "echo #{i}" if /Open|Ac|Email|(exe$)/.match?(i)
 
 image_data = f.generate_image_data
 FileUtils.rm f

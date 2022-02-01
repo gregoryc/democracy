@@ -14,7 +14,7 @@ EOF
 Dir.glob("*") { |pdf|
 	$pdf =  pdf
 	case pdf
-		when /DOC|sh$/
+		when /html$/
 			next
 	end
 
