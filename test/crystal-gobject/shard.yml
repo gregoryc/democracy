@@ -1,0 +1,16 @@
+name: gobject
+version: 0.10.0
+authors:
+  - "Jonne Haß <me@jhass.eu>"
+description: "GObject introspection based binding generator and generated bindings"
+license: BSD-3-Clause
+crystal: '~> 1.0'
+libraries:
+  libgirepository: ~> 1.0
+targets:
+  gi-generator:
+    main: src/generator/stage3.cr
+  gi-dump:
+    main: src/generator/dump.cr
+  gi-doc:
+    main: src/generator/doc.cr

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gdc -v -O3 -s -frelease -Wall -Wextra *.d -o x && ./x

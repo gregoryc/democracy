@@ -1,0 +1,27 @@
+Communicate is cool.
+
+Communicate runs a Ruby expression after speaking a prompt (the first argument) and getting your verbal answer (using something unfortunately called "nerd-dictation", which is a wrapper around another program which deals with speech recognition)                                                                                               
+
+
+Communicate allows you to have conversations with your computer, and it is cross platform
+
+
+(Or it hopefully is)
+
+
+
+communicate 'What is the best color?' 'case text; when /blue/; puts "You are right!"; when /red/; puts "Red is a bad color"; end  '       
+
+
+That would be an example of how one could use "communicate"
+
+
+
+
+
+
+Make sure you have nerd-dictation on your computer
+
+
+
+The name nerd-dictation is absolutely awful, and I have to criticize him for not making it have a better name, but it works.

@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+require 'colored'
+
+def main
+if ARGV[0].nil?
+	print "Enter filename to put output in  (enter /dev/null for no file )   > ".green
+	
+	$file = File.open($stdin.readline.strip, "w")
+else
+	$file = File.open(ARGV[0], "w")
+end
+
+lines = $stdin.read.split("\n")
+$items = []
+lines[..-2].each do |line|
+	line = line.chomp
+	begin
+		(eval  "$items.push((" + line + ").to_s)")#l
+	rescue Exception
+		eval  "$items.push((" + line.dump + ").to_s)"#
+	end;end
+	#.split(" ").join("+")#split("+").join(' ')
+
+last_line = lines[-1]
+
+
+$items.each_with_index do |n, i|
+	$N = n
+	#N = $N
+	eval_ = eval(last_line)
+begin
+	$file.puts(eval_)
+rescue
+	$file.puts(eval_.dump)
+end
+	puts eval_
+end
+
+$file.close
+
+end
+
+begin
+	main
+rescue Exception
+end
+
+
+	$file.close

@@ -1,0 +1,26 @@
+#!/bin/sh
+# $Id$
+# elvis: rae		-- Busca en el diccionario de la Real Academia de la Lengua Española (Spanish Dictionary)
+# Author: Ruben Pollan <meskio@terra.es>
+. surfraw || exit 1
+
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search words]...
+Description:
+  Busca en el diccionario de la Real Academia de la Lengua Española (Spanish Dictionary)
+EOF
+    w3_global_usage
+}
+
+w3_config
+
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+if null "$w3_args"; then
+    w3_browse_url "https://lema.rae.es/drae/"
+else
+    escaped_args=$(w3_url_of_arg $w3_args)
+    w3_browse_url "https://lema.rae.es/drae/?val=${escaped_args}"
+fi

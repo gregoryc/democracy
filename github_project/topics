@@ -1,0 +1,44 @@
+Making a better cp (copy, stdin to args if ARGV.length < 2, copy urls)
+Making a better mv (move, stdin to args if ARGV.length < 2, copy urls)
+
+Making a better cp (copys, first half of stdin to second half of stdin)
+Making a better cp (moves, first half of stdin to second half of stdin)
+
+Making a better cp (copya, first half of args to second half of stdin)
+Making a better cp (movea, first half of args to second half of stdin)
+
+Making a better shred (shredi)
+Making a better rm (rmi)
+Making a better cat (p, cats urls too)
+Making a better tac (reverse, cats urls too)
+
+Making a better find (files, reads from stdin if no args)
+Making a better big_num 
+Making a better xargs 
+Making a better c_repl 
+Making a better sed
+Making a c preprocessor
+Making github copier (EXTREMELY VALUABLE TOOL)
+Making copy tool
+
+first
+second
+third
+fourth
+fifth
+sixth
+seventh
+eighth
+ninth
+
+
+lastln
+
+
+
+
+Making troll tools
+Having google take over terminal like a demon
+Catting to stdout
+
+

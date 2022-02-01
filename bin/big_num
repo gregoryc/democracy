@@ -1,0 +1,155 @@
+#!/usr/bin/ruby
+list = [
+	"thousand",
+	"million",
+	"billion",
+	"trillion",
+	"quadrillion",
+	"quintillion",
+	"sextillion",
+	"septillion",
+	"octillion",
+	"nonillion",
+]
+
+'''decillion
+undecillion
+duodecillion
+tredecillion
+quattordecillion
+quindecillion
+sexdecillion
+septendecillion
+octodecillion
+novemdecillion
+vigintillion
+unvigintillion
+duovigintillion
+trevigintillion
+quattorvigintillion
+quinvigintillion
+sexvigintillion
+septenvigintillion
+octovigintillion
+novemvigintillion
+trigintillion
+untrigintillion
+duotrigintillion
+tretrigintillion
+quattortrigintillion
+quintrigintillion
+sextrigintillion
+septentrigintillion
+octotrigintillion
+novemtrigintillion
+quatrigintillion
+unquatrigintillion
+duoquatrigintillion
+trequatrigintillion
+quattorquatrigintillion
+quinquatrigintillion
+sexquatrigintillion
+septenquatrigintillion
+octoquatrigintillion
+novemquatrigintillion
+quintigintillion
+unquintigintillion
+duoquintigintillion
+trequintigintillion
+quattorquintigintillion
+quinquintigintillion
+sexquintigintillion
+septenquintigintillion
+octoquintigintillion
+novemquintigintillion
+sexagintillion
+unsexagintillion
+duosexagintillion
+tresexagintillion
+quattorsexagintillion
+quinsexagintillion
+sexsexagintillion
+septensexagintillion
+octosexagintillion
+novemsexagintillion
+septuagintillion
+unseptuagintillion
+duoseptuagintillion
+treseptuagintillion
+quattorseptuagintillion
+quinseptuagintillion
+sexseptuagintillion
+septenseptuagintillion
+octoseptuagintillion
+novemseptuagintillion
+octogintillion
+unoctogintillion
+duooctogintillion
+treoctogintillion
+quattoroctogintillion
+quinoctogintillion
+sexoctogintillion
+septenoctogintillion
+octooctogintillion
+novemoctogintillion
+nonagintillion
+unnonagintillion
+duononagintillion
+trenonagintillion
+quattornonagintillion
+quinnonagintillion
+sexnonagintillion
+septennonagintillion
+octononagintillion
+novemnonagintillion
+'''.each_line do |word|
+	list.push word.strip
+end
+if ARGV.length > 0
+	if ARGV[0].to_i < 80
+		system "echo Speed is really slow, like oh my fucking god! So slow! | espeak -s #{ARGV[0]}"
+	end
+end
+
+#puts list.length
+system "clear"
+#list = ["thousand", "million", "billion", "trillion", "quadrillion", "quintillion", "sextillion", "septillion", "octillion", "nonillion"]
+
+#def output line, a
+def output line, result, a
+puts "#{line} =\n    #{result} =\n    #{a}"
+#end
+
+if ARGV.length > 0
+	if ARGV[0].to_i < 80
+	#	system "echo Super slow mo | espeak"
+	end
+
+	if ARGV[0].to_i < 80
+		system "toilet FUCKING SLOWww....."
+	end
+	system "echo " + a + " | espeak -s #{ARGV[0]}"
+else
+#	system "echo "
+	system "echo " + a + " | espeak "
+end
+
+end
+begin
+
+while line = $stdin.readline
+	line = line.strip
+	
+a = result = eval(line).to_i.to_s
+a = a.reverse.scan(/.?.?.?/).join(",").reverse[1..]
+a = a.reverse; list.each do |name| a.sub!(",", " " + name.reverse + " "); end; a = a.reverse
+
+if a =~ /,/
+	puts "Number too big"
+else
+	output line, result, a
+end
+
+end
+rescue EOFError
+end

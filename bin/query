@@ -1,0 +1,87 @@
+#!/usr/bin/env ruby
+#BROWSER
+require "fileutils"
+require "cgi"
+require "shellwords"
+include FileUtils
+require "colored"
+def main arg
+
+
+arg = File.basename arg
+arg = arg.gsub(/.Resume\.html\.pdf$/, "")
+other = arg.split("_")
+
+number = other[0]
+
+other = other[1..]
+
+other = other.join(" ")
+args = [
+"https://ca.indeed.com/jobs?q=",CGI.escape(other), "&l=ottawa",
+]
+
+args = args[0] + args[1] + args[2]
+
+#args = args.shellescape.
+
+puts args
+str=5
+
+args = args.shellescape
+
+args = args.prepend(" ").prepend BROWSER
+
+system args
+end
+
+BROWSER = "google-chrome >/dev/null 2>/dev/null"
+
+#i = 0
+
+
+def main_
+c = 0
+
+
+#system "killall " + "google-chrome"
+
+#system "killall #{BRO; clear"
+
+
+#system "espeak " + c.to
+
+
+Dir.chdir Dir.home + "/" + "Downloads"
+list = Dir.glob(
+	"*Resume.html.pdf"
+	).sort{a=_1;b=_2;a+String.new;b+String.new;[a,b];eval([a.split("_").first.to_i,60.chr,61.chr,62.chr,_2.split("_").first.to_i].join) }
+#puts list[0]
+
+#c = list
+#c = list
+
+
+c = list[0].split("_")[0].to_i
+
+list.each do |arg|
+	a =  ((c + 1.0) / (list.length) * 100).to_s[0..3] + "%  done"
+
+
+	
+	system "killall #{BROWSER}"
+	system "notify-send #{c} 'Opening #{c}... :)'"
+	system "espeak  '" + a + ("Res-oom-eh "   +  c.to_s + ", ") * 3 + "'"
+
+	
+	system "clear"
+
+	puts c.to_s.green
+	main arg
+	c += 1
+end
+
+
+end
+
+main_

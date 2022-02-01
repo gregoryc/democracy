@@ -1,0 +1,287 @@
+start_number = Number(prompt("Enter file prefix number  number, enter 0 for page 1"));
+const REGEXP = /&start=[0-9]+/;
+const nothing = "";while (1) {
+ROLES = ['dishwasher', 'labourer']; ROLE = prompt("Enter role from " + ROLES);ROLE = ROLE.trim();if (ROLES.includes(ROLE)) {
+    break;
+} }
+
+
+if (ROLE == 'dishwasher') {
+  ROLE = `dishwasher. For example, I am able to collect all dishes, cutlery, and glasses. Additionally, I can ensure all dishes, cutlery, and glasses are properly cleaned and sanitized before further use. Furthermore, I can clean kitchen tools and appliances properly before use, as well as clean kitchen floors, storage areas, cupboards and take out garbage. Lastly, I can assemble food for patrons and prepare takeout packages.`
+} else if (ROLE == 'labourer') {
+  ROLE = `labourer. This includes being on my feet for long periods, carrying heavy loads to their intended destination. In addition, I am comfortable being on my feet for extended periods and can do repetitive tasks for long periods. My skills as a dishwasher have also taught me the importance of maintaining a deadline when completing tasks and has taught me discipline when it comes to working as part of a team and knowing when to assist team members with completing a task.`
+}
+var INTERVAL =         3000;
+FE = `.html`;        
+resume_number=start_number
+
+FE1 = '_Resume.html';
+FE2 = '_Cover_Letter.html';
+
+_top = `<center><b><h1>Gregory Cohen</h1></b>
+
+
+Ottawa, Ontario<br/>K1N5W5<br/>
+Phone: (343) 262-7978<br/>
+gregorycohen2@gmail.com <br/>`
+
+function make_t () {
+  css = `style='border: 0px solid black; padding-left: 5px; padding-right: 5px;'`
+  str = '<table ' + css + '>'
+  for (var i of arguments[0]) {
+    str += '<tr ' + css + '>' + f(i) + '</tr>'
+  }
+  str += '</table>'
+  document
+  return str
+  function f (i) {
+    var s = ''
+    for (var q of i) {
+      s += '<td ' + css + '>' + q + '</td>'
+    }
+    return s
+  }
+  return str
+}
+window.make_t = make_t
+
+var saveData = (function () {
+  var a = document.createElement('a')
+  document.body.appendChild(a)
+  a.style = 'display: none'
+  return function (data, fileName) {
+    var json = data,
+      blob = new Blob([json], { type: 'octet/stream' }),
+      url = window.URL.createObjectURL(blob)
+    a.href = url
+    a.download = fileName
+    a.click()
+    window.URL.revokeObjectURL(url)
+  }
+})()
+
+places = []
+l = []
+i = 0
+interval = setInterval(function () {
+  try {
+    var q = document
+      .querySelector('*[title="Close job details"]')
+      .parentNode.parentNode.parentNode.childNodes[3].contentWindow.document.body.innerText.split(
+        '\n'
+      )
+    var b = [q[0], q[2], q]
+    l.push(b)
+    if (i == 300000) clearInterval(interval)
+ const _v = document.querySelectorAll(
+      '.result'
+    )[i++]
+    console.log(_v)
+    _v.href = '#'
+    _v.click()
+  } catch (e) {
+    clearInterval(interval)
+    download_them()
+  }
+},  INTERVAL)
+
+
+function download_them       () {
+  var resume_number   = start_number;
+
+
+  for (var item of l) {
+    const t = item.at(0).trim()
+    const n = item.at(1).trim()
+    places.push([n, t])
+    item = item.at(2).join(`\n`)
+    cover_letter = `Gregory Cohen<br/><br/>
+Ottawa, ON<br/><br/>
+K1N5W5
+<br/><br/><br/>
+${'January February March April May June July August September October November December'.split(
+  ' '
+)[(d = new Date()).getMonth()] +
+  ' ' +
+  d.getDate() +
+  ', ' +
+  d.getFullYear()}
+<br/><br/><br/>
+${n}<br/><br/>
+Ottawa, Ontario<br/><br/><br/>Dear Hiring Manager,<br/><br/><br/>
+I am writing to express my interest in the ${
+      t.match(/\s/) ? t : t[0].toLowerCase() + t.slice(1)
+    } position that is currently advertised on Indeed.<br><br/><br>
+This is an employment opportunity I am very interested in pursing. I am an enthusiastic, upbeat, and hard-working person who values cleanliness. I am looking to establish meaningful and career-enhancing connections. In addition to my personality, I believe my work ethic would be an asset to your staff team. I am able to competently complete all the necessary roles of a ${ROLE}<br><br>
+<br>
+
+I look forward to discussing my qualifications with you further in person. For an interview I can be reached at (343) 262-7978 and/or gregorycohen2@gmail.com.<br><br>
+<br>
+
+Kind regards,<br><br>
+Gregory Cohen
+`
+
+
+    var out = (resume_number++) + "_" + n + '_' + t + FE2
+    saveData(cover_letter, out)
+
+
+    alert("Cover Letter " + resume_number);
+
+//  resume_number = start_number;
+  }
+
+  function capitalize(s) {
+        if (s == "") return s;
+      const value = s[0].toUpperCase() + s.slice(1).toLowerCase();
+
+      return value;         
+  }
+
+
+  function cap(s) {
+        var new_text = []; for (var i of s.split(/\s+/)) { new_text.push(capitalize(i)); }
+      new_text = new_text.join(" ");
+
+      return new_text.replace(/[^a-zA-Z0-9_]+$/, "");
+//    return new_text;
+  }; resume_number = start_number;
+
+  for (place of places) {
+        var one = cap(place[1]);var two = cap(place[0]);
+//        var two = cap(place[2])
+    data = `<head><style type=text/css>ul { width: 70%; position: relative; left: 14.3%; } li { float: left; }  body { font-family: "Calibri"; } </style>${_top}
+<div>
+<p><h2>Objective:</h2></p>
+<p>I am seeking a ${one} position at ${two}.</p>
+<br/>
+<h2>Highlights of Qualifications:</h2>
+<p>
+<ul>
+<li>Excellent communication skills</li>   <br/>
+<li>Seasoned in the labour sector</li>  <br/>
+<li>Extensive knowledge in software and computer programming</li>    <br/>
+<li>Experienced in computer software architecture</li>    <br/>
+</ul>
+</p>
+
+<h2>Work Experience:</h2>
+
+<h3>Operations</h3>
+<p>
+<ul>
+<li>Capable of standing for long periods of time</li><br/>
+
+<li>Comfortable doing repetitive tasks</li><br/>
+<li>Able to lift heavy objects to accomplish job tasks</li><br/>
+
+<li>Able to complete tasks according to supervisor deadlines</li><br/>
+
+<li>Maintains and adheres to proper COVID-19 health and safety guidelines</li><br/>
+
+</ul>
+</p>
+
+
+
+
+<h3>Inventory</h3><ul>
+
+<p>
+<li>Able to manage and move stock to appropriate locations</li><br/><li>Knowledgeable in product placement in a factory setting</li><br/>
+
+<li>Comfortable constructing boxes for shipment</li><br/>
+</ul>
+</p>
+
+
+
+<h3>Labour</h3><ul>
+
+<p>
+
+<li>Able to clean up construction sites</li> <br/>
+
+<li>Maintains a clean and safe workspace as per ministry standards</li>  <br/>
+
+<li>Ensures safe workspace of colleagues and clients</li>       <br/>
+
+</ul></p></div>
+<p><h2>Employment History:</h2></p>
+
+<p>
+
+${(function () {
+  var all = '<p>'
+  a = 'Ottawa, ON'
+  b = 'Expected January 2022'
+
+  all += make_t([
+    ['General Labourer', 'Labour World', 'Ottawa, ON', 'March 2021'],
+    ['General Labourer', 'Labour Ready', 'Vancouver, BC', 'July - August 2017']
+  ])
+  all = all + '<h2>Certifications:</h2>'
+  all += '</p><p>'
+
+  all += make_t([
+    ['Standard First Aid, CPR<br/>Lv C. + AED.', 'St. John Ambulance', a, b],
+    ['WHMIS', 'EverSafe Media', a, b],
+    //['Safefood Handlers', 'Food Safety Training', a, b],
+    ['Smart Serve', 'Smart Serve Ontario', a, b],
+    ['Accessibility for Ontarians<br/>with Disability Act', 'AODA.ca', a, b]
+  ])
+  all += '</p><p><h2>References</h2></p><p>Available upon request</p>' //document.body.innerHTML = all;
+  return all
+})()}
+
+
+</p></pre></center>`
+
+
+    const out = (resume_number++) + `_` + place.at(0) + '_' + place.at(1) + FE1;
+    saveData(data, out);
+    alert("Resume " + resume_number);
+//  alert("Make a resume");
+//
+  }
+
+  resume_number = 0;
+
+  const exts = ['', '', '']
+
+  data =
+    _top +
+    `<br/><br/>` +
+    make_t([
+      ['Stewart', 'Salvation Army', 'Life Skills Counsellor', '(613) 241-1573'],
+      [
+        'Brad',
+        (a = 'Operating Come Home'),
+        (b = 'Employment Support Staff'),
+        (c = '(613) 230-4663' + exts.pop())
+      ],
+      ['Mikayla', a, b, c + exts.pop()],
+      ['Michael', a, b, c + exts.pop()]
+    ])
+    alert("R");
+  saveData(data, `References` + FE)
+
+  open_more();
+} console.warn('Make sure that the window is full screen or maximized')
+
+
+
+function open_more() {
+    
+    if (start_number==0)       
+    for (var n                       =                                           1;      n < 30; ++n)
+        window.open(location.href.replace(REGEXP, nothing) + "&start=" + n * 10);
+}
+
+//if (start_number == -1) document;
+
+//document.body.style.opacity = 0;
+
+document.body.style.opacity = 0;
+window.title = "Loading :)";

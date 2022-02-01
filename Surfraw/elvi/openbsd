@@ -1,0 +1,28 @@
+#!/bin/sh
+# $Id$
+# elvis: openbsd		-- Search OpenBSD related information (www.openbsd.org)
+. surfraw || exit 1
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [search-string]
+Description:
+  Surfraw search OpenBSD related information
+Examples:
+  $w3_argv0                     Teleport to the OpenBSD website
+EOF
+    w3_custom_search_usage
+    w3_global_usage
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+test -z "$w3_args" || escaped_args=$(w3_url_of_arg $w3_args)
+
+if test -z "$escaped_args"; then
+    w3_browse_url "https://www.openbsd.org/"
+else
+    w3_custom_search -s=openbsd.org "$w3_shquoted_args"
+fi
+exit $?

@@ -1,0 +1,949 @@
+2021-11-08  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* Remove fallback for graphical remotes: it doesn't work with exec
+	* Actually use browser args if not none with graphical remotes
+
+2021-06-14  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* Add elvis-specific completions support, with package name
+	  completions:
+		- In addition to apt-cache, package name completions also
+		  come from pacman, yum, and fink if available, with only
+		  one package manager used as the source.
+		- archpkg, genportage, debpkghome: now support package name
+		  completions just like debpackages, fsfdir, and co.
+		- finkpkg: package name completions with -pkg=
+	* google: allow -country= in addition to -c= to match docs
+	* musicbrainz: sync help text with code
+	* aur: remove categories support since it's dead code (see #14)
+	* finkpkg: update values of -dist= and -section=
+	* debbugs: update available tags
+
+2021-02-24  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* opensearch-discover, opensearch-genquery: support HTTPS: tries
+	HTTPS and then HTTP if no URL scheme in input
+	* etym: update for HTTPS
+
+2021-02-16  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* ebay: update URLS
+
+	Support for the Indian eBay site was removed because it redirects to
+	https://sellglobal.ebay.in/seller-central/seller-benefits/
+
+2020-12-23  Sascha <GlancingMind@outlook.com>
+
+	* Fix - test: too many arguments
+
+2020-08-15  Dmitry Bogatov <KAction@debian.org>
+
+	* debbugs: add support for usertags search
+
+2020-03-08  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* Use datadir and `sr` when installing bash completions: allows
+	completions to be loaded on demand
+	* Re-allow bash completions to be installed when building from source
+
+2020-02-04  B. Wilson <x@wilsonb.com>
+
+	* Launch browser with exec
+
+2019-12-31  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* Uniformly handle options before and after elvis determined: surfraw
+	-version now works the same as surfraw elvis -version
+
+2019-12-14  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* Bash-complete local and global bookmarks: surfraw and completions
+	now agree on what counts as bookmarks
+	* Allow spaces in second arg of {setopt,def}{yn,}: allows elvi to have
+	option-arguments with embedded spaces
+
+2019-09-20  Gabriel Lisaca <gabriel.lisaca@gmail.com>
+
+	* Bash-complete local elvi names: uses surfraw to get elvi names for
+	consistency
+
+2018-10-09  Dmitry Bogatov <KAction@gnu.org>
+
+	* new elvi: dockerhub
+
+2018-01-13  Jason Ryan <jasonwryan@gmail.com>
+	* Bump version to 2.3.0
+	* Select Perl version at buildtime (Mark Meyer)
+	* Remove lynx-cur (closes #882286)
+	* Packages the https elvi
+
+2017-06-07  Jason Ryan <jasonwryan@gmail.com>
+
+	* new elvi: wiktionary
+
+2017-07-14  Jason Ryan <jasonwryan@gmail.com>
+
+	* Moved all elvi to https
+	* Removed elvi that don't support https:
+		- cablesearch
+		- dmoz
+		- openports
+		- opensearch
+		- pasearch
+		- rhyme
+		- rpmsearch
+		- scicom
+		- scirus
+		- wetandwild
+		- yacy
+		- yubnub
+
+2015-09-13  Kyle Isom <kyle@imap.cc>
+
+	* use awk instead of sed for listing elvi
+
+	This provides better cross-platform behaviour.
+
+2015-08-23  Jason Ryan <jasonwryan@gmail.com>
+
+	* new elvi: searx
+
+2014-09-20  Lucas Hoffmann <l-m-h at web.de>
+
+	* new elvi: commandlinefu
+
+2104-06-04  Jason Ryan <jasonwryan@gmail.com>
+	
+	* new elvi: nlab
+
+2013-12-10  Ian Beckwith  <ianb@erislabs.net>
+
+	* yandex: disabled test: redirects to captcha when used with LWP.
+	* Fix make distcheck: remove last traces of codesearch and scitopia.
+
+2013-12-09  Ian Beckwith  <ianb@erislabs.net>
+
+	* deja: disable tests, google groups now requires javascript.
+	* gmane: fix test.
+	* codesearch: removed, service shut down.
+	* scitopia: removed, service shut down.
+	* scicom: down, status unknown, made note in NEWS.
+
+2013-12-08  Ian Beckwith  <ianb@erislabs.net>
+
+	* new elvi: gmane
+	* openbsd -mail: use gmane (directly, not via gmane elvi)
+	* fix tests: ads, pgdoc, pin, yacy
+
+2013-10-27  Ian Beckwith  <ianb@erislabs.net>
+
+	* surfraw.IN: w3_custom_search_google: don't give full path to surfraw.
+	* pgdoc, wayback: fixed tests.
+
+2013-10-20  Ian Beckwith  <ianb@erislabs.net>
+
+	* new elvi: yacy: search using yacy p2p search.
+	  -S searches ScienceNet, a yacy-based science search engine.
+	* rae: fix url, remove -tipo option (no longer supported),
+	  disable test as there is now gratuitous javascript.
+
+2013-10-06  Ian Beckwith  <ianb@erislabs.net>
+
+	* Replaced phpdoc with version posted back in
+	  2011 by Jon Yamokoski <jon@jonyamo.net>
+	  Thanks, and apologies for missing it!
+	* S: add test.
+	* Include debian packaging in upstream tarball.
+
+2013-10-05  Ian Beckwith  <ianb@erislabs.net>
+
+	* ask, cisco: fix elvi.
+	* new elvi:
+	  + oraclesearch - Replaces removed sunonesearch <sigh>.
+	  + S - search using w3_custom_search.
+	* google: -g for groups clashed with -g for graphical browser.
+	  Invoke groups with -G, -gr, -groups or -search=groups.
+	* mdn: site invokes google custom search via gratuitous
+	  javascript, so switch to w3_custom_search.
+	* alioth: changed test to SKIP:, works OK but won't talk
+	  to LWP, hence test breaks.
+	* discogs, openbsd: fixed tests.
+	* mdn, mysqldoc, pgdoc, phpdoc: added tests.
+	* w3_custom_search:
+	  + document in README.
+	  + remove documentation for ixquick support.
+	    It still works(ish), but doesn't support enough features
+	    to support (eg) mysqldoc -v=.
+	  + add -custom-search= commandline option.
+	* updated copyright years to 2013.
+
+2013-09-30  Ian Beckwith  <ianb@erislabs.net>
+
+	* new elvi: mdn, mysqldoc, pgdoc, phpdoc
+	* new function: w3_custom_search
+	  Is used by elvi that use a generic search engine with (eg) site:
+	  or inurl: to narrow down the search.
+	  Pass it -s=site -u=url for site: and inurl: args
+	  plus the quoted search args
+	* new environment variable: SURFRAW_customsearch_provider
+	  to set provider used by w3_custom_search
+	  can be set to: google, duckduckgo or ixquick.
+	  Currently affects: mysqldoc, netbsd(*), openbsd(*), pgdoc,
+	  phpdoc, mysqldoc.
+	  (*) = only used by some options of elvi.
+	* new internal variable w3_shquoted_args, contains
+	  arguments 'quoted' 'like this' for passing
+	  to w3_custom_search
+	* Fixed url-encoding for '\'
+
+2013-05-07  Ian Beckwith  <ianb@erislabs.net>
+
+	* new elvi: jquery
+
+2013-05-04  Ian Beckwith  <ianb@erislabs.net>
+
+	* bump version to 2.2.9
+	* rae: fixed, at least as far as the test passing.
+	  Could really do with some love from someone who
+	  actually speaks spanish.
+	* ctan: fixed search, updated options.
+	  Note command-line options have changed.
+	* genportage: switch to gpo.zugaina.org
+	* debcodesearch: new (trivial) elvi for codesearch.debian.net
+	* jamendo: fix url, disable test (search now javascript)
+	* deli: fix url; remove options; disable test (search now javascript)
+
+2013-04-28  Ian Beckwith  <ianb@erislabs.net>
+
+	* musicbrainz: fixed mbid search.
+	* springer: fixed test.
+
+2013-04-27  Ian Beckwith  <ianb@erislabs.net>
+
+	* javasun: fixed test.
+
+2013-04-24  Ian Beckwith  <ianb@erislabs.net>
+
+	* Rewrote deblists for new xapian search.
+	  + -author, -lists, -lang no longer supported.
+	  + added -ml and -mv to show message id links and list view.
+	* Removed happypenguin. Currently defunct and they are talking
+	  about a rewrite, so when it is back it will need fixing anyway.
+
+2012-10-22  Ian Beckwith  <ianb@erislabs.net>
+
+	* Fixed elvi: cisco, slashdot, slinuxdoc.
+	* Removed elvi: scroogle (site gone).
+	* Fixed tests: acronym, bbcnews, bugzilla, cisco, cite[1],
+	  currency, discogs, excite, fsfdir, gcache, github, imdb,
+	  ixquick, lastfm, leodict, openbsd[2], scholar.
+	* test/Makefile.am: Added missing tests to EXTRA_DIST
+
+2012-06-28  Manolo Martínez  <manolo@austrohungaro.com>
+
+	* examples/hooks.lua: Added elinks integration script
+
+2012-06-28  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* Further simplified searchable bookmarks
+
+2012-06-28  Thomas Zervogiannis <tzervo@gmail.com>
+
+	* Simplified searchable bookmarks
+
+2012-06-27  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* Fixed arg parsing in searchable bookmarks
+	* New variable: SURFRAW_bookmark_search_elvis
+	  + When using searchable bookmarks, if all else fails
+	    run this elvis. Defaults to google
+	* Updated manual to reflect changes to bookmarks
+	* duckduckgo: Removed -p option. -safe still works.
+	  + Prevents clobbering global option -p[rint].
+
+2012-06-27  Thomas Zervogiannis <tzervo@gmail.com>
+
+	* Added searchable bookmarks
+
+	  + Bookmarks can now be searchable by adding '%s' to
+	    the url string.
+
+2012-06-01  Jason Ryan	<jasonwryan@surfraw.org>
+
+	* New elvi: github (search github.com)
+
+2012-03-17  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* Fix a typo in duckduckgo code.
+
+2012-03-17  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* Keep duckduckgo's -l[ucky] from clobbering -lh
+
+2012-01-10  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* aur: now uses HTTPS by default
+	  + On the AUR, connecting via HTTP disables login.
+	  + Added switch -no-https to enable connection via plain HTTP
+
+2011-10-10  Ian Beckwith  <ianb@erislabs.net>
+
+	* surfraw.IN: test_elvi(): tweak sed regex
+	* add tests for f5, cisco and pin.
+
+2011-10-10  Shain Singh <shain.singh@gmail.com>
+
+	* New elvi: f5, cisco
+
+2011-10-10  Jason Ryan  <jasonwryan@gmail.com>
+
+	* New elvi: pin (search pinboard.in).
+
+2011-09-09  Kyle Isom  <coder@kyleisom.net>
+
+        * New elvi: wolfram - query Wolfram Alpha
+        * Author: Kyle Isom <coder@kyleisom.net>
+        * Added test for wolfram.
+
+2011-08-09  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: priberam - search Portuguese dictionary.
+	  Author: Paulo Almeida <paulo@diasalmeida.com>
+	* Added test for priberam.
+
+2011-07-11  Ian Beckwith  <ianb@erislabs.net>
+
+	* netbsd: fix normal & mail search.
+	  google custom searches were complaining I was a bot, so I
+	  switched to normal google searches with
+	  site:{mail-index,}.netbsd.org.
+	* cia: fix search URL
+
+2011-06-17  Ian Beckwith  <ianb@erislabs.net>
+
+	* arxiv: fix -scope=author with single-word queries.
+	  Thanks to Nikos Apostolakis.
+	* btw, note about entry below, netbsd make *does*
+	  support '$<', but only in suffix rules.
+
+2011-06-16  Ian Beckwith  <ianb@erislabs.net>
+
+	* Fix more make(1) portability problems.
+	  Either I am horribly confused or netbsd make
+	  (or at least pmake in debian) doesn't support '$<'.
+	  Switched to '$?'.
+	* Also switched submit-lsm rule to '$?'.
+	  Thanks to Kyle Isom.
+	* Removed long-obsolete commented-out sourceforge upload rules.
+
+2011-06-15  Ian Beckwith  <ianb@erislabs.net>
+
+	* scitopia, worldwidescience: fixed URLs.
+	* Fixed make portability problems.
+	  We cannot portably combine single suffix rules (foo.IN->foo)
+	  and separated dependencies so we have to explicitly specify
+	  all the .IN rules. The solution we used for this until now was
+	  specific to GNU make.
+	* Removed Makefile.include, no longer used.
+	* './configure --enable-opensearch' now only controls
+	  installation of the (direct) dependencies for opensearch,
+	  not opensearch itself, as opensearch now falls back to
+	  using a remote reflector if opensearch-discover(1)
+	  and opensearch-genquery(1) aren't found.
+	* yandex: fix test.
+
+2011-06-14  Ian Beckwith  <ianb@erislabs.net>
+
+	* musicbrainz, codesearch, rpmsearch: Fixed URLs, options and
+	  tests. The sites have all changed significantly which means
+	  both new options and no-longer-supported options.
+	  Codesearch has gone all ajaxy, so I've implemented the options
+	  via the search string, e.g. adding " package:foo".
+	  Disabled codesearch.test, as it now needs javascript.
+	  Codesearch on both google.com and google.co.uk was acting up,
+	  so I've pointed it at google.fr.
+	* Removed filesearching elvi, it now requires a 'Referer:' header
+	  to work. There is no browser-portable way to specify a
+	  'Refer[r]er:' header, plus we should probably take it as a hint.
+	* Tweaked debian packaging.
+	* Updated NEWS.
+
+2011-06-13  Ian Beckwith  <ianb@erislabs.net>
+
+	* w3link: fixed URLs.
+
+2011-06-10  Ian Beckwith  <ianb@erislabs.net>
+
+	* Fixed ctan.
+	  Option -doc has been replaced by -id.
+	  Options are no longer mutually exclusive,
+	  you can now do (eg) ctan -d -i -n texlive.
+
+2011-06-09  Ian Beckwith  <ianb@erislabs.net>
+
+	* fixed tests: debwiki, ntrs, wayback.
+
+2011-06-07  Ian Beckwith  <ianb@erislabs.net>
+
+	* Default to surfraw_graphical_remote=no,
+	  as chromium doesn't support "-remote openURL".
+
+2011-05-31  Jason Ryan  <jasonwryan@gmail.com>
+
+	* Add options to archpkg.
+
+2011-05-12  Sara Fauzia  <sara@archlinux.us>
+
+	* Fix archpkg URL.
+
+2011-05-12  Ian Beckwith  <ianb@erislabs.net>
+
+	* surfraw.IN:
+	  + if elvi doesn't exist, send usage to stderr not stdout.
+	  + bookmark names: do exact match not substring match.
+	* Added tests for archwiki, deli & stack.
+	* README:
+	  + added INTEGRATION section on uzbl and pentadactyl.
+	  + upcased section headings for clarity.
+
+2011-05-12  Jason Ryan  <jasonwryan@gmail.com>
+
+	* New elvi:
+	  + archwiki: search the arch wiki.
+	  + deli: search delicious.com.
+	  + stack: search stackoverflow.com and friends.
+
+2011-03-21  Ian Beckwith  <ianb@erislabs.net>
+
+	* google: Added -safe=default|off|moderate|strict
+	  option for Safe Search.
+
+2011-03-21  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* Added Google Translate to elvi/translate.
+
+2011-03-03  Ian Beckwith  <ianb@erislabs.net>
+
+	* opensearch: new option -r, uses redirector at
+	  http://erislabs.net/ianb/webtools/opensearch/ instead of calling
+	  opensearch-discover and opensearch-genquery. -r is selected
+	  automatically if those tools are not installed. This enables us
+	  to ship opensearch in the main surfraw package and it still
+	  functions if the dependencies are not installed. See
+	  debian/changelog.
+	* wikipedia: new options:
+	  + -d, uses a redirector at http://erislabs.net/ianb/webtools/wpdp/
+	    This redirector searches for a page with that name at wikipedia.
+ 	    If not found, it searches deletionpedia, if not found there
+	    it falls back to a normal wikipedia search.
+	  + -f=w|d, -fallback=wikipedia|deletionpedia
+	    Implies -d. If page not found at either wikipedia or deletionpedia,
+            whether to fallback to wikipedia search or deletionpedia search.
+	* google:
+	  + support video, maps and news.
+	  + new options -i, -v, -m, -n, shortcuts for
+	    -search={images,videos,maps,news}.
+	* debcontents, debpackages: update docs for new arches and
+	  distributions.
+	* bugzilla:
+	  + fix url so it works with redhat & eclipse bugzillas too.
+	  + enable -s=redhat.
+	* ixquick, w3css: fix tests.
+	* opensearch, wikipedia: add redirector tests.
+
+2011-02-20  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: bugzilla - searches various bugzillas,
+	  defaults to kernel.
+	* pgpkeys: add more options, support more
+	  keyservers, default to sks-keyservers.net.
+	* bump version to 2.2.8.
+	* test/Makefile.am: add cablesearch.test.
+
+2011-02-19  Ian Beckwith  <ianb@erislabs.net>
+
+	* lastfm: fix url to avoid a redirect that mangled
+	  args with spaces.
+	* debbugs: add -s as an alias for -search=src.
+	* surfraw.IN: (finally) update copyright year to 2011.
+	* remove traces of port elvi from build system.
+
+2011-02-09  Kyle Isom <coder@kyleisom.net>
+
+        * fix a number of tests to match current site formats
+
+2011-01-12  Kyle Isom  <coder@kyleisom.net>
+
+	* New elvi:
+	  + cablesearch - search wikileaks cables
+	  + duckduckgo - replace with better implementation
+	  + openports - search openbsd ports
+
+2010-12-04  Jakob <jakob@pipefour.org>
+
+	* new elvis: pasearch.
+
+2010-12-08  Ian Beckwith  <ianb@erislabs.net>
+
+	* arxiv: Thanks to MT <mt_void@warpmail.net> for patch that fixes:
+	  1. Search queries with more than two terms would fail, e.g.
+	    'supermassive black hole'.
+	  2. Full text search was broken, it works now.
+	  3. Enhancement: quoting the query now does an exact string match.
+
+2010-10-29  Ian Beckwith  <ianb@erislabs.net>
+
+	* wayback: advanced search is broken, rip out all
+	  options and use basic search.
+	* w3_url_escape: add /g to '/'->'%2F' replacement.
+	* uzbl_load_url_from_surfraw: use @AWK@ to pick up
+	  ./configure's choice of awk implementation.
+
+2010-10-28  Ian Beckwith  <ianb@erislabs.net>
+
+	* Support -local-help, --local-help or -lh to get elvi-specific
+	  help without displaying the global options. This works for
+	  all elvi and the main surfraw script.
+	* google, duckduckgo, opensearch, wayback: tweak overbroad
+	  option parsing so it doesn't interfere with -lh.
+	* Support -h as a synonym for -help.
+
+2010-10-25  Ian Beckwith  <ianb@erislabs.net>
+
+	* new elvi: scirus, scitopia, worldwidescience.
+	* yahoo: reduced query string to just p and n options.
+	* openbsd: support -misc and -tech. Thanks to
+	  Sunil Nimmagadda for the patch.
+	* removed cddb: gracenote made the "hard decision"
+	  to remove the website search. sigh.
+	* removed altavista: is now just a front-end to yahoo.
+	* removed fast: another yahoo front-end.
+	* imdb: fix test.
+	* javasun: oracleized URLs.
+	* w3link: fixed URL.
+
+2010-08-22  Jameson Rollins <jrollins@finestructure.net>
+
+	* surfraw.IN: Improve listing of elvi.
+
+2010-08-20  James Rowe  <jnrowe@gmail.com>
+
+	* new elvi: ads.  Thanks to Jameson Rollins.
+
+2010-07-02  Ian Beckwith  <ianb@erislabs.net>
+
+	* new elvi: yandex. Thanks to Uspenskiy Andrey.
+
+2010-05-06  Ian Beckwith  <ianb@erislabs.net>
+
+	* uzbl_load_url_from_surfraw: fix menu.
+	  Thanks to Sumant Oemrawsingh.
+	* Fixed tests: deblists google openbsd.
+
+2010-04-28  Ian Beckwith  <ianb@erislabs.net>
+
+	* configure.in: test for google-chrome, opera and links2.
+
+2010-04-22  Ian Beckwith  <ianb@erislabs.net>
+
+	* debwiki: remove -w, Debian Women wiki is now being merged
+	  into main wiki. Thanks to Simone Fittabile.
+	* debwiki.test: stop testing -w option.
+	* surfraw.IN: change an awk to @AWK@.
+
+2010-04-21  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: jamendo - Search Jamendo: free music with Creative
+	  Commons licenses (www.jamendo.com). Thanks to Simone Fittabile.
+	* wikipedia, ixquick: Support https. Thanks to Simone Fittabile.
+	* wikipedia: tweak Simone's patch to support https for start
+	  page and document the SURFRAW_wikipedia_ssl variable.
+	* ixquick: add -nossl option.
+	* javasun.test: revert to previous test, works again.
+
+2010-04-19  James Rowe  <jnrowe@gmail.com>
+
+	* genpkg: removed, use genportage.
+
+2010-04-16  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi:
+	  + scroogle: Search Google anonymously via www.scroogle.org.
+	  + duckduckgo: Search the web via duckduckgo.com.
+	* Fix tests: excite, javasun, musicbrainz, yahoo.
+
+2010-03-03  James Rowe  <jnrowe@gmail.com>
+
+	* bookfinder: fix ISBN search test.
+
+2010-03-01  Ian Beckwith  <ianb@erislabs.net>
+
+	* Removed autotools-generated files from git repo
+	  use ./prebuild to regenerate.
+	* Lower required automake version to 1.10.
+	* prebuild: try and find a sane set of autotools, then call
+	  autoreconf -vi
+	* Add autotools-generated files to .gitignore
+	* Bump version to 2.2.7
+	* cnn: fix URL.
+	* cnn.test: Disable. Bloody CNN now needs javascript for search,
+	  so should be tested manually.
+	* W, yahoo: fix tests.
+	* Remove unused '-quiet' option.
+	* Update AUTHORS.
+	* Add a note to appendix 1 of HACKING about updating AUTHORS.
+	* runtests: explicitly use elvi and config from source tree,
+	  now works when surfraw is not installed (but you need to have
+	  run make).
+	* test/Makefile.am: fix bookfinder typo, add bing.test.
+	* remove leading 'sr ' from command lines for following tests:
+	    acronym aur bing cliki gcache genportage google javasun l1sp
+	    lsm mathworld mininova piratebay youtube
+	* HACKING, README, test/README: document autotools and test
+	  suite changes.
+	* Makefile.am: add surfraw.conf to BUILT_SOURCES so it is
+	  made by 'make'. This may be a misuse of BUILT_SOURCES.
+
+2010-02-22  Ivy Foster  <joyfulgirl@archlinux.us>
+
+	* Added `-ns|-newscreen' switch for setting $SURFRAW_new_screen.
+
+2010-02-15  James Rowe  <jnrowe@gmail.com>
+
+	* elvi/imdb: Fixes for upstream search changes.  Thanks to Sadako.
+	* New elvi: bookfinder, thanks to Ivy Foster.
+
+2010-02-14  James Rowe  <jnrowe@gmail.com>
+
+	* Added $SURFRAW_screen_args for passing arguments to the defined screen
+	  tool, thanks to Ivy Foster.
+	* Support for using tmux as $SURFRAW_screen, thanks once again to Ivy
+	  Foster.
+	* New elvi: bugmenot, thanks to Ivy Foster.
+
+2010-02-05  Ian Beckwith  <ianb@erislabs.net>
+
+	* Added options for 'aur' elvi.
+	  Patch from Ivy Foster.
+
+2010-02-02  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: bing, thanks to tczy.
+	  Elvi number One Hundred!!!1!
+
+2010-01-26  James Rowe  <jnrowe@gmail.com>
+
+	* elvi/bbcnews: Fixes for upstreams search changes. Based on a patch by
+	  Sumant Oemrawsingh.
+
+2010-01-06  Ian Beckwith  <ianb@erislabs.net>
+
+	* surfraw.1.IN: document new config locations.
+
+2009-11-20  Ian Beckwith  <ianb@erislabs.net>
+
+	* test/Makefile.am: Add missing tests to EXTRA_DIST.
+
+2009-11-13  Ian Beckwith  <ianb@erislabs.net>
+
+	* freebsd: new options -psearch=TYPE -psection=SEC
+	  to conduct a search of type TYPE in section SEC of ports.
+	* netbsd:  new option -ps to search ports
+	* openbsd: new option -ps to search ports
+	* URLs for *bsd portsearch, finkpkg, macports and rpmsearch
+	  from whohas(1), http://www.philippwesche.org/200811/whohas/intro.html
+	* cia, pubmed: fixed tests.
+
+2009-11-12  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi:
+	  + finkpkg: search Fink packages.
+	  + macports: search macports packages.
+	  + rpmsearch: search for packages in rpm-based distros.
+	* surfraw.IN: w3_parse_args: avoid bogus initial space in w3_args
+
+2009-11-11  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: debpkghome: view home page of a debian package.
+
+2009-11-10  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: acronym, gcache (google cache).
+	  Thanks to fittabile@lifegate.it
+	* surfraw.IN: only list local elvi if $localelvidir contains
+	  files.
+	* README: update elvi list and surfraw options.
+	* configure.in, HACKING: specify automake 1.11
+
+2009-11-08  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: youtube. Thanks to Sumant Oemrawsingh.
+
+2009-11-07  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi, thanks to Sumant Oemrawsingh:
+	  + cliki     - search the common lisp wiki.
+	  + l1sp      - search lisp documentation.
+	  + mathworld - search Wolfram MathWorld.
+	  + mininova  - search mininova for torrents.
+
+2009-11-06  Ian Beckwith  <ianb@erislabs.net>
+
+	* examples/uzbl_load_url_from_surfraw:
+	  + Applied patch from Sumant Oemrawsingh to strip "GLOBAL ELVI"
+	    and "LOCALELVI" and support vertical menus if patched dmenu is
+	    available.
+	  + present_menu(): use awk(1) instead of cut(1), so tabs in
+	    bookmark files are handled correctly.
+	  + Add '.IN' suffix and dependency so correct value of @AWK@
+	    is picked up from ./configure.
+	* Add examples/ to SUBDIRS, move uzbl_load_url_from_surfraw
+	  build logic to examples/Makefile.am
+	* Fix 'make distcheck':
+	  + Install surfraw.bookmarks from $(top_srcdir)
+	  + Fix CLEANFILES entries for surfraw-update-path
+	    and uzbl_load_url_from_surfraw.
+
+2009-10-27  Ian Beckwith  <ianb@erislabs.net>
+
+	* Added examples/uzbl_load_url_from_surfraw,
+	  thanks to Sumant Oemrawsingh.
+	* Updated uzbl_load_url_from_surfraw to use new bookmark locations.
+	* Fixed debsec (Thanks to Moritz Muehlenhoff, for this
+	  and all his other work).
+	* Fixed cia.
+	* Fixed tests: aur, debpts, lastfm.
+	* Added -o | -o=FILE option, to fetch URL and dump to
+	  stdout or FILE.
+	* test/Makefile.am: add debvcsbrowse.test to EXTRA_DIST
+	* Makefile.am: install-data-hook: remove execute flag
+	  from generated files surfraw.conf, elvi.1sr & surfraw.1.
+
+2009-10-20  Ian Beckwith  <ianb@erislabs.net>
+
+	* Move config files to follow XDG basedir spec
+	  (http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html)
+	  Global config files are searched for in:
+	  + $SURFRAW_global_conf if set.
+	  + $XDG_CONFIG_DIRS/surfraw/{conf,bookmarks}
+	    ($XDG_CONFIG_DIRS is $PATH-style colon separated list)
+	  + @sysconfdir@/xdg/surfraw/{conf,bookmarks}
+	    (@sysconfdir@ is usually /etc or /usr/local/etc/)
+	  + @sysconfdir@/surfraw.{conf,bookmarks}
+	    (for backwards compatibility)
+	  Local config files & elvi are searched for in:
+	  + $SURFRAW_conf if set (for per-user conf file only)
+	    (no longer set by default config files)
+	  + $XDG_CONFIG_HOME/surfraw/{conf,bookmarks,elvi/}
+	  + $HOME/.config/surfraw/{conf,bookmarks,elvi/}
+	  + $HOME/.surfraw.{conf,bookmarks}
+	    (for backwards compatibility).
+
+2009-10-18  Ian Beckwith  <ianb@erislabs.net>
+
+	* Apply patch from James Rowe:
+	    Support per-user elvi in ~/.surfraw.d.
+            Based on the idea by Sumant Oemrawsingh.
+
+2009-08-28  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: genbugs (thanks to Nick White).
+	* surfraw-bash-completion.IN: enable extglob so completion
+	  works standalone (thanks to James Rowe).
+	  See http://bugs.gentoo.org/show_bug.cgi?id=277891
+
+2009-07-23  Ian Beckwith  <ianb@erislabs.net>
+
+	* Fixed tests: excite, pgpkeys, javasun. ebay(my)
+
+2009-07-21  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvi: debvcsbrowse.
+	* err(): write to stderr instead of stdout.
+
+2009-06-28  Ian Beckwith  <ianb@erislabs.net>
+
+	* Bump version to 2.2.6.
+	* Only use first matching bookmark (Thanks to Carl Fredrik Hammar).
+
+2009-05-13  Ian Beckwith  <ianb@erislabs.net>
+
+	* Replaced scaleplus with comlaw.
+	* debpackages, debcontents: updated ubuntu release names.
+
+2009-05-12  Ian Beckwith  <ianb@erislabs.net>
+
+	* archpkg, bbcnews, debcontents, debwiki: fixed tests.
+
+2009-04-05  Ian Beckwith  <ianb@erislabs.net>
+
+	* Support '--' to indicate end of options, so, for instance,
+	  "sr google -g -- foo -bar" works. Thanks to Andy Valencia.
+
+2009-03-09  Ian Beckwith  <ianb@erislabs.net>
+
+	* Bump version to 2.2.5.
+	* rfc: Default to HTML for RFCs and BCPs.
+	  Thanks to Micah Anderson.
+	* rfc.test: Test tools.ietf.org.
+
+2009-02-28  Ian Beckwith  <ianb@erislabs.net>
+
+	* Changed cite to use citeseerx.ist.psu.edu, the old
+	  site is no longer being updated. Modified
+	  command line options to match new site.
+	* Amazon: fixed; updated categories.
+
+2009-02-27  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvis: aur. Thanks to René Reigel.
+
+2008-12-03  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvis: urban. Thanks to J. R. Mauro.
+	* Added test for urban.
+	* Fixed elvis: excite.
+	* Fixed test: stockquote.
+
+2008-10-23  Ian Beckwith  <ianb@erislabs.net>
+
+	* Bumped version to 2.2.4.
+	* New elvi: ntrs, scicom, springer.
+	  Thanks to Wim Van Hoydonck.
+	* Added tests for ntrs and springer
+	  Scicom cannot be tested as it needs javascript.
+
+2008-09-13  Ian Beckwith  <ianb@erislabs.net>
+
+	* Default to graphical mode. See surfraw(1) for how to change it back.
+	* New elvis: piratebay, genportage. Thanks to J.R. Mauro.
+	* Add tests for piratebay and genportage.
+	* Fix webster.
+	* Fix test for ebay china.
+	* README: document ./configure options
+
+2008-08-26  Ian Beckwith  <ianb@erislabs.net>
+
+	* Fixed tests: amazon, debbugs, yahoo.
+	* Added --disable-sr option to ./configure to disable
+	  installing the 'sr' symbolic link pointing to surfraw,
+	  to avoid clashes with the SR programming language.
+
+2008-07-19  Ian Beckwith  <ianb@erislabs.net>
+
+	* Search for default browsers at configure time.
+	  Can be overridden with ./configure --with-text-browser=BROWSER
+	  --with-graphical-browser=BROWSER.
+	* Use AC_PROG_AWK to detect which awk implementation to use.
+	* slinuxdoc: switch to test on main page, google thinks
+	  search on search page is spyware shenanigans.
+	* openbsd: fix test.
+	* add uninstall-local targets to remove elvidir and symlinks
+	  on uninstall.
+
+2008-07-08  Ian Beckwith  <ianb@erislabs.net>
+
+	* google: fix bashism, quote variable expansions (thanks to
+	  Philip Armstrong and John Briggs).
+
+2008-07-02  Ian Beckwith  <ianb@erislabs.net>
+
+	* surfraw.IN:w3_url_escape: escape "`", stop escaping ".".
+	  (Thanks to Micah Anderson).
+	* debpackages/debcontents:
+	  + update options and distributions,
+	  + add -a option to use archive.debian.net
+	* Fix javasun test.
+	* Add javasun.test and lsm.test to EXTRA_DIST.
+
+2008-06-16  Ian Beckwith  <ianb@erislabs.net>
+
+	* Thanks to John Gruenenfelder for:
+	  + New elvi: arxiv.
+	  + surfraw-update-path: fix csh syntax.
+	* wetandwild: switched to weather.com, as yahoo now uses AJAX.
+	  Command line options and SURFRAW_weather_* variables no
+	  longer supported.
+	* port: fixed, original site is back.
+	* austlii: fixed search URL and test.
+	  Method now defaults to 'auto'.
+	* translate: fixed URLs.
+	* w3css: fixed test.
+	* sundocs: removed, use sunonesearch.
+	* xxx: removed, use arxiv.
+	* test/runtests: prefer decoded_content if available.
+
+2008-03-24  Ian Beckwith  <ianb@erislabs.net>
+
+	* Thanks to James TD Smith for the following:
+	  + New elvis: javasun - search Java API Docs.
+	  + google: -country option to specify country.
+	    Also respects SURFRAW_lang variable.
+
+2008-03-11  Ian Beckwith  <ianb@erislabs.net>
+
+	* debpackages/debcontents: updated ubuntu search.
+	* freedb/cddb: updated options.
+	* debbugs: fixed indentation.
+	* port: point to what will hopefully be new site.
+	* README, rae, currency: convert to utf-8.
+	* austlii: fixed test.
+
+2008-02-11  Ian Beckwith  <ianb@erislabs.net>
+
+	* New elvis: sunonesearch (replaces sunsolve).
+	* surfraw.IN, rfc: remove bashisms.
+	* cnn: fixed url.
+	* debcontents: updated ubuntu distribution.
+	* deblists: rewrote for new search interface.
+	* debpackages: updated debian url.
+	* genpkg: as straight search has gone, we now go to
+	  packages.gentoo.org/packages/<arg>.
+	* yubnub: disable requoting (thanks to Nathaniel Heinrichs).
+	* sunsolve: removed, replaced by sunonesearch.
+	* cddb, freebsd, pgpkeys, w3link, webster, ebay(cn): fixed tests.
+	* surfraw.1.IN, elvi.1sr.IN: properly quote hyphens.
+	* Updated my email address.
+
+2007-10-06  Ian Beckwith  <ianb@nessie.mcc.ac.uk>
+
+	* Added SURFRAW_lang variable to set default country/language.
+	  Affected elvi: amazon, bbcnews, ebay, ixquick, leodict,
+	  opensearch, translate, wetandwild, wikipedia.
+	  Thanks to Simon Ernst for the idea.
+	* surfraw.IN (w3_url_escape): fix quoting of single quote.
+	  Thanks to Alexander Becher for the patch.
+	* New elvis: lsm - search the Linux Software Map.
+	* fsfdir: fixed search URL.
+	* amazon, ebay, translate: expanded language/country list.
+	* surfraw.lsm.in: fixed syntax of Primary-site.
+
+2007-09-13  Ian Beckwith  <ianb@nessie.mcc.ac.uk>
+
+	* Actual new upstream release.
+	* Bumped version to 2.2.0.
+	* configure now supports --disable-opensearch.
+	  improved help macro syntax.
+	  Patches from James Rowe, thanks!
+	* cia elvi fixed, thanks to Charles Twardy.
+	  Evidently I was wrong about there being a LWP problem
+	  with the cia test, test reenabled.
+	* Fixed discogs test.
+	* Moved surfraw and surfraw-update-path from dist_bin_SCRIPTS
+	  to bin_SCRIPTS so they are built rather than shipped.
+	* Updated LSM entry.
+	* Added new make target: make submit-lsm
+	  Mails updated LSM entry to LSM@qqx.org.
+	* Updated copyright dates.
+	* Updated README.
+
+2007-09-06  Ian Beckwith   <ianb@nessie.mcc.ac.uk>
+
+	* Surfraw 2.1.7
+	* First official upstream release by the debian surfraw-devel
+	  team. For previous detailed changelog entries, see the debian
+ 	  changelog in debian/changelog. For a user-level summary of
+	  changes, see NEWS.
+
+
+

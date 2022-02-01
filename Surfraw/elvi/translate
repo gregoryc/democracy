@@ -1,0 +1,167 @@
+#!/bin/sh
+# $Id$
+# elvis: translate	-- Translate human languages
+. surfraw || exit 1
+
+w3_config_hook () {
+def   SURFRAW_translate_from	"$SURFRAW_lang"
+def   SURFRAW_translate_to		"$SURFRAW_lang"
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [words|URI]...
+Description:
+  Surfraw translate human language
+Local options:
+
+  -from=LANGUAGE	Source language
+           			Environment: SURFRAW_translate_from, SURFRAW_lang
+
+  -to=LANGUAGE		Destination language
+		        	Environment: SURFRAW_translate_to, SURFRAW_lang
+
+Languages (any provider):
+  nl                Dutch
+  en				English
+  fr				French
+  de				German
+  el                Greek
+  it				Italian
+  ja				Japanese
+  ko				Korean
+  pt				Portuguese
+  ru				Russian
+  es				Spanish
+Languages (Systrans only):
+  zh                Chinese (Simplified)
+  zt                Chinese (Traditional)
+Languages (Google only):
+  auto              Automatically detect language
+  af                Afrikaans
+  sq                Albanian
+  ar                Arabic
+  hy                Armenian
+  az                Azerbaijani
+  eu                Basque
+  be                Belarusian
+  bg                Bulgarian
+  ca                Catalan
+  zh-CN             Chinese (Simplified)
+  zh-TW             Chinese (Traditional)
+  hr                Croatian
+  cs                Czech
+  da                Danish
+  et                Estonian
+  tl                Filipino
+  fi                Finnish
+  gl                Galician
+  ka                Georgian
+  ht                Hatian Creole
+  iw                Hebrew
+  hi                Hindi
+  hu                Hungarian
+  is                Icelandic
+  id                Indonesian
+  ga                Irish
+  la                Latin
+  lv                Latvian
+  lt                Lithuanian
+  mk                Macedonian
+  ms                Malay
+  mt                Maltese
+  no                Norwegian
+  fa                Persian
+  pl                Polish
+  ro                Romanian
+  sr                Serbian
+  sk                Slovak
+  sl                Slovenian
+  sw                Swahili
+  sv                Swedish
+  th                Thai
+  tr                Turkish
+  uk                Ukrainian
+  ur                Urdu
+  vi                Vietnamese
+  cy                Welsh
+  yi                Yiddish
+Examples:
+  $w3_argv0 			Provider's standard translation page
+  $w3_argv0 -from=fr -to=en la verite vous liberera
+  $w3_argv0 -from=en -to=es https://tashian.com/multibabel
+                                Translate the given Web page
+Bugs:
+  Systrans derived providers only support the following translation
+  combinations:
+	English to Chinese
+	English to French
+	English to German
+	English to Italian
+	English to Japanese
+	English to Korean
+	English to Portuguese
+	English to Spanish
+	Chinese to English
+	French to English
+	French to German
+	German to English
+	German to French
+	Italian to English
+	Japanese to English
+	Korean to English
+	Portuguese to English
+	Russian to English
+	Spanish to English
+EOF
+    w3_global_usage
+}
+mkopts from= to=
+w3_complete_hook_opt ()
+{
+        local opt="$1"
+        case "$opt" in
+                -from=*|-to=*)
+                        echo nl en fr de el it ja
+                        echo zh zt
+                        echo auto af sq ar hy az eu be bg ca zh-CN zh-TW hr cs da et tl fi gl ka ht iw hi hu is id ga la lv lt mk ms mt no fa pl ro sr sk sl sw sv th tr uk ur vi cy yi
+                        ;;
+                *) return 1 ;;
+        esac
+}
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+	-from=*)	setopt SURFRAW_translate_from	   	    $optarg ;;
+	-to=*)		setopt SURFRAW_translate_to	    	    $optarg ;;
+	*) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+if test -z "$w3_args"
+    then w3_browse_url "https://translate.google.com/"
+else
+    if [ -z "$SURFRAW_translate_to" ];
+    then
+        SURFRAW_translate_to="en"
+    fi
+    if [ -z "$SURFRAW_translate_from" ];
+    then
+        SURFRAW_translate_from="fr"
+    fi
+    escaped_args=$(w3_url_of_arg $w3_args)
+    case "$escaped_args" in
+        http*) w3_browse_url "https://translate.google.com/translate?&sl=${SURFRAW_translate_from}&tl=${SURFRAW_translate_to}&u=${escaped_args}"
+        ;;
+        *) w3_browse_url "https://translate.google.com/?&sl=${SURFRAW_translate_from}&tl=${SURFRAW_translate_to}&q=${escaped_args}"
+        ;;
+    esac
+fi
+
+exit $?

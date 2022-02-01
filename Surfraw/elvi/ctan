@@ -1,0 +1,71 @@
+#!/bin/sh
+# $Id$
+# elvis: ctan		-- Search the Comprehensive TeX Archive Network (ctan.org)
+. surfraw || exit 1
+
+w3_config_hook () {
+defyn SURFRAW_ctan_topics   0
+defyn SURFRAW_ctan_desc     0
+defyn SURFRAW_ctan_authors  0
+def   SURFRAW_ctan_results  $SURFRAW_results
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search words]...
+Description:
+  Search the Comprehensive TeX Archive Network (ctan.org)
+Local options:
+  -desc                         Search descriptions (default)
+  -topics                       Search by filename
+  -authors                      Search package identifiers
+Options can be combined to search multiple types at once.
+EOF
+    w3_global_usage
+}
+mkopts desc topics authors
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+    -top*)    setoptyn SURFRAW_ctan_topics    1       ;;
+    -d*)      setoptyn SURFRAW_ctan_desc      1       ;;
+    -au*)     setoptyn SURFRAW_ctan_authors   1       ;;
+	*) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+if test -z "$w3_args"; then
+    w3_browse_url "https://www.ctan.org/"
+else
+    escaped_args=$(w3_url_of_arg $w3_args)
+	if ifno SURFRAW_ctan_topics  &&
+	   ifno SURFRAW_ctan_desc  &&
+	   ifno SURFRAW_ctan_authors
+	then
+		SURFRAW_ctan_desc=1
+	fi
+
+	url="https://www.ctan.org/search/?x=1&PORTAL=on"
+    url="${url}&phrase=${escaped_args}&max=${SURFRAW_results}"
+
+	if ifyes SURFRAW_ctan_topics
+	then
+		url="${url}&TOPICS=on"
+	fi
+	if ifyes SURFRAW_ctan_desc
+	then
+		url="${url}&PKG=on"
+	fi
+	if ifyes SURFRAW_ctan_authors
+	then
+		url="${url}&AUTHORS=on"
+	fi
+
+	w3_browse_url "$url"
+fi

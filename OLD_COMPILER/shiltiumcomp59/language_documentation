@@ -1,0 +1,56 @@
+Documentation for the Shilto Language version 0.01.
+
+It is fairly high-level, very simple and designed
+from what were considered the best features and syntactical elements of
+other languages.
+
+Just-in-time compilation and the performance benefits thereof:
+	The Shilto Language is a language capable of being just-in-time
+	compiled; in fact, its current implementation is a just-in-time
+	compiler. It should be very fast on a just-in-time compiled
+	implementation, and nothing in the language is holding it back, unlike
+	many other languages such as Python. In fact, in the current
+	implementation, it almost matches the speed of an equivalent C program!
+	That is to say, it's incredibly fast, especially since the direct
+	alternative to it is Javascript, and there's no way Javascript could
+	ever get anywhere near the speed of C! And the Shilto Language is
+	actually even faster than C in some cases, and it's getting faster! It
+	will hopefully beat C in all areas soon. But there is one area where it
+	currently blows C out of the water -- doing trigonometric calculations.
+	Since the Shilto Language has trigonometric functions built-in as unary
+	operators, it is able to do some great optimizations, such as computing
+	the sine and cosine of an angle, at the same time, without having to
+	call any function, in one x86 CPU instruction -- fsincos! GCC does not
+	do these kind of optimizations. For example, if you're calling the sin
+	function with the argument x, and x cannot be determined at compile
+	time, gcc will generate code to call the sin function, and so, of
+	course, the CPU will have to do lots of unneccessary pushing and popping
+	in the called function. This is not the case in the current Shilto
+	Language implementation; there are no function calls for trigonometric
+	"functions". And also, in a just-in-time compiled implementation, the
+	just-in-time compiler is able to produce extremely efficient code with
+	vector instructions such as SSE2 specifically for the computer on which
+	it is about to run, but only if the computer supports them.
+	
+	Another good thing about the performance of the Shilto Language on a
+	just-in-time compiler is that the Shilto Language has built-in vector
+	operators, which perform multiple operations on multiple elements in the
+	array or hash table at the same time. These operators are very easy for
+	the compiler to automatically translate into vector instructions. If
+	this seems similar to a feature of the D language, it is: D is whence I
+	got the idea.
+
+List of features:
+	garbage collection, no keywords, mostly immutable types, strong
+	use of immutablility, unless statement, until loop, loop loop,
+	bases in literals, closures, function syntax, multiple return
+	values, extreme strong typing, static typing, its simplicity,
+	exponentiation operator, roots operator, lack many unneccessary
+	types (like Python, unlike C)
+
+Syntax:
+	Introduction:
+		The Shilto Language is a language with syntax similar to C. It is
+		based off of the C syntax, but there are several notable
+		differences, all of which are intended as improvements to the
+		(as of this writing) 38 year old syntax that C has.

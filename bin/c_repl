@@ -1,0 +1,76 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+require 'English'
+require 'fileutils'
+
+require 'colored'
+
+require 'readline'
+
+$command = 'gcc -O3 -s -xc '
+class String
+  def run
+    FileUtils.rm_rf('/tmp/ruby_gcc')
+    puts self
+    # puts self
+    IO.popen("#{$command} - -o /tmp/ruby_gcc ", 'w') do |f|
+      f.puts $text.gsub('CODE', self)
+    end
+    if $CHILD_STATUS.exitstatus != 0
+      puts $text.gsub('CODE', self)
+      puts # text
+    end
+
+    system '/tmp/ruby_gcc < /usr/share/dict/words'
+    # end
+  end
+end
+
+$text = <<~EOF
+  #include <stdio.h>
+  #include <string.h>
+  #include <stdlib.h>
+
+  #include <unistd.h>
+
+  int main() {
+          FILE *stream;
+             char *line = NULL;
+             size_t len = 0;
+             ssize_t nread;
+             /*if (isatty(stdin)) {
+             	fputs_unlocked(#{'Enter text > '.green});
+             }*/
+
+             while ((nread = getline(&line, &len, stdin)) != -1) {
+  //               fwrite(line, nread, 1, stdout);
+  CODE
+             }
+
+
+             free(line);
+  	return 0;
+  }
+
+EOF
+
+# line = ""
+
+lines = ''
+
+loop do
+  # print "Enter ".green + " c code from which to map ".green +
+  $stdout.print 'Enter '.green
+  $stdout.print 'C'.blue + ' code from which to map '.green + 'STDIN  word list | code '.blue + ' >   '.green
+  # STDOUT.print "Enter ".green
+
+  # + "c code from which to map #{"stdin".blue}".green + ""#"> ".magenta
+  lines = "#{$stdin.readline};".strip
+  if (lines == 'clear') || lines.size.zero?
+    system 'clear'
+    lines = ''
+    next
+  end
+  lines.run
+end

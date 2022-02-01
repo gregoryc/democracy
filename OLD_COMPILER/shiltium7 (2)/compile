@@ -1,0 +1,123 @@
+#!/usr/bin/python -SE
+
+from os import system, unlink, kill, fork, popen, path
+getsize = path.getsize
+del path
+from sys import stderr, argv
+
+OPTIONS_IN_EVERY_OPTION_STRING = ("-pedantic -Werror -Wfatal-errors -Winit-self "
+	"-Wstrict-overflow=5 -Wfloat-equal -Wundef -Wshadow -Wunsafe-loop-optimizations -funsafe-loop-optimizations "
+	"-Wall -Wextra -Wcast-qual -Wcast-align -Wwrite-strings -Wlogical-op -Waggregate-return -Wredundant-decls -lm -o shiltium")
+
+C_OPTIONS = "-Wbad-function-cast -Wdeclaration-after-statement -Wc++-compat -Wstrict-prototypes -Wold-style-definition -Wnested-externs"
+
+OPTIONS_FOR_WHEN_OPTIMIZATION_IS_OFF = "-Wformat=0"
+OPTIMIZATION_OPTIONS = "-s -Wformat=2"
+
+option_strings = (
+	"(gcc) -std=c89",
+	"(gcc) -std=gnu89",
+	"(gcc) -std=c99",
+	"(gcc) -std=gnu99",
+	"(g++) -std=c++98",
+	"(g++) -std=gnu++98",
+	"(g++) -std=c++0x",
+	"(g++) -std=gnu++0x",
+)
+
+COMMAND_LINE_OPTIONS_FOR_SMALL_EXECUTABLE_MODE = set(("mini", "tiny", "small"))
+
+option_strings = [i + " " + OPTIONS_IN_EVERY_OPTION_STRING + " shiltium.c 2>&1; printf $?" for i in option_strings]
+
+remove_first_argument = True
+
+system("tput reset")
+
+if len(argv) > 1 and (argv[1] in ("opt", "optimize", "rel", "release") or argv[1] in COMMAND_LINE_OPTIONS_FOR_SMALL_EXECUTABLE_MODE):
+	status = system(
+		"gcc -DDEBUG=0 " + OPTIONS_IN_EVERY_OPTION_STRING + " " + C_OPTIONS + " " + OPTIMIZATION_OPTIONS + " " +
+		("-Os" if argv[1] in COMMAND_LINE_OPTIONS_FOR_SMALL_EXECUTABLE_MODE else "-O3") +
+		" -std=c89 -Wdeclaration-after-statement shiltium.c && strip --remove-section .comment --remove-section .note shiltium")
+	if status:
+		raise SystemExit(1)
+elif len(argv) > 1 and argv[1] in ("lines", "num_lines", "numlines"):
+	print "Lines:\n"
+	system("wc -l *.c *.h")
+	raise SystemExit
+elif len(argv) > 1 and argv[1] == "ratio":
+	system(argv[0] + " > /dev/null 2>/dev/null")
+	size_of_debugging_version = float(getsize("shiltium"))
+	
+	system(argv[0] + " rel > /dev/null 2>/dev/null")
+	size_of_release_version = float(getsize("shiltium"))
+	
+	print "The debugging version is %.2f times bigger than the release version.\n" % (size_of_debugging_version / size_of_release_version)
+	print "The release version is %.2f%% of the size of the debugging version." % ((size_of_release_version / size_of_debugging_version) * 100)
+	
+	raise SystemExit
+elif len(argv) > 1 and argv[1] == "check_code":
+	try:
+		from time import time
+		old_time = time()
+		
+		for number, option_string in enumerate(option_strings):
+			for i in range(2):
+				for j in range(2):
+					if not option_string.startswith("(g++) "):
+						if option_string.startswith("(gcc) "):
+							new_option_string = option_string[6:]
+						else:
+							new_option_string = option_string
+							                                              # i == 0 -> 0, otherwise i == 1 -> 3 
+						new_option_string = "gcc -O%d -DDEBUG=%d %s" % (i * 3, j, new_option_string + " " + C_OPTIONS)
+						print new_option_string
+						stdout_of_command = popen(new_option_string).read()
+						if stdout_of_command != '0': raise SystemExit
+					
+					if not option_string.startswith("(gcc) "):
+						if option_string.startswith("(g++) "):
+							new_option_string = option_string[6:]
+						else:
+							new_option_string = option_string
+							                                              # i == 0 -> 0, otherwise i == 1 -> 3 
+						new_option_string = "g++ -O%d -DDEBUG=%d %s" % (i * 3, j, new_option_string)
+						print new_option_string
+						stdout_of_command = popen(new_option_string).read()
+						if stdout_of_command != '0': raise SystemExit
+		
+		normal = True
+	except SystemExit:
+		normal = False
+	
+	try:
+		unlink("shiltium")
+	except:
+		pass
+	
+	if normal:
+		print ("\x1bc\x1b[!p\x1b[?3;4l\x1b[4l\x1b>All the code is perfect! It compiles in every version of C and C++ " +
+			"that was checked! The code compiled as C89, C99, C++98 and C++0x, and all the GNU variants of them " +
+			"without any warnings or errors at all! The code was compiled in %d different ways and they all compiled properly!\n" %
+				(len(option_strings) * 4))
+		print "It took %s seconds to check.\n" % (time() - old_time)
+	else:
+		print >> stderr, "\n" + stdout_of_command[:-2]
+	
+	raise SystemExit
+else:
+	status = system("gcc -g -std=c89 -DDEBUG=1 " + OPTIONS_IN_EVERY_OPTION_STRING + " " + C_OPTIONS + " " + OPTIONS_FOR_WHEN_OPTIMIZATION_IS_OFF + " shiltium.c")
+	if status:
+		raise SystemExit(1)
+	
+	remove_first_argument = False
+
+
+if remove_first_argument:
+	args = " ".join(argv[2:])
+else:
+	if len(argv) > 1:
+		args = argv[1]
+	else:
+		args = ""
+
+system("./shiltium " + args)

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+rm -f *.gem                                                   nohup.out
+PATH=bin:$PATH
+
+
+echo -n 0.0. | blue
+cat VERSION_NUMBER | blue
+echo Incrementing | blue
+(cat VERSION_NUMBER; echo 1) | add | squeeze 0 0 VERSION_NUMBER;
+version=0.0.`cat VERSION_NUMBER`
+echo $version | red
+#echo version 
+#cat VERSION_NUMBER | red
+echo Success | green
+gem build ./*.gemspec --verbose      || exit 1
+gem push *.gem --verbose

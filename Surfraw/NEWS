@@ -1,0 +1,508 @@
+        ______  _     _  ______   _______  ______   _______  _  _  _
+       / _____)(_)   (_)(_____ \ (_______)(_____ \ (_______)(_)(_)(_)
+      ( (____   _     _  _____) ) _____    _____) ) _______  _  _  _
+       \____ \ | |   | ||  __  / |  ___)  |  __  / |  ___  || || || |
+       _____) )| |___| || |  \ \ | |      | |  \ \ | |   | || || || |
+      (______/  \_____/ |_|   |_||_|      |_|   |_||_|   |_| \_____/
+
+      Surfraw - Shell Users' Revolutionary Front Rage Against the Web
+
+                                 Oh Baybe
+                                I need some
+                               Deep Linking
+                                 Let us go
+                            Surfin' in the raw!
+
+                                  N E W S
+Sat Jan 13 18:55:20 GMT 2018  - surfraw 2.3.0
+
+        * We are moving! This is the last release on Debian's platform.
+          For all future development, please check out
+          https://gitlab.com/surfraw/Surfraw
+
+	    * All elvi now use HTTPS
+          + Elvi for sites that don't work with HTTPS have left the building:
+        	- cablesearch
+	   	    - dmoz
+	   	    - openports
+	   	    - opensearch
+	   	    - pasearch
+	   	    - rhyme
+	   	    - rpmsearch
+	   	    - scicom
+	   	    - scirus
+	   	    - wetandwild
+	   	    - yacy
+	   	    - yubnub
+	    * Select Perl version at buildtime (Mark Meyer)
+	    * Remove lynx-cur (closes #882286)
+
+Tue Dec 10 15:49:46 GMT 2013  - surfraw 2.2.9
+
+        * New elvi:
+          + S - search using w3_custom_search (see below)
+          + cisco - search Cisco documentation
+          + debcodesearch - search Debian codebase
+          + github - search github
+          + gmane - search mailing lists
+          + jquery - search jQuery documentation
+          + mdn - search Mozilla Developer Network
+          + mysqldoc - search MySQL documentation
+          + oraclesearch - search Oracle documentation
+          + pgdoc - search PostgreSQL documentation
+          + phpdoc - search PHP documentation
+          + pin - search pinboard.in
+          + wolfram - search Wolfram Alpha
+          + yacy - search YaCy P2P search engines, including ScienceNet
+        * Changed elvi:
+          + aur - uses HTTPS by default, use -no-https to disable
+          + deblists
+            * Removed options -author, -lists, -lang
+            * added options -ml (message links) and -mv (list view)
+          + duckduckgo:
+            * removed -p (clashes with global print option), use -safe instead
+            * stopped -l[ucky] from clobbering -lh
+          + google: changed -g option to -G to avoid clash with -g for graphical view
+        * Fixed elvi: ask, ctan, deli, genportage, jamendo, javasun, openbsd
+          musicbrainz, rae, slashdot, slinuxdoc
+        * Removed elvi for dead sites: happypenguin, scroogle, sunonesearch (replaced by oraclesearch)
+        * w3_custom_search
+          + elvi that use a search engine as a backend with site: and inurl:
+            can now choose which search engine to use.
+            So far, google and duckduckgo are supported, with duckduckgo the default.
+          + Affected elvi: mdn, mysqldoc, netbsd, openbsd, pgdoc, slinuxdoc
+          + To select on the commandline use -custom-search=google or -custom-search=duckduckgo
+          + Or configure SURFRAW_customsearch_provider
+        * New variable: SURFRAW_bookmark_search_elvis
+	  When using searchable bookmarks, if all else fails run this elvis.
+          Defaults to google
+        * New example elinks integration script in examples/hooks.lua.
+        * Debian packaging now included in release, in debian/ dir.
+        * Known problems at time of release
+          + deblogs - down (hopefully) temporarily
+          + yacy - demo portal down, ScienceNet still up
+          + scicom - down, status unknown
+
+Tue Jul 12 00:46:02 BST 2011  - surfraw 2.2.8
+
+        * New elvi:
+          + ads - search the SAO/NASA Astrophysics data system.
+          + archwiki: search the arch wiki.
+          + bugzilla - search various bugzillas, defaults to kernel.
+          + cablesearch - search wikileaks cables
+          + deli: search delicious.com.
+          + duckduckgo - replace with better implementation
+          + openports - search openbsd ports
+          + pasearch - search Penny Arcade archives.
+          + scirus, scitopia, worldwidescience - science searches
+          + stack: search stackoverflow.com and friends.
+          + yandex - russian web search.
+        * Changed elvi:
+          + archpkg: now supports options.
+          + arxiv: quote queries for exact string matches.
+          + ctan: Option -doc replaced by -id. Options no longer mutually
+            exclusive.
+          + codesearch, musicbrainz, rpmsearch: rewritten to match new
+            site. Options have changed to match site, see help message.
+          + debbugs: add -s as an alias for -search=src.
+          + google: new options:
+            * -v, -search=video: search video
+            * -m, -search=maps: search maps
+            * -n, -search=news: search news
+            * -i: new shortcut for -search=images
+            * -safe=default|off|moderate|strict: safe search
+          + openbsd: support -misc and -tech.
+          + opensearch: new option -r, uses remote redirector
+            which means it can run without heavy dependencies.
+          + pgpkeys: add more options, support more keyservers,
+            default to sks-keyservers.net.
+          + translate: added Google Translate support.
+          + wayback: advanced search is broken, rip out all
+            options and use basic search.
+          + wikipedia: new option -d, uses remote redirector
+            to search both wikipedia and deletionpedia.
+            use -fallback=wikipedia|deletionpedia to customise
+            behaviour.
+        * Fixed elvi: archpkg, arxiv, cia, codesearch, ctan, javasun,
+          lastfm, musicbrainz, netbsd, rpmsearch, w3link, yahoo.
+        * Removed elvi:
+          + altavista: is now just a front-end to yahoo. RIP.
+          + cddb: gracenote made the "hard decision" to remove the
+            website search. sigh.
+          + fast: another yahoo front-end.
+          + filesearching: refuses to work without 'Referer:' header.
+          + port: site gone
+        * Support -local-help, --local-help or -lh to get elvi-specific
+          help without displaying the global options. This works for
+          all elvi and the main surfraw script.
+        * Support -h as a synonym for -help.
+        * Improved listing of elvi.
+        * Default to surfraw_graphical_remote=no,
+          as chromium doesn't support "-remote openURL".
+        * Bookmark names are now an exact match not a substring match.
+        * Support BSD/POSIX make.
+        * README: added INTEGRATION section on uzbl and pentadactyl.
+
+Thu May  6 20:20:09 BST 2010  - surfraw 2.2.7
+
+        * New elvi (surfraw now has over one hundred elvi!):
+          + by tczy:
+            * bing: Search using Microsoft's Bing.
+          + by Ivy Foster:
+            * bookfinder: Search for books using www.bookfinder.com.
+            * bugmenot: Bypass compulsory web registration with bugmenot.com.
+          + by Ian Beckwith:
+            * duckduckgo: Search the web via duckduckgo.com.
+            * scroogle: Search Google anonymously via www.scroogle.org.
+          + by Simone Fittabile:
+            * jamendo: Search Jamendo: free music with Creative Commons licenses
+        * Removed elvi: genpkg (use genportage instead).
+        * Fixed elvi:
+          + cnn
+          + imdb (thanks to Sadako)
+          + bbcnews (thanks to Sumant Oemrawsingh and James Rowe)
+        * aur: added options (thanks to Ivy Foster)
+        * wikipedia, ixquick: support https. Thanks to Simone Fittabile.
+        * debwiki: remove -w, Debian Women wiki is being merged into main
+          Debian wiki. Thanks to Simone Fittabile.
+        * Improved support for screen(1). Thanks to Ivy Foster:
+          + Support for using tmux as $SURFRAW_screen.
+          + Added `-ns|-newscreen' switch for setting $SURFRAW_new_screen.
+          + Added $SURFRAW_screen_args for passing arguments to the defined
+            screen tool.
+        * uzbl_load_url_from_surfraw: fix menu.
+          Thanks to Sumant Oemrawsingh.
+
+Fri Nov 20 03:34:19 GMT 2009  - surfraw 2.2.6
+
+        * New elvi:
+          + by Sumant Oemrawsingh:
+            * cliki        - search the common lisp wiki.
+            * l1sp         - search lisp documentation.
+            * mathworld    - search Wolfram MathWorld.
+            * mininova     - search mininova for torrents.
+            * youtube      - search youtube for videos.
+          + by Simone Fittabile:
+            * acronym      - find acronyms
+            * gcache       - search google cache.
+          + by Nick White:
+            * genbugs      - search gentoo bug tracker
+          + by Ian Beckwith:
+            * debpkghome   - view home page of a debian package.
+            * debvcsbrowse - browse vcs of a debian package
+            * rpmsearch    - search for packages in rpm-based distros.
+            * finkpkg      - search Fink packages.
+            * macports     - search macports packages.
+        * Move config files to follow XDG basedir spec
+          This means that if your global config was in /etc/surfraw.conf
+          it is now in /etc/xdg/surfraw/conf, and local config is
+          now in $HOME/.config/surfraw/conf. The same applies to bookmarks.
+          See README for details on configuring config locations, and
+          http://standards.freedesktop.org/basedir-spec/basedir-spec-0.6.html
+          for the gory details. The old locations are still supported for
+          backwards-compatibility.
+        * Support per-user elvi in $HOME/.config/surfraw/elvi/
+          Patch by James Rowe, idea by Sumant Oemrawsingh.
+        * Added -o | -o=FILE option, to fetch URL and dump to
+          stdout or FILE.
+        * Modified elvi:
+          + freebsd: new options -psearch=TYPE -psection=SEC
+            to conduct a search of type TYPE in section SEC of ports.
+          + netbsd:  new option -ps to search ports
+          + openbsd: new option -ps to search ports
+          + debsec: fixed (Thanks to Moritz Muehlenhoff, for this
+            and all his other work).
+          + cia: fixed.
+        * Added examples/uzbl_load_url_from_surfraw, to integrate surfraw
+          with uzbl (uzbl.org), thanks to Sumant Oemrawsingh.
+
+Wed May 13 02:30:21 BST 2009  - surfraw 2.2.5
+
+  * Replaced scaleplus elvi with comlaw.
+  * rfc: use HTML for RFCs and BCPs.
+  * Support '--' to indicate end of options, so, for instance,
+    "sr google -g -- foo -bar" works.
+  * debpackages, debcontents: update ubuntu release names.
+
+Sun Mar  1 02:12:14 GMT 2009  - surfraw 2.2.4
+
+  * New elvi:
+    + ntrs, scicom, springer - Thanks to Wim Van Hoydonck.
+    + urban - Thanks to J. R. Mauro.
+    + aur - Thanks to René Reigel.
+  * excite: fixed.
+  * cite: changed to use citeseerx.ist.psu.edu, the old
+    citeseer is no longer being updated.
+  * amazon: fixed; updated categories.
+
+Sat Sep 13 20:40:01 BST 2008  - surfraw 2.2.3
+
+  * Surfraw now defaults to graphical mode. See surfraw(1)
+    for how to change the default back.
+  * Search for default browsers during build.
+    This can be overridden by passing --with-text-browser=BROWSER
+    and --with-graphical-browser=BROWSER to ./configure.
+  * New elvis: piratebay, genportage. Thanks to J.R. Mauro.
+  * Detect which awk to use.
+  * Fixed slinuxdoc and webster.
+  * Removed bashisms.
+  * Fixed uninstall.
+  * Add --disable-sr option to ./configure to disable installing the
+    'sr' symbolic link, to avoid clashes with the SR programming language.
+
+Thu Jul  3 08:47:14 BST 2008  - surfraw 2.2.2
+
+  * New elvis:
+    + arxiv - Search the Los Alamos Science E-Print Archive
+      replaces xxx which was just a stub (thanks to John Gruenenfelder).
+    + javasun - search Java API Docs (thanks to James TD Smith)
+  * Fixed elvis:
+    + debpackages/debcontents: update options and distributions,
+      add -a options to use archive.debian.net.
+    + wetandwild: switched to weather.com, as yahoo now uses AJAX.
+      Command line options and SURFRAW_weather_* variables no
+      longer supported.
+    + austlii: fixed search URL, default method is now 'auto'.
+    + port: original site is back.
+    + translate: fixed URLs.
+  * Removed elvis:
+    + sundocs: use sunonesearch.
+    + xxx: replaced by arxiv.
+  * surfraw: fix w3_url_escape quoting (thanks Micah Anderson)
+  * surfraw-update-path: fix csh syntax (thanks John Gruenenfelder)
+  * google: Add -country option to specify country. Respects
+    SURFRAW_lang variable (Thanks to James TD Smith).
+
+Sun Mar  9 19:24:26 GMT 2008  - surfraw 2.2.1
+
+  * New elvi:
+    + lsm - Search the Linux Software Map.
+    + sunonesearch - Search Sun's One Search (replaces sunsolve).
+  * Fixed elvi: cddb, cnn, debcontents, deblists, debpackages, freedb,
+    fsfdir, genpkg, and yubnub (thanks for the latter to Nathaniel Heinrichs).
+  * Removed elvis: sunsolve (replaced by sunonesearch).
+  * amazon, ebay, translate: expanded language/country list.
+  * Added new configuration variable SURFRAW_lang.
+    Elvi that support specifying language or country
+    will use this as a default. If used, it should be set
+    to an ISO 2-letter country code (eg uk, de, ca).
+    Thanks to Simon Ernst for the idea.
+  * Fixed quoting single quotes in URLs (thanks to Alexander
+    Becher for the patch).
+
+Thu Sep  6 21:59:35 BST 2007 - surfraw 2.2.0
+
+  * Resumed making upstream releases.
+    Surfraw is now maintained by the Debian Surfraw-Devel Team. Please
+    report bugs to <surfraw-devel@lists.alioth.debian.org>, and feel
+    free to join us on the list.
+
+    There have been many changes since the last official release.
+
+    New elvi: alioth archpkg bbcnews cddb cia codesearch ctan cve
+              deblists deblogs debpts debsec debwiki discogs dmoz ebay
+              etym foldoc freedb fsfdir genpkg gutenberg happypenguin
+              imdb ixquick lastfm leodict musicbrainz opensearch
+              pgpkeys port rae rfc scholar scpan w3css w3html w3link
+              w3rdf wayback wikipedia yubnub
+
+    Removed elvi: appwatch britannica ftpfind ftpsearch jake
+                  raging swhois
+
+    Elvi now live in /usr/lib/surfraw (or /usr/local/lib/surfraw)
+    Use surfraw-update-path to add this directory to your path or
+    prefix elvi with sr or surfraw, eg "sr google foo bar".
+
+    Bookmarks can be defined in /etc/surfraw.bookmarks or
+    ~/.surfraw.bookmarks. See /etc/surfraw.bookmarks for the format.
+    Bookmarks can be used with "sr [options] bookmarkname".
+
+    There is now a test suite. "make test" to run it or
+    see test/README.
+
+    For a full list of changes since the last release, see
+    debian/changelog. From this release onwards, changes will be
+    logged in ./ChangeLog as normal.
+
+Tur Mar 30 01:21:03 CEST 2004 - surfraw 2.0.2
+
+  * Added bash completion support by Justin B Rye
+  * Do not set $DISPLAY when running in text mode
+  * Removed sharereactor elvi
+
+Tue Feb 10 04:01:40 GMT 2004 - surfraw 2.0.1
+
+Please note that the elvi have moved again, to /usr/lib/surfraw
+
+If you used surfraw-update-path from version 2.0 to add the elvi
+directory to your path, you will need to run it again, first with
+-remove to remove the old path, then again with -add. To change your
+path you will need to either log out and in again or source the
+relevant config files.
+
+  * Moved elvi to /usr/lib/surfraw
+  * Updated docs for new elvi location
+  * Changed man page section for all elvi to 1sr
+  * Fixed surfraw help text
+  * Added man page links for pgpkeys, ebay and sharereactor
+  * Added linda override (and surfraw.dirs) for usr-lib-in-arch-all
+  * Added debhelper tokens to prerm/postinst
+    (they were in released 2.0-1 but not CVS)
+  * Rewrote man page surfraw.1.in, added man page elvi.1sr.in
+    Both go via autoconf.
+  * Removed old debian/surfraw.1
+  * Updated debian/surfraw.links to point elvi to elvi.1sr.gz
+  * Updated AUTHORS to hopefully include every contributor, ever.
+  * Changed a few "def"s to "defyn"s in surfraw.conf.in
+  * Fixed quoting so   sr google foo "bar baz" qux   works
+  * Makefile.am: Added missing files to EXTRA_DIST
+  * Added a debconf note (only visible if upgrading from 2.0-1)
+    explaining the elvi have moved again
+  * configure.in: changed to new AM_INIT_AUTOMAKE format,
+    specified minimum automake version 1.7
+  * updated surfraw.lsm with new URLs
+  * deleted debian/rules.save (old rules backup)
+  * Removed elvi:
+    + britannica: gone subscription-only
+    + swhois: all whois sites I can find have anti-harvester features
+          that stop us using them.
+  * Fixed elvi:
+    + wikipedia - added missing quotes (could've sworn I did this already)
+    + cnn - updated url
+    + translate - corrected docs
+  * Moved debian/surfraw.links to links.IN in top dir, now uses autoconf
+    and is not debian-specific
+  * Makefile.am: Added install-data-hook to create links
+  * configure.in, elvi/Makefile.in: fixed ELVIDIR quoting
+  * added elvi/surfraw_elvi to CLEANFILES & removed it from cvs, as it is
+    generated on build.
+  * disabled ifs quoting in elvi that don't like it:
+    freedb, happypenguin, jake, rhyme, scaleplus,
+        sharereactor, thesaurus, webster, deblists.
+  * Added note to HACKING explaining how to disable ifs quoting
+  * synced NAMESPACE branch with HEAD
+    Please use the main HEAD branch from now on.
+  * links.IN: made links relative
+  * Converted debconf to po-debconf
+  * Eliminated templates.IN, as it confused po-debconf
+  * Deautoconfiscated the debian directory, as only templates went through
+    autoconf
+
+Tue Dec 23 03:19:58 GMT 2003 - surfraw 2.0
+
+New development team, see http://alioth.debian.org/projects/surfraw
+
+  * Moved elvi to /usr/bin/surfraw-elvi. (Closes: #209155, #192869, #201175)
+  * Provided surfraw-update-path to put new dir in path.
+  * Added sr as alias to surfraw.
+  * Added bookmark support and /etc/surfraw.bookmarks.
+  * New elvi: alioth, rfc, scpan, deblists. (Closes: #134498)
+    plus leodict and happypenguin by Moritz Muehlenhoff (Closes: #217799)
+    and wikipedia, also by Moritz Muehlenhoff (Closes: #223953)
+    and sharereactor, pgpkeys and ebay, also by Moritz Muehlenhoff
+  * Fixed elvi: altavista, debcontents, excite, jake, scaleplus,
+    slinuxdoc, sundocs, swhois, translate.
+  * amazon: fixed test (Closes: #163903) and -country, removed tag-id stuff.
+  * debcontents: changed options to SURFRAW_debcontents_*.
+  * sourceforge: added -type and -exact options.
+  * webster: added -t (thesaurus) option.
+  * debbugs: added options.
+  * Removed elvi: appwatch, ftpsearch, ftpfind, raging (sites defunct).
+  * Updated Debian Standards-Version to 3.6.1.0
+  * surfraw.in:
+    - Applied Brian Nelson's "-remote openURL" patch (Closes: #165967).
+    - Fixed browser selection (Closes: #118314).
+  * google -l/-lucky support (Closes: #127078, #128544).
+  * Added deja patch from Christian Garbs (Closes: #149600).
+  * debian/rules: changed to use DESTDIR.
+  * Force default browser to sensible-browser (Closes: #119357)
+    - This supercedes NMU changes (Closes: #200164, #201229, #149584)
+    - Change default browser in manpage (Closes: #113148)
+  * Rename stranslate back to translate (Closes: #141243)
+  * Make woffle not look for /usr/local/bin/surfraw (Closes: #156466)
+  * Add lynx to Recommends (Closes: #141242)
+  * Make surfraw lintian-clean
+    - Remove '(s)' from copyright
+    - Remove /etc conffile entries
+  * Kevin Kreamer <kkreamer@etherhogz.org> did this work.
+  * Easy bugs first
+    - fix type in README (Closes: #154304)
+    - s/README/README.gz/ in manpage (Closes: #164206)
+  * Added elvi for imdb, cddb, freedb and bbcnews written by Ian Beckwith.
+  * changed "Author(s)" to "Author" in debian/copyright
+  * removed debian/conffiles to prevent debhelper being so incredibly
+    "helpful" as to inlude conffiles *twice*
+
+Wed Dec 26 02:48:06 EST 2001 - Surfraw 1.0.7
+    Fix major sed lossage in 1.0.6 which removed all references to
+     http:// (not just in the documentation strings as was intended)
+
+Sun Dec 23 21:02:57 EST 2001 - Surfraw 1.0.6
+    New elvi: freebsd, openbsd, filesearching, ftpfind
+    Updated elvi: translate (babelfish), ftpsearch, fast, netbsd
+    Rename linuxdoc elvi to slinuxdoc, to prevent name clash with sgmltools
+    Use test -r instead of test -e which inexplicably chocked Solaris8
+    Documentation changes
+
+Tue Nov  6 11:14:21 EST 2001 - Surfraw 1.0.5
+    Fix wayward indentation introduced in 1.0.4
+     which caused -browser to fail
+    Note that SURFRAW_browser was made obsolete in 1.0.4.
+     SURFRAW_text_browser and SURFRAW_graphical_browser
+     replace its functionality
+    STATE EXTRA CLEARLY THE FORMAT OF ~/.surfraw.conf so
+     even Redhat users get it.
+
+Thu Oct 25 05:32:25 EST 2001 - Surfraw 1.0.4
+    New elvi: debbugs, debcontents, debpackages, swhois, woffle
+    Dead elvi: ircsearch, newscientist
+    -g and -t switch between graphical & text browsers
+    -new opens a new window on -remote comprehending browsers
+    Support "--" option to end all options
+    Fix url space escaping problem
+    Surfraw placed into the public domain
+
+Fri Jan 12 14:51:10 EST 2001 - Surfraw 1.0.3
+    New elvi: amazon
+    Add `scaleplus' elvi to elvi/Makefile.am
+    Minor documentation bug fixes
+
+Wed Sep 27 06:37:48 EST 2000 - Surfraw 1.0.2
+    Viva l`explorateur de texte!
+      http://slashdot.org/articles/00/08/28/1143249.shtml
+      http://www.theage.com.au/frontpage/20000828/A32287-2000Aug28.html
+    Translate elvi didn't correctly parse -from or -to
+    HACKING file was missing from EXTRA_DIST
+
+Fri Aug 25 23:42:31 EST 2000 - Surfraw 1.0.1
+    New elvi: britannica
+    Updated elvi: freshmeat
+
+Fri Aug 25 02:26:31 EST 2000 - Surfraw 0.5.8
+    New elvi: stockquote (nasdaq, quote.com, yahoo), jake
+    Don't open new screen(1)s by default
+    Zorch usage of local variables (not POSIX)
+
+Sat Aug 12 20:00:45 EST 2000 - Surfraw 0.5.7
+    New elvi: fast netbsd translate W wetandwild.
+    Auto detect browser during configure phase.
+    Built in support for screen(1)
+    Built in support for netscape-remote
+    `surfraw' on its own now displays a list of elvi
+
+Sun Aug  6 11:43:50 EST 2000 - Surfraw 0.5.6
+    New elvi: newscientist pubmed freshmeat
+
+Sat Aug  5 16:07:55 EST 2000 - Surfraw 0.5.5
+    New elvi: appwatch cnn excite ftpsearch linuxdoc scaleplus sundocs
+              sunsolve thesaurus weather webster
+
+Wed Aug  2 08:56:04 EST 2000
+    Name change, surfaw -> surfraw
+    Web-site is now http://surfraw.sourceforge.net/
+
+Sun Jul 30 17:51:50 EST 2000 - Surfaw 0.5.4
+    A Lazy sunday. A tired, but happy mood. The afternoon drowses by and
+    we have the initial version.
+
+$Id$

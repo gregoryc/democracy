@@ -1,0 +1,161 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+temp_variable_total = 0
+bash_mode = false
+
+class IO
+  def gets_to_end
+    read
+  end
+end
+temp_variable_count = 0
+
+def puts(a)
+  $stdout.puts "\t#{a}"
+end
+# num_concats = 0
+# def puts
+#	$stdout.puts
+# end
+
+a = <<~EOF
+  #include <string.h>
+  #include <stdio.h>
+  #include <unistd.h>
+  #include <stdlib.h>
+
+  typedef struct {
+  		size_t size;
+  		char* value;
+  	} SPECIAL_STRUCT;
+
+  static inline char* make_struct(size_t size, char* string) {
+
+  	SPECIAL_STRUCT* a = malloc(sizeof(SPECIAL_STRUCT));
+  	a->size = size;
+  	a->value = string;
+
+  	return a->value;
+  }
+EOF
+
+b = $stdin.readlines
+puts a
+b.each do |line|
+  concat = false
+  num_concats = 0
+  (file = line.scan(/>\s*(.+)$/))
+  in_string = -1
+  can_use_operators = 0
+
+  t = 0
+
+  chars = ''
+  if !bash_mode && line.strip == 'bash {'
+    bash_mode = true
+    print 'system("'
+    next
+  elsif bash_mode && line.strip == '}'
+    print '");'
+    bash_mode = false
+    next
+  elsif bash_mode
+    # system #{line.strip
+    l = line.strip
+    if l[-1] == '&'
+    else
+      l += ' ; '
+    end
+
+    print l
+    next
+  end
+  fooz = []
+
+  if /.*\).*\{\s*/.match?(line.strip)
+    chars += ' /* start of function */ '
+    in_function = true
+  end
+  if /.*\}\s*/.match?(line.strip)
+    chars += ' /* end of function */ '
+    in_function = true
+  end
+
+  first_in_string = -1
+
+  puts "Output to #{file}" if file.size.positive?
+
+  line.size.times do |iter|
+    char = line[iter]
+
+    next_char = line[iter + 1]
+
+    if (char =~ (/[a-zA-Z_]+[a-zA-Z0-9]/) || (char == ' ' && next_char == '"')) && (in_string == -1)
+      concat = true
+    end
+
+    if char == '"'
+      if in_string == -1
+        in_string = iter
+        first_in_string = iter if first_in_string == -1
+        #				can_use_operaters += 1
+        can_use_operators = true
+      else
+        #	puts concat
+        num_concats += 1
+        chars += ' , ' if concat
+        # chars += [ "(TEMP_VARIABLE_NUMBER_#{t += 1} = make_struct(sizeof(#{line[in_string..iter]}), #{line[in_string..iter]}))"][0]
+
+        fooz.push line[in_string..iter]
+        # temp_variable_number
+
+        t += 1
+        in_string = -1
+      end
+    elsif in_string != -1
+      if char == '\\' && next_char == '"'
+        if char == '\\'
+        end
+      elsif iter == line.size - 2
+        puts 'Error: Unterminated quote'
+      end
+    else
+      chars += char
+    end
+  end
+  # temp_variable_total += 1
+
+  puts ''
+  t.times do |number|
+    puts "size_t TEMP_VARIABLE_TOTAL_#{temp_variable_total += 1} = sizeof('\\0');"
+    puts "size_t TEMP_VARIABLE_LEN_#{number + 1} ; char*  TEMP_VARIABLE_NUMBER_#{temp_variable_count += 1}=#{fooz[number]};  "
+    temp_variable_total += 1
+    puts "TEMP_VARIABLE_TOTAL_#{temp_variable_total - 1} +=( TEMP_VARIABLE_LEN_#{number + 1}=sizeof(#{fooz[number]}));"
+  end
+
+  #					chars += [ "(strncpy(TEMP_VARIABLE_NUMBER_#{t += 1}, malloc(TEMP_VARIABLE_TOTAL_#{number + 1}))"][0]
+
+  # print chars
+  # puts ""
+
+  # t += 1
+  num_concats.times do |number|
+    puts ["char* TEMP_VARIABLE_NUMBER_#{temp_variable_count += 1} = malloc(TEMP_VARIABLE_TOTAL_#{number + 1}); /* dest */"][0]
+
+    #	puts "dest = malloc(TEMP_VARIBLE_TOTAL_#{temp_variable_total});"
+    puts "strncpy(TEMP_VARIABLE_NUMBER_#{temp_variable_count} /* dest */, TEMP_VARIABLE_NUMBER_#{number + 1} /* src */, TEMP_VARIABLE_LEN_#{number + 1} /* size*/ #{number == num_concats - 1 ? ' + 1' : ''});"
+    t += 1
+    puts '/* concatenation total */'
+    puts "char* TEMP_VARIABLE_NUMBER_#{temp_variable_count += 1} = make_struct(TEMP_VARIABLE_TOTAL_#{number + 1}, TEMP_VARIABLE_NUMBER_#{temp_variable_count - 1});"
+    chars = chars.sub('()', "(TEMP_VARIABLE_NUMBER_#{temp_variable_count})")
+  end;	# puts "Hello"
+
+  #			puts [num_concats, line, "DDD"]
+
+  # if !can_use_operators
+  puts chars
+  # end
+
+  # end
+end

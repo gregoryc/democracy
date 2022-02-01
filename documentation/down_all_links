@@ -1,0 +1,16 @@
+down_all_links downloads all links from a webpage
+
+
+This is really useful as a "glue" program with other programs.
+
+
+It takes one argument, the website to download from
+
+
+
+
+
+
+
+
+The links get printed to the standard output

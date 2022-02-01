@@ -1,0 +1,818 @@
+#!/bin/sh
+# Surfraw -- Shell Users' Revolutionary Front Against the World wide web
+#
+#  Copyright (c) 2003-2018 The Surfraw-Devel Team
+#                          <surfraw-devel@lists.alioth.debian.org>
+#  Copyright (c) 2000-2001 Julian Assange, placed into the public domain
+#  Copyright (c) 2000 Melbourne Institute for Advanced Study, placed into the public domain
+#
+# see the file COPYING for further copyright details
+#
+
+surfraw_version=@VERSION@
+surfraw_api_version=1.0
+# $0 can be -bash when sourced for tab completions.
+# POSIX seems to assume `--` support.
+w3_argv0=$(basename -- "$0")
+
+elvidir="@ELVIDIR@"
+
+# defaults
+
+w3_config_hook () {
+    return 1
+}
+
+find_global_conf () {
+    local base="${1}"
+    local conf
+    set --
+
+    if [ "${XDG_CONFIG_DIRS}" ] ; then
+        local OIFS="${IFS}"
+        IFS=":"
+        set -- ${XDG_CONFIG_DIRS}
+        IFS="$OIFS"
+    fi
+    set -- "$@" "@sysconfdir@/xdg"
+
+    for dir ; do
+        conf="${dir}/surfraw/${base}"
+        if [ -r "${conf}" ] ; then
+            printf "%s" "${conf}"
+            return 0
+        fi
+    done
+
+    # old surfraw default
+    conf="@sysconfdir@/xdg/surfraw/$base"
+    if [ -r "${conf}" ] ; then
+        printf "%s" "${conf}"
+        return 0
+    fi
+
+    return 1
+}
+
+load_global_conf () {
+    local conf
+    if test -n "$SURFRAW_global_conf" && test -r "$SURFRAW_global_conf"; then
+	conf="$SURFRAW_global_conf"
+    else
+	conf=$(find_global_conf conf)
+    fi
+    if test -z "$conf" || ! test -r "$conf"; then
+	err "couldn't find global config in @sysconfdir@/xdg/surfraw/conf or \$XDG_CONFIG_DIRS"
+    fi
+    . "$conf"
+}
+
+find_local_conf () {
+    base="$1"
+    if test -n "$XDG_CONFIG_HOME" && test -r "$XDG_CONFIG_HOME/surfraw/$base"; then
+	echo "$XDG_CONFIG_HOME/surfraw/$base"
+    elif test -n "$HOME"; then
+	if test -r "$HOME/.config/surfraw/$base"; then
+	    echo "$HOME/.config/surfraw/$base"
+	elif test -r "$HOME/.surfraw.$base"; then
+	    echo "$HOME/.surfraw.$base"
+	fi
+    fi
+}
+
+load_local_conf () {
+    local conf
+    conf=""
+    if test -n "$SURFRAW_conf" && test -r "$SURFRAW_conf"; then
+	conf="$SURFRAW_conf"
+    else
+	conf="$(find_local_conf conf)"
+    fi
+    if test -n "$conf" && test -r "$conf"; then
+	. $conf
+    fi
+}
+
+get_local_elvi_dir () {
+    if test -n "$XDG_CONFIG_HOME";then
+	echo "$XDG_CONFIG_HOME/surfraw/elvi"
+    elif test -n "$HOME";then
+	echo "$HOME/.config/surfraw/elvi"
+    fi
+}
+
+w3_config () {
+    load_global_conf
+    w3_config_hook
+    load_local_conf
+}
+
+warn () {
+    echo "$w3_argv0 WARNING: ""$@" >&2
+}
+
+err () {
+    echo "$w3_argv0 ERROR: ""$@" >&2
+    exit 1
+}
+
+yesno () {
+    eval value="\"\$${1}\""
+    case $(echo "$value" | tr A-Z a-z) in
+	yes|true|on|1)	return 0 ;;
+	no|false|off|0)	return 1 ;;
+	*) err "\"$1\" is not set correctly. Should be (yes|on|1|no|off|0). Is \"$value\"" ;;
+    esac
+}
+
+ifyes () {
+    yesno "$@" && return 0
+    return 1
+}
+
+ifno () {
+    yesno "$@" && return 1
+    return 0
+}
+
+ok () {
+    yesno "$@"
+}
+
+null () {
+    test -z "$@" && return 0
+    return 1
+}
+
+def () {
+    eval value="\"\$${1}\""
+    # Do nothing if already have a value.
+    test -z "$value" && eval ${1}="\"$2\""
+    return 0
+}
+
+defyn () {
+    def "$@"
+    yesno "$1"
+}
+
+setopt  () {
+    eval value="\"\$${1}\""
+    eval ${1}="\"$2\""
+}
+
+setoptyn () {
+    setopt "$@"
+    yesno "$1"
+}
+
+quote_ifs () {
+	 if [ -z "$1" ];   then return;  fi
+     @PERL@ -e '$ifs=$ENV{IFS} || " "; $arg=shift;if($arg =~/[$ifs]/) { $arg="\"$arg\""; } print "$arg\n"; ' -- "$1"
+
+}
+
+bookmark_file_search () {
+	search="$1"
+	file="$2"
+	if [ -r "$file" ]
+	then
+		@AWK@ -v search="$search" '$1 == search { for (nLoop = 2;nLoop <= NF; nLoop++) printf("%s ", $nLoop); print ""; }' $file | head -n 1
+	fi
+}
+
+bookmark_lookup () {
+	search="$1"
+	file=$(find_local_conf bookmarks)
+	lookup=$(bookmark_file_search "$search" "$file")
+	if [ -z "$lookup" ]
+	then
+	    file=$(find_global_conf bookmarks)
+	    lookup=$(bookmark_file_search "$search" "$file")
+	fi
+	if [ -n "$lookup" ]
+	then
+		echo "$lookup"
+	fi
+}
+
+w3_find_prog () {
+  prog="$1"
+  old_ifs="${IFS:-\" \"}"
+  IFS=":"
+  path_ifs="$PATH"
+  for dir in $path_ifs; do
+    test -z "$dir" && dir=.
+    if test -e "$dir/$prog"; then
+	echo "$dir/$prog"
+	IFS="$old_ifs"
+	return 0
+    fi
+  done
+  IFS="$old_ifs"
+  return 1
+}
+
+w3_url_escape () {
+    echo "$@" | sed 's/%/%25/g;
+		     s/+/%2B/g;
+#		     s/ /+/g;
+		     s/ /%20/g;
+		     s/(/%28/g;
+		     s/)/%29/g;
+		     s/"/%22/g;
+		     s/#/%23/g;
+		     s/\$/%24/g;
+		     s/&/%26/g;
+		     s/,/%2C/g;
+#		     s/\./%2E/g;
+		     sx/x%2Fxg;
+		     s/:/%3A/g;
+		     s/;/%3B/g;
+		     s/</%3C/g;
+		     s/=/%3D/g;
+		     s/>/%3E/g;
+		     s/?/%3F/g;
+		     s/@/%40/g;
+		     s/\[/%5B/g;
+		     s/\\/%5C/g;
+		     s/\]/%5D/g;
+		     s/\^/%5E/g;
+		     s/{/%7B/g;
+		     s/|/%7C/g;
+		     s/}/%7D/g;
+		     s/~/%7E/g;
+		     s/`/%60/g;
+		   '"s/'/%27/g"
+}
+
+w3_url_of_arg () {
+    if ok SURFRAW_quote_args; then
+        args=\""$@"\"
+    else
+        args="$@"
+    fi
+    if ok SURFRAW_escape_url_args; then
+     	w3_url_escape "$args"
+    else
+	    echo "$args"
+    fi
+}
+
+true () {
+    return 0
+}
+
+false () {
+    return 1
+}
+
+w3_global_usage () {
+    defyn SURFRAW_local_help no
+    if ifyes SURFRAW_local_help; then
+	return;
+    fi
+# style: keep sorted
+#-------------------------------------79 cols----------------------------------
+    cat <<EOF
+Global options:
+  -bookmark-search-elvis=ELVIS	If args are passed to a non-searchable
+				bookmark, search with this elvis instead.
+				Default: $SURFRAW_bookmark_search_elvis
+				Environment: SURFRAW_bookmark_search_elvis
+  -browser=EXECUTABLE		Set browser
+				Default: $SURFRAW_browser
+  -custom-search=PROVIDER       Use PROVIDER for custom searches.
+				Supported: google, duckduckgo
+				Default: $SURFRAW_customsearch_provider
+				Environment: SURFRAW_customsearch_provider
+  -elvi				List Surfraw mechanisms for conquering evil
+  -escape-url-args=yes|no	Apply url escaping to arguments
+				Default: $SURFRAW_escape_url_args
+				Environment: SURFRAW_escape_url_args
+  -g | -graphical		Get some windowed sin
+  				Default: $SURFRAW_graphical
+				Environment: SURFRAW_graphical
+  -h  | -help			What you're reading now, dude
+  -lh | -local-help		Just show elvi-specific help, not the global options
+  -p | -print			Just print search URL, don't pass to browser
+  -o | -o=FILE			Fetch URL and dump to stdout or FILE.
+  -new[=yes|no]			Start in a new window
+				Default: $SURFRAW_new_window
+				Environment: SURFRAW_new_window
+  -ns[=yes|no]			Start in a new screen
+     | -newscreen[=yes|no]	Default: $SURFRAW_new_screen
+				Environment: SURFRAW_new_screen
+  -t | -text			Back to the yellow brick road
+  -q | -quote			Quote arguments with " characters
+				Default: $SURFRAW_quote_args
+				Environment: SURFRAW_quote_args
+  -version			Display Surfraw version ($surfraw_version)
+  --				End of options
+Copyright:
+  Copyright (c) 2003-2013 The Surfraw-Devel Team
+                           <surfraw-devel@lists.alioth.debian.org>
+  Copyright (c) 2000-2001 Julian Assange <proff@iq.org>
+  Copyright (c) 2001 Australian Institute for Collaborative Research
+  Copyright (c) 2000 Melbourne Institute for Advanced Study
+EOF
+}
+
+w3_usage_hook () {
+    echo "Usage: $w3_argv0 [options] [args...]"
+    w3_global_usage
+}
+
+w3_bad_option () {
+    err "bad option \"${opt}\". Try ${w3_argv0} -help for usage information"
+}
+
+w3_parse_option_hook () {
+    return 1
+}
+
+list_elvi() {
+    local_dir="$1"
+    awk '/^#[ 	]+elvis:[ 	]+/{ sub("^# elvis: ",""); print $0; }' $(find "$local_dir/" ! -type d ! -type l ! -name '*~' | sort | xargs)
+    for script in $(find "$local_dir/" ! -type d -type l | sort) ; do
+	printf '%-16s--> %s\n' $(basename "$script") $(basename $(readlink "${script}"))
+    done
+}
+
+# Should only complete for specific options
+# Called before declared-options completions
+w3_complete_hook_opt ()
+{
+	return 1
+}
+# Provide package-name completions
+# TODO: add more distro package managers
+w3_complete_packages ()
+{
+	if command -v apt-cache >/dev/null 2>&1
+	then
+		apt-cache --generate pkgnames -- "$1"
+	elif command -v pacman >/dev/null 2>&1
+	then
+		# Do prefix searches like the others.
+		# TODO: prevent accidental regex searching by users.
+		#        How often is this likely to occur though?
+		pacman -Ssq "^$1"
+	elif command -v yum >/dev/null 2>&1
+	then
+		# Get plain name excluding arch (to match the others)--assuming names have no dots.
+		yum list all -- "${1}*" | cut -d . -f 1
+	elif command -v fink >/dev/null 2>&1
+	then
+		fink list -- "${1}*" | cut -f 2
+	else
+		return 1
+	fi
+}
+# Completions for main surfraw script
+w3_complete_hook_opt_global ()
+{
+	local opt="$1"
+	case "$opt" in
+		-bookmark-search-elvis=*)
+			cd "$(get_local_elvi_dir)" 2>/dev/null && echo *
+			cd "$elvidir" && echo *
+			;;
+		# -browser=* can be anything
+		-custom-search=*) echo google duckduckgo ;;
+		-escape-url-args=*) echo yes no ;;
+		# -o=* can be anything
+		-new=*|-ns=*|-newscreen=*) echo yes no ;;
+		*) return 1 ;;
+	esac
+}
+# Allowed to use a plain '*' in case statements
+# Called before declared-options completions
+# These must print newline-delimited completion alternatives (if any are defined for the argument)
+w3_complete_hook_arg_default ()
+{
+	local arg="$1"
+	if command -v look >/dev/null 2>&1
+	then
+		look -- "${arg:-''}"
+	else
+		return 1
+	fi
+}
+w3_complete_hook_arg ()
+{
+	w3_complete_hook_arg_default "$@"
+}
+
+w3_complete ()
+{
+	local arg="$1"
+
+	w3_complete_hook_opt "$arg" && return 0
+	w3_complete_hook_opt_global "$arg" && return 0
+	# At this point, `arg` is either:
+	#   1. an option that takes an argument BUT doesn't define completions for it;
+	#   2. a flag;
+	#   3. an incomplete option name; or
+	#   4. a non-option argument.
+	case "$arg" in
+		# Avoid completing options that don't define completions for the optarg
+		-*=*) return 0 ;;
+		# Complete options
+		-*)
+			# Remove ' ' "options"
+			echo "$SURFRAW__complete_flags $SURFRAW__complete_options" | sed -e 's/^[[:space:]]*//' -e 's/[[:space:]]*$//' | tr -s '[:space:]'
+			return 0
+			;;
+	esac
+
+	w3_complete_hook_arg "$arg"
+	return 0
+}
+# Properly complete calls like "sr fooelvis -- -notanoption"
+w3_complete_arg ()
+{
+	local arg="$1"
+	w3_complete_hook_arg "$arg"
+	return 0
+}
+
+# Declare options (and valid arguments, TODO)
+# Does not need leading hyphen
+# Example use:
+#   mkopts flag optwithvar=
+mkopts ()
+{
+	for opt in "$@"
+	do
+		case "$opt" in
+			*=*) SURFRAW__complete_options="$SURFRAW__complete_options -$(echo $opt | sed 's/^\([^=]*=\).*/\1/')" ;;
+			*) SURFRAW__complete_flags="$SURFRAW__complete_flags -$opt" ;;
+		esac
+	done
+}
+
+# Options with arguments
+mkopts bookmark-search-elvis= browser= escape-url-args= new= ns= newscreen= custom-search= o=
+# Flags
+mkopts elvi graphical help local-help quote new ns newscreen o text version print
+
+w3_parse_option () {
+    opt="$1"
+    case "$opt" in
+	    -*=*) optarg=$(echo "$opt" | sed 's/[-_a-zA-Z0-9]*=//')
+    esac
+    w3_parse_option_hook "$opt" "$optarg" && return 0
+    case "$opt" in
+    -bookmark-search-elvis=*)
+        setopt SURFRAW_bookmark_search_elvis   $optarg ;;
+	-browser=*)	    setopt   SURFRAW_browser		$optarg	;;
+	-elvi*)		    echo " GLOBAL ELVI:"
+			    list_elvi "$elvidir"
+			    localelvidir=$(get_local_elvi_dir)
+			    if [ -d "$localelvidir" ] && [ -n "$(ls "$localelvidir")" ]; then
+				echo " LOCAL ELVI:"
+				list_elvi "$localelvidir"
+			    fi
+			    exit 0 ;;
+	-escape-url-args=*) setoptyn SURFRAW_escape_url_args	$optarg ;;
+	-g | -graphical)    setoptyn SURFRAW_graphical		yes	;;
+	-help | --help |-h) do_help=1					;;
+	-local-help | \
+	--local-help |-lh|-\? ) do_help=1 ;setoptyn SURFRAW_local_help yes  ;;
+	-q | -quote)	    setoptyn SURFRAW_quote_args	    	yes	;;
+	-new)		    setoptyn SURFRAW_new_window		yes	;;
+	-new=*)		    setoptyn SURFRAW_new_window		$optarg ;;
+	-ns | -newscreen)   setoptyn SURFRAW_new_screen yes ;;
+	-ns=* | -newscreen=*)   setoptyn SURFRAW_new_screen $optarg ;;
+	-custom-search=*)    setopt SURFRAW_customsearch_provider $optarg ;;
+	-o)		    setoptyn SURFRAW_dump		yes	;;
+	-o=*)		    setoptyn SURFRAW_dump		yes
+			    setopt SURFRAW_dump_file		$optarg ;;
+	-t | -text)	    unset DISPLAY
+			    setoptyn SURFRAW_graphical 		no	;;
+	-version)	    echo $surfraw_version; exit 0	    	;;
+	-p | -print)        setoptyn SURFRAW_print  yes     		;;
+	--complete=* | \
+	-complete=*)        w3_complete "$optarg"; exit 0               ;;
+	--complete-arg=* | \
+	-complete-arg=*)    w3_complete_arg "$optarg"; exit 0           ;;
+	--)		    setoptyn SURFRAW_end_of_args yes 		;;
+	-*)		    w3_bad_option "$opt"		    	;;
+	*)		    return 1					;;
+    esac
+    return 0
+}
+
+w3_parse_args () {
+    w3_args=
+    w3_shquoted_args=
+    def SURFRAW_browser none
+    def SURFRAW_browser_args none
+    defyn SURFRAW_quote_ifs yes
+    defyn SURFRAW_end_of_args no
+    do_help=0
+    mode=unknown
+    for arg in "$@"; do
+	isarg=1
+	if ifno SURFRAW_end_of_args
+	then
+	    w3_parse_option "$arg"
+	    isarg=$?
+	fi
+        if [ $isarg -eq 1 ]
+	then
+	    if  [ -z "$w3_shquoted_args" ]
+	    then
+		w3_shquoted_args="$(quote "$arg")"
+	    else
+		w3_shquoted_args="$w3_shquoted_args $(quote "$arg")"
+	    fi
+	    if ok SURFRAW_quote_ifs
+	    then
+		arg=$(quote_ifs "$arg")
+	    fi
+	    if [ -n "$w3_args" ]
+	    then
+		w3_args="$w3_args $arg"
+	    else
+		w3_args="$arg"
+	    fi
+	fi
+    done
+    if test $SURFRAW_browser = none; then
+	if ok SURFRAW_graphical && test -n "$DISPLAY"; then
+		SURFRAW_browser=$SURFRAW_graphical_browser
+		SURFRAW_browser_args=$SURFRAW_graphical_browser_args
+		mode=graphical
+	else
+		SURFRAW_browser=$SURFRAW_text_browser
+		SURFRAW_browser_args=$SURFRAW_text_browser_args
+		mode=text
+	fi
+    fi
+    if ok do_help; then
+	w3_usage_hook
+	exit 0
+    fi
+}
+
+w3_dump () {
+    if test -z "$SURFRAW_dump_file"; then
+	SURFRAW_dump_file="-"
+    fi
+    if test -x "$(which curl)"; then
+	curl -o "$SURFRAW_dump_file" "$@"
+    elif test -x "$(which wget)"; then
+	wget -q -O "$SURFRAW_dump_file" "$@"
+    elif test -x "$(which GET)"; then
+	if test "$SURFRAW_dump_file" = "-"; then
+	    GET "$@"
+	else
+	    GET "$@" > "$SURFRAW_dump_file"
+	fi
+    else
+	err "No URL fetcher found: install curl, wget or libwww-perl"
+    fi
+}
+
+w3_browse_url () {
+    if ok SURFRAW_new_screen && test $(echo $TERM | cut -c 1-6) = "screen" &&
+	test $mode = text; then
+	screen=yes
+    else
+	screen=no
+    fi
+    if ok SURFRAW_dump; then
+	w3_dump "$@"
+    elif ok SURFRAW_print; then
+	echo "$@"
+    elif ok screen; then
+	if [ "$SURFRAW_screen" = "tmux" ]; then
+	    if test "$SURFRAW_browser_args" = "none"; then
+		$SURFRAW_screen $SURFRAW_screen_args "$SURFRAW_browser \"$@\""
+	    else
+		$SURFRAW_screen $SURFRAW_screen_args "$SURFRAW_browser $SURFRAW_browser_args \"$@\""
+	    fi
+	else
+	    if test "$SURFRAW_browser_args" = "none"; then
+		$SURFRAW_screen $SURFRAW_screen_args $SURFRAW_browser "$@"
+	    else
+		$SURFRAW_screen $SURFRAW_screen_args $SURFRAW_browser $SURFRAW_browser_args "$@"
+	    fi
+	fi
+    else
+	if ok SURFRAW_graphical_remote && test $mode = graphical; then
+		if ok SURFRAW_new_window; then
+			newwin=", new-window"
+		else
+			newwin=""
+		fi
+		if test $SURFRAW_browser_args = "none"; then
+			exec $SURFRAW_browser -remote "openURL($*$newwin)"
+		else
+			exec $SURFRAW_browser $SURFRAW_browser_args -remote "openURL($*$newwin)"
+		fi
+	else
+		if test $SURFRAW_browser_args = "none"; then
+			exec $SURFRAW_browser "$@"
+		else
+			exec $SURFRAW_browser $SURFRAW_browser_args "$@"
+		fi
+	fi
+    fi
+}
+
+w3_custom_search_usage() {
+    echo "Custom search:"
+    echo "  To choose which search engine gets used for custom searches,"
+    echo "  configure SURFRAW_customsearch_provider"
+    echo "  or use -custom-search=PROVIDER"
+    echo "  supported: google, duckduckgo"
+    echo "  default: $SURFRAW_customsearch_provider"
+}
+
+w3_custom_search() {
+    case "$SURFRAW_customsearch_provider" in
+        google)      w3_custom_search_google     "$@" ;;
+        duckduckgo)  w3_custom_search_duckduckgo "$@" ;;
+        ixquick)     w3_custom_search_ixquick    "$@" ;;
+        *)           w3_custom_search_duckduckgo "$@" ;;
+    esac
+}
+
+w3_custom_search_google() {
+    params=$(eval w3_custom_search_mangle -s site: $*)
+    params=$(eval w3_custom_search_mangle -u inurl: $params)
+    params=$(eval w3_custom_search_inurl_quote_dots $params)
+    url="$(eval surfraw google -p $params )"
+    w3_browse_url "$url"
+}
+
+w3_custom_search_duckduckgo() {
+    params=$(eval w3_custom_search_mangle -s site: $*)
+    params=$(eval w3_custom_search_mangle -u inurl: $params)
+    url="$(eval surfraw duckduckgo -p $params )"
+    w3_browse_url "$url"
+}
+
+w3_custom_search_ixquick() {
+    params=$(eval w3_custom_search_mangle -s host: $*)
+    params=$(eval w3_custom_search_mangle -u url: $params)
+    url="$(eval surfraw ixquick -p $params )"
+    w3_browse_url "$url"
+}
+
+w3_custom_search_mangle() {
+    search="$1"
+    replace="$2"
+    shift
+    shift
+    for arg in "$@"
+    do
+        quote "$(echo "$arg" | sed "s/^${search}=\(.*\)/${replace}\1/")"
+    done
+}
+
+w3_custom_search_inurl_quote_dots() {
+    for arg in "$@"
+    do
+        if echo "$arg" | grep -q -- inurl:
+        then
+            quote "$(echo "$arg" | sed 's/\./\\./g;')"
+        else
+            quote "$arg"
+        fi
+    done
+}
+
+quote () {
+	quoted=$(echo "$1"|sed "s/'/'\\\\\''/g")
+	echo "'$quoted'"
+}
+
+surfraw_usage() {
+	cat <<EOF
+Usage: $w3_argv0 [-help] [-elvi] elvis [elvioptions] [search terms]
+       $w3_argv0 [options] bookmark [search terms]
+    If you wish to run the elvi directly, run "surfraw-update-path" to append
+	$elvidir to your \$PATH in your shell's config files.
+    See surfraw-update-path(1) for details
+Options:
+   -elvi  List elvi
+   -help  This help
+sr is an alias for surfraw
+EOF
+	w3_global_usage
+}
+
+# Browse URL or perform a search on URL(s) if search terms
+# are provided (use the user's elvis of choice if URL has no
+# %s field or multiple if multiple URLs are provided)
+parse_bookmark()
+{
+    if [ -z "$w3_args" ]; then
+        case "$bookmark" in
+            *"%s"*)
+                # Keep only the domain address, the rest contains %s which should be filtered.
+                bookmark=$(echo $bookmark | @AWK@ -F '/' '{print $1 "//" $3}')
+                ;;
+            *)
+                # Keep the first URL (if multiple-URL bookmark) as-is, no %s here...
+                bookmark=$(echo $bookmark | cut -f 1 -d ' ')
+                ;;
+        esac
+    else
+        escaped_args=$(w3_url_of_arg $w3_args)
+
+        case "$bookmark" in
+            *"%s"*)
+                bookmark="$(echo $bookmark | sed "s|\%s|$escaped_args|")"
+                ;;
+            *)
+                [ -z $SURFRAW_bookmark_search_elvis ] && SURFRAW_bookmark_search_elvis=google
+                bookmark=$(echo $bookmark | sed -e 's|^|site:|' \
+                                                -e 's|\ |\ OR\ site:|g' \
+                                                -e "s|^|$w3_args |" \
+                                                -e "s|^|$SURFRAW_bookmark_search_elvis |")
+                ;;
+        esac
+    fi
+    echo $bookmark
+}
+
+if [ "$w3_argv0" = "surfraw" -o "$w3_argv0" = "sr" ]
+then
+	w3_config
+	opts=""
+	unquoted_opts=""
+	unquoted_searchterms=""
+	elvi=""
+	searchterms=""
+	do_help=0
+	for arg in "$@"
+	do
+	  # if it is an option
+	  if [ "$(echo "$arg" | sed 's/^\(.\).*/\1/;' )" = "-" ]
+	  then
+		  # if option before elvi
+		  if [ -z "$elvi" ]
+		  then
+			  w3_parse_option "$arg"
+		  fi
+		  if ok do_help
+		  then
+		      surfraw_usage
+		      exit 0
+		  fi
+		  if  [ -z "$opts" ]
+		  then
+			  opts="$(quote "$arg")"
+			  unquoted_opts="$arg"
+		  else
+			  opts="$opts $(quote "$arg")"
+			  unquoted_opts="$unquoted_opts $arg"
+		  fi
+	  elif [ -z "$elvi" ]
+	  then
+		  elvi="$arg"
+	  else
+		  if [ -z "$searchterms" ]
+		  then
+			  searchterms="$(quote "$arg")"
+			  unquoted_searchterms="$arg"
+		  else
+			  searchterms="$searchterms $(quote "$arg")"
+			  unquoted_searchterms="$unquoted_searchterms $arg"
+		  fi
+	  fi
+	done
+	if [ -z "$elvi" ]
+	then
+		surfraw_usage
+		exit 0
+	else
+		localelvidir=$(get_local_elvi_dir)
+		if [ -x "$localelvidir/$elvi" ]
+		then
+			exec sh -c "$localelvidir/$elvi $opts $searchterms"
+		elif [ -x "$elvidir/$elvi" ]
+		then
+			exec sh -c "$elvidir/$elvi $opts $searchterms"
+		else
+			bookmark=$(bookmark_lookup $elvi)
+			if [ -n "$bookmark" ]
+			then
+                w3_parse_args $unquoted_opts $unquoted_searchterms
+                bookmark=$(parse_bookmark)
+                w3_browse_url "$bookmark"
+                exit 0
+			else
+				echo "$w3_argv0: $elvi: No elvis or bookmark with that name"
+				echo "Passing everything to browser and hoping for the best..."
+                exec $BROWSER "$elvi $opts $unquoted_searchterms"
+                exit 0
+			fi
+	   fi
+	fi
+fi

@@ -1,0 +1,63 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+include Math
+require 'fileutils'
+
+include FileUtils
+
+class String
+  def s
+    "puts #{self}"
+  end
+end
+#		"puts "+self;end;end
+
+def map(arg1)
+  $stdin.each_line do |n|
+    #		line = line.chomp
+    line = n.chomp!
+    #	if eval(arg1, n)
+    # $N = line;
+    eval_(arg1, n)
+  end
+end
+
+def eval_(string, n)
+  a = b = c = d = e = f = g = h = i = j = k = l = m = n = o = p = q = r = s = t = u = v = w = x = y = z = n
+  # A=B=C=D=E=F=G=H=I=J=K=L=M=N=O=P=Q=R=S=T=U=V=W=X=Y=Z=n
+  # a=b=c=d=e=f=g=h=i=j=k=l=m=n=o=p=q=r=s=t=u=v=x=y=z=
+
+  case n
+  when /^[0-9]+$/
+    n = n.to_i
+    a = b = c = d = e = f = g = h = i = j = k = l = m = n = o = p = q = r = s = t = u = v = w = x = y = z = n
+
+    eval(string.s)
+    return
+  when /^[0-9.]+$/
+    n = n.to_f
+    a = b = c = d = e = f = g = h = i = j = k = l = m = n = o = p = q = r = s = t = u = v = w = x = y = z = n
+
+    eval(string.s)
+    return
+    # elsif =~ /[0-9./
+  end
+
+  begin
+    eval(string.s)
+    nil
+  #		return eval(string)
+  #		rescue Exception
+  rescue SyntaxError
+    #					return eval(string.s.dump); re
+
+    eval(string.s.dump)
+    #					eval(string.s.dump)
+  end
+end
+
+map ARGV.join(' ')
+# end
+#
+#

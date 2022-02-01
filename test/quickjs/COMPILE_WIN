@@ -1,0 +1,1 @@
+micro a.rb; opal -c a.rb > a.js; qjsc a.js -e -o /dev/stdout > a.c   ;  x86_64-w64-mingw32.static-gcc a.c *.a -o p.exe ; wine p.exe

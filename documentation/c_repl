@@ -1,0 +1,17 @@
+C Repl is a read-evaluate-print loop for C
+
+
+C Repl shows that you don't have to use a tool like Python or Ruby to have a repl
+
+
+
+The result of your input gets compiled, and then run.
+
+By default, the standard input is the words file
+
+You can do some powerful things, very, very fast with this tool.
+
+
+This would be the fastest filter possible.
+
+Compare this with t, which is slow.

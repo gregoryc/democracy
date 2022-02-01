@@ -1,0 +1,24 @@
+Reads a bunch of lines
+
+
+
+                                                   Then a ruby expression is evaluated as   the last line
+
+
+The result is outputted in an argument.
+
+
+                                                                                                                                                                                                                    You can enter /dev/null if you don't want an output file
+
+
+
+
+
+"t" is better
+
+
+
+See also
+
+
+t

@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+require 'nokogiri'
+
+doc = Nokogiri::HTML.parse($stdin.read)
+l = doc.css('a').map { |link| link['href'] }
+
+l = l.reject(&:nil?)
+
+puts l

@@ -1,0 +1,16 @@
+Begin4
+Title:		surfraw
+Version:	@VERSION@
+Entered-date:	@ISODATE@
+Description:	Shell Users' Revolutionary Front Rage Against the Web
+		Fast unix command line interface to a variety of popular WWW
+		search engines and other evils
+Keywords:	surfraw, www, web, search
+Author: 	proff@iq.org (Julian Assange)
+		surfraw-devel@lists.alioth.debian.org (Current surfraw developers)
+Maintained-by:	surfraw-devel@lists.alioth.debian.org
+Primary-site: https://gitlab.com/surfraw/Surfraw 
+Original-site: http://surfraw.alioth.debian.org  
+Platforms: shell, perl and sed script
+Copying-policy:	Public Domain
+End

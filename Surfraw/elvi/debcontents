@@ -1,0 +1,179 @@
+#!/bin/sh
+# $Id$
+# elvis: debcontents	-- Search contents of debian/ubuntu packages (packages.debian.org/packages.ubuntu.com)
+. surfraw || exit 1
+
+w3_config_hook () {
+def   SURFRAW_debcontents_arch    i386
+def   SURFRAW_debcontents_distro  stable
+def   SURFRAW_debcontents_search  "files"
+defyn SURFRAW_debcontents_ubuntu  no
+defyn SURFRAW_debcontents_archive no
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search words]...
+Description:
+  Search contents of debian/ubuntu packages (packages.debian.org/packages.ubuntu.com)
+Local options:
+  -a                            Search archived debian releases
+  -u                            Search ubuntu packages instead of debian
+  -search=                      Type of search
+      files              |      Packages that contain files named like this
+      path               |      Paths ending with the keyword
+      word               |      Packages that contain files or directories
+                                whose names contain the keyword
+                                Default: $SURFRAW_debcontents_search
+                                Environment: SURFRAW_debcontents_search
+  -arch=                        Specialized search on architecture
+      i386               |      Intel x86        (all)
+      powerpc            |      PowerPC          (all)
+      amd64              |      AMD64            (all)
+      m68k               |      Motorola 680x0   (debian, archive.debian)
+      alpha              |      Alpha            (debian, archive.debian)
+      sparc              |      SPARC            (debian, archive.debian)
+      arm                |      ARM              (debian, archive.debian)
+      hppa               |      HP PA/RISC       (debian, archive.debian)
+      ia64               |      Intel IA-64      (debian, archive.debian)
+      mips               |      MIPS             (debian, archive.debian)
+      mipsel             |      MIPS (DEC)       (debian, archive.debian)
+      s390               |      IBM S/390        (debian, archive.debian)
+      hurd-i386          |      Hurd (i386)      (debian)
+      kfreebsd-amd64     |      kFreeBSD (amd64) (debian)
+      kfreebsd-i386             kFreeBSD (i386)  (debian)
+                                Default: $SURFRAW_debcontents_arch
+                                Environment: SURFRAW_debcontents_arch
+  -distro=                      Specific distribution
+     Debian:
+       stable            |      Stable
+       testing           |      Testing
+       unstable          |      Unstable
+       oldstable         |      Old Stable
+     Archived Debian (-a):
+      bo                 |      1.3.1
+      hamm               |      2.0
+      slink              |      2.1
+      potato             |      2.2
+      woody              |      3.0
+      sarge              |      3.1
+      etch               |      4.0
+     Ubuntu (-u):
+       dapper            |      Dapper
+       dapper-updates    |      Dapper Updates
+       dapper-backports  |      Dapper Backports
+       hardy             |      Hardy
+       hardy-updates     |      Hardy Updates
+       hardy-backports   |      Hardy Backports
+       intrepid          |      Intrepid
+       intrepid-updates  |      Intrepid Updates
+       intrepid-backports|      Intrepid Backports
+       jaunty            |      Jaunty
+       jaunty-updates    |      Jaunty Updates
+       jaunty-backports  |      Jaunty Backports
+       karmic            |      Karmic
+       karmic-updates    |      Karmic Updates
+       karmic-backports  |      Karmic Backports
+       lucid             |      Lucid
+       lucid-updates     |      Lucid Updates
+       lucid-backports   |      Lucid Backports
+       maverick          |      Maverick
+       maverick-updates  |      Maverick Updates
+       maverick-backports|      Maverick Backports
+       natty             |      Natty
+       natty-updates     |      Natty Updates
+       natty-backports   |      Natty Backports
+                                Default: $SURFRAW_debcontents_distro
+                                Environment: SURFRAW_debcontents_distro
+EOF
+    w3_global_usage
+}
+mkopts a u search= arch= distro=
+w3_complete_hook_opt ()
+{
+        local opt="$1"
+        case "$opt" in
+                -search=*) echo files path word ;;
+                -arch=*) echo i386 powerpc amd64 m68k alpha sparc arch hppa ia64 mips mipsel s390 hurd-i386 kfreebsd-amd64 kfreebsd-i386 ;;
+                # The values for -distro= in the help are outdated.
+                -distro=*)
+                        echo stable testing unstable oldstable bo hamm slink potato woody sarge etch
+                        for ubuntu_dist in dapper hardy intrepid jaunty karmic lucid maverick natty
+                        do
+                                echo "$ubuntu_dist"
+                                echo "${ubuntu_dist}-updates"
+                                echo "${ubuntu_dist}-backports"
+                        done
+                        ;;
+                *) return 1 ;;
+        esac
+}
+w3_complete_hook_arg ()
+{
+	w3_complete_packages "$@" || w3_complete_hook_arg_default "$@"
+}
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+	-arch=*)    setopt   SURFRAW_debcontents_arch 	 $optarg	;;
+	-distro=*)  setopt   SURFRAW_debcontents_distro  $optarg	;;
+	-search=*)  setopt   SURFRAW_debcontents_search  $optarg	;;
+	-u*)        setoptyn SURFRAW_debcontents_ubuntu  yes    	;;
+	-a*)        setoptyn SURFRAW_debcontents_archive yes    	;;
+	-ca*) 	    setoptyn SURFRAW_debcontents_usecase yes    	;;
+	*) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+
+if   ifyes SURFRAW_debcontents_ubuntu
+then
+	searchpage="http://packages.ubuntu.com/#search_contents"
+	searchurl="http://packages.ubuntu.com/search"
+elif ifyes SURFRAW_debcontents_archive
+then
+	searchpage="https://archive.debian.net/#search_contents"
+	searchurl="https://archive.debian.net/search"
+else
+	searchpage="https://packages.debian.org/#search_contents"
+	searchurl="https://packages.debian.org/search"
+fi
+if test -z "$w3_args"; then
+    w3_browse_url "$searchpage"
+else
+    escaped_args=$(w3_url_of_arg $w3_args)
+
+    if ifyes SURFRAW_debcontents_ubuntu
+    then
+	if [ "$SURFRAW_debcontents_distro" = "stable" ]
+	then
+		SURFRAW_debcontents_distro=raring
+	fi
+    fi
+    url="$searchurl?keywords=${escaped_args}&searchon=contents"
+
+    url="$url&arch=${SURFRAW_debcontents_arch}"
+    url="$url&suite=${SURFRAW_debcontents_distro}"
+
+    case "$SURFRAW_debcontents_search" in
+	p*)      if ifyes SURFRAW_debcontents_ubuntu ||
+	            ifyes SURFRAW_debcontents_archive
+                 then
+                    searchmode=""
+		 else
+		    searchmode=path
+                 fi;;
+	f*)      searchmode=exactfilename  ;;
+	w*)      searchmode=filename       ;;
+	*)       err "Unknown search type" ;;
+    esac
+
+    url="${url}&mode=${searchmode}"
+    w3_browse_url "$url"
+fi

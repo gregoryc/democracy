@@ -1,0 +1,175 @@
+#!/bin/sh
+# $Id$
+# elvis: musicbrainz	-- Search MusicBrainz (musicbrainz.org)
+. surfraw || exit 1
+
+w3_config_hook () {
+def   SURFRAW_musicbrainz_limit       $SURFRAW_results
+def   SURFRAW_musicbrainz_search      artist
+def   SURFRAW_musicbrainz_tagrelease  ""
+def   SURFRAW_musicbrainz_tagtrack    ""
+def   SURFRAW_musicbrainz_tagnum      ""
+def   SURFRAW_musicbrainz_taglen      ""
+def   SURFRAW_musicbrainz_tagpuid     ""
+def   SURFRAW_musicbrainz_tagfile     ""
+defyn SURFRAW_musicbrainz_advanced    0
+defyn SURFRAW_musicbrainz_direct      0
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search words]...
+Description:
+  Surfraw search MusicBrainz (musicbrainz.org)
+Local options:
+  -d                            Direct (old) search.
+  -a                            Enable advanced query syntax. See:
+                                 https://musicbrainz.org/popup/TextSearchSyntax
+  -results=NUM                  Number of search results returned
+                                Default: $SURFRAW_musicbrainz_results
+                                Environment: SURFRAW_musicbrainz_results
+				0 means all results.
+  -search=                      Search type:
+          artist        |       Artist [default]  <*>
+          release       |       Release (album)   <*>
+          release_group |       Release Group
+          label         |       Label             <*>
+          annotation    |       Annotation
+          barcode       |       Barcode
+          catno         |       Catalog number
+          cdstub        |       CD Stub
+          discid        |       Disc ID
+          editor        |       Editor
+          freedb        |       FreeDB
+          freedbid      |       FreeDB ID
+          isrc          |       ISRC
+          iswc          |       ISWC
+          mbid          |       MBID
+          puid          |       PUID
+          recording     |       Recording
+          trmid         |       TRM ID
+          work          |       Work
+	  tag                   Tag Search
+	                         With Tag Search, [search words] are treated
+	                         as artist name, use -tag* below to specify
+				 other fields.
+			        <*> = supported by direct search (-d)
+                                Environment: SURFRAW_musicbrainz_search
+  -tagrelease=ALBUM             Album/Release tag search (implies -search=tag)
+  -tagnum=TRACKNUM              Track number tag search  (implies -search=tag)
+  -tagtrack=SONG                Track tag search         (implies -search=tag)
+  -taglen=DURATION              Track length tag search  (implies -search=tag)
+  -tagfile=FILENAME             Filename tag search      (implies -search=tag)
+  -tagpuid=FILENAME             PUID tag search          (implies -search=tag)
+EOF
+    w3_global_usage
+}
+mkopts d a results= search=
+mkopts tagrelease= tagnum= tagtrack= taglen= tagfile= tagpuid=
+w3_complete_hook_opt ()
+{
+        local opt="$1"
+        case "$opt" in
+                -search=*) echo artist release release_group label annotation barcode catno cdstub discid editor freedb freedbid isrc iswc mbid puid recording trmid work tag ;;
+                *) return 1 ;;
+        esac
+}
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+    -results=*) setopt   SURFRAW_musicbrainz_results    $optarg ;;
+    -tagrel*=*) setopt   SURFRAW_musicbrainz_tagrelease $optarg
+                setopt   SURFRAW_musicbrainz_search     tag     ;;
+    -tagnu*=*)  setopt   SURFRAW_musicbrainz_tagnum     $optarg
+                setopt   SURFRAW_musicbrainz_search     tag     ;;
+    -tagtra*=*) setopt   SURFRAW_musicbrainz_tagtrack   $optarg
+                setopt   SURFRAW_musicbrainz_search     tag     ;;
+    -tagle*=*)  setopt   SURFRAW_musicbrainz_taglen     $optarg
+                setopt   SURFRAW_musicbrainz_search     tag     ;;
+    -tagp*=*)   setopt   SURFRAW_musicbrainz_tagpuid    $optarg
+                setopt   SURFRAW_musicbrainz_search     tag     ;;
+    -tagf*=*)   setopt   SURFRAW_musicbrainz_tagfile    $optarg
+                setopt   SURFRAW_musicbrainz_search     tag     ;;
+    -a)         setoptyn SURFRAW_musicbrainz_advanced   1       ;;
+    -d)         setoptyn SURFRAW_musicbrainz_direct     1       ;;
+    -search=*)  searchtype="$optarg"
+                case "$searchtype" in
+		    ar*)              setopt SURFRAW_musicbrainz_search artist ;;
+		    release_*)        setopt SURFRAW_musicbrainz_search release_group ;;
+		    release|rel|al*)  setopt SURFRAW_musicbrainz_search release ;;
+		    an*)              setopt SURFRAW_musicbrainz_search annotation ;;
+		    ba*)              setopt SURFRAW_musicbrainz_search barcode ;;
+		    ca*)              setopt SURFRAW_musicbrainz_search catno ;;
+		    cd*)              setopt SURFRAW_musicbrainz_search cdstub ;;
+		    d*)               setopt SURFRAW_musicbrainz_search discid ;;
+		    e*)               setopt SURFRAW_musicbrainz_search editor ;;
+		    freedb|fr)        setopt SURFRAW_musicbrainz_search freedb ;;
+		    freedbid)         setopt SURFRAW_musicbrainz_search freedbid ;;
+		    isr*)             setopt SURFRAW_musicbrainz_search isrc ;;
+		    isw*)             setopt SURFRAW_musicbrainz_search iswc ;;
+		    l*)               setopt SURFRAW_musicbrainz_search label ;;
+		    m*)               setopt SURFRAW_musicbrainz_search mbid ;;
+		    p*)               setopt SURFRAW_musicbrainz_search puid ;;
+		    rec*)             setopt SURFRAW_musicbrainz_search recording ;;
+		    tr*)              setopt SURFRAW_musicbrainz_search trmid ;;
+		    w*)               setopt SURFRAW_musicbrainz_search work ;;
+		    ta*)              setopt SURFRAW_musicbrainz_search tag ;;
+		    *) err "Search type not known"
+		esac ;;
+    *) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+if test -z "$w3_args" &&
+   test -z "$SURFRAW_musicbrainz_tagrelease" &&
+   test -z "$SURFRAW_musicbrainz_tagnum" &&
+   test -z "$SURFRAW_musicbrainz_tagtrack" &&
+   test -z "$SURFRAW_musicbrainz_taglen" &&
+   test -z "$SURFRAW_musicbrainz_tagpuid" &&
+   test -z "$SURFRAW_musicbrainz_tagfile"
+then
+    w3_browse_url "https://musicbrainz.org/search.html"
+else
+    escaped_args=$(w3_url_of_arg $w3_args)
+    url="https://musicbrainz.org"
+    if ifyes SURFRAW_musicbrainz_direct
+    then
+        case "$SURFRAW_musicbrainz_search" in
+	    artist|release|label)
+	        url="${url}/search/oldsearch.html?query=${escaped_args}&type=${SURFRAW_musicbrainz_search}&limit=${SURFAW_musicbrainz_results}&handlearguments=1" ;;
+	    *) err "Search type $SURFRAW_musicbrainz_search not supported by Direct Search (-d)" ;;
+	esac
+    else
+	case "$SURFRAW_musicbrainz_search" in
+            artist|release_group|release|recording|work| \
+	    label|annotation|cdstub|editor| \
+	    freedb)  url="${url}/search?query=${escaped_args}&type=${SURFRAW_musicbrainz_search}&limit=${SURFRAW_musicbrainz_limit}"
+		if ifyes SURFRAW_musicbrainz_advanced
+		then
+		    url="${url}&adv=on"
+		fi ;;
+
+            catno|barcode|discid|freedbid|freedb| \
+	    puid|trmid|isrc|iswc| \
+	    discid)
+		url="${url}/otherlookup?${SURFRAW_musicbrainz_search}=${escaped_args}" ;;
+
+        mbid)
+		url="${url}/release/${escaped_args}" ;;
+
+	    tag)
+	        url="${url}/taglookup?artist=${escaped_args}&release=${SURFRAW_musicbrainz_tagrelease}&track=${SURFRAW_musicbrainz_tagtrack}&tracknum=${SURFRAW_musicbrainz_tagnum}&duration=${SURFRAW_musicbrainz_taglen}&filename=${SURFRAW_musicbrainz_tagfile}&puid=${SURFRAW_musicbrainz_puid}" ;;
+
+	    *)
+	        err Unknown search type "${SURFRAW_musicbrainz_search}" ;;
+	esac
+    fi
+
+    w3_browse_url "$url"
+fi

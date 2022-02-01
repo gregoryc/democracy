@@ -1,0 +1,113 @@
+#!/bin/sh
+# elvis: deblists	-- Search debian mailing lists (lists.debian.org/search.html)
+# ianb@erislabs.net 2003919
+. surfraw || exit 1
+
+w3_config_hook () {
+defyn SURFRAW_deblists_matchany         no
+defyn SURFRAW_deblists_searchmsgid      no
+def   SURFRAW_deblists_msgidsearchtype  direct
+def   SURFRAW_deblists_sort             relevance
+def   SURFRAW_deblists_results          $SURFRAW_results
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search patterns]...
+Description:
+  Surfraw search debian mailing lists (lists.debian.org/search.html)
+Local options:
+  -results=NUM                  Number of search results returned
+                                Default: $SURFRAW_deblists_results
+                                Environment: SURFRAW_deblists_results
+  -m|-msgid                     Search by message-id, jump to result
+  -mv                           Search by message-id and show matches
+  -ml                           Search by message-id and show links
+  -any                          Match any word in search rather than all words
+  -sort=relevance       |       How to sort the results
+        date            |
+        revdate
+                                Default: $SURFRAW_deblists_sort
+                                Environment: SURFRAW_deblists_sort
+EOF
+    w3_global_usage
+}
+mkopts results= msgid mv ml any sort=
+w3_complete_hook_opt ()
+{
+        local opt="$1"
+        case "$opt" in
+                -sort=*) echo relevance date revdate ;;
+                *) return 1 ;;
+        esac
+}
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+        -result*=*) setopt   SURFRAW_deblists_results         $optarg ;;
+        -mv)        setoptyn SURFRAW_deblists_searchmsgid     yes ;
+                    setopt   SURFRAW_deblists_msgidsearchtype view    ;;
+        -ml)        setoptyn SURFRAW_deblists_searchmsgid     yes ;
+                    setopt   SURFRAW_deblists_msgidsearchtype links   ;;
+        -m|-msg*)   setoptyn SURFRAW_deblists_searchmsgid     yes     ;;
+        -any)       setoptyn SURFRAW_deblists_matchany        yes     ;;
+        -sort*=*)   setopt   SURFRAW_deblists_sort            $optarg ;;
+        *) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+if test -z "$w3_args"; then
+    if ifyes SURFRAW_deblists_searchmsgid
+    then
+        w3_browse_url "https://lists.debian.org/msgid-search"
+    else
+        w3_browse_url "https://lists.debian.org/search.html"
+    fi
+elif ifyes SURFRAW_deblists_searchmsgid
+then
+    if [ "$SURFRAW_deblists_msgidsearchtype" = links ]
+    then
+        searchtype="&links=Query"
+    elif [ "$SURFRAW_deblists_msgidsearchtype" = view ]
+    then
+        searchtype=""
+    else
+        searchtype="&firsthit=I%27m+feeling+lucky"
+    fi
+    escaped_args=$(w3_url_of_arg $w3_args)
+    w3_browse_url "https://lists.debian.org/msgid-search/?m=${escaped_args}${searchtype}"
+
+else
+
+    escaped_args=$(w3_url_of_arg $w3_args)
+    url="https://lists.debian.org/cgi-bin/search?P=${escaped_args}"
+    if ifyes SURFRAW_deblists_matchany
+    then
+        url="$url&DEFAULTOP=or"
+    else
+        url="$url&DEFAULTOP=and"
+    fi
+
+    case "$SURFRAW_deblists_sort" in
+        rel*) SURFRAW_deblists_sort="relevance" ;;
+        rev*) SURFRAW_deblists_sort="revdate"   ;;
+        d*)   SURFRAW_deblists_sort="date"      ;;
+        *)    err "Unknown sort method: $SURFRAW_deblists_sort"
+    esac
+    url="$url&sort=${SURFRAW_deblists_sort}"
+
+    if [ "$SURFRAW_deblists_results" = "" ]
+    then
+        SURFRAW_deblists_results=10
+    fi
+    url="$url&HITSPERPAGE=${SURFRAW_deblists_results}"
+    w3_browse_url "$url"
+
+fi
+

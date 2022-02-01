@@ -1,0 +1,12 @@
+Magenta bold is one of the color tools
+
+It takes the input and makes it magenta
+
+If it is outputting to a human being (a tty) it shows magenta text on the screen.
+
+
+Otherwise, it will convert it to HTML.
+
+Not all of these color tools work perfectly yet.
+
+But many of them do.

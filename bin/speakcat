@@ -1,0 +1,9 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'shellwords'
+
+$stdin.each_line do |line|
+  puts line
+  system "espeak #{line.chomp.shellescape} || flite #{line.chomp.shellescape}"
+end
