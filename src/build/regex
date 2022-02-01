@@ -1,0 +1,2 @@
+gsub '(?:(^def .*[^_])\((?:([a-zA-Z0-9]*)\s*,?\s*)([a-zA-Z0-9]*)\s*\)\s*$)' "\1(*, \2)" < functions | replace "(*, )" "()" > new_functions
+gsub (^\t.*nth.*)(\d+)\) \1{"arg1": \2}) < functions | less

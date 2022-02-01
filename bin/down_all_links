@@ -1,0 +1,50 @@
+#!/usr/bin/ruby
+
+require 'nokogiri'
+$subdirectories = []
+
+def f arg
+doc = Nokogiri::HTML.parse(`curl -sL #{arg[0]}`); l = doc.css('a').map { |link| link['href'] };
+
+l = l.select { |thing| (!thing.nil?) } 
+
+l.each do |link|
+	link = link.strip
+	if link.size == 0
+		next
+	end
+	
+	if "#?".include? link[0]
+	next; end
+	#p [arg, link]
+	split = link.split("/")[1..]
+#	p split
+	if split && link == split[-3]
+	next
+	end
+#	puts split
+	if arg[0].split("/")[-2] == link.split("/")[-1]
+		next
+	end
+	if link[0] == "/"
+		link << " "
+
+		link = arg[0].split("/")[0] + "/" + link.split("/")[1..].join("/")
+		link=link.strip
+		#link = link.strip
+	end
+	if link[-1] == "/" && link.length > arg[0].length
+		if !($subdirectories.include? link)
+		$subdirectories.push link
+		system "echo #{link.dump}"
+						f([link])
+		end
+	else
+		puts link
+	end
+#	puts link
+#	p link
+end
+end
+
+f ARGV

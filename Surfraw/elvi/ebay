@@ -1,0 +1,152 @@
+#!/bin/sh
+# elvis: ebay		-- Search the Ebay auction site
+# Author: Moritz Muehlenhoff <jmm@informatik.uni-bremen.de>
+. surfraw || exit 1
+
+w3_config_hook () {
+def   SURFRAW_ebay_country	"$SURFRAW_lang"
+def   SURFRAW_ebay_results	50
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search-string]
+Description:
+  Search the Ebay auction site
+Local options:
+  -country= | -c=
+                 com        |   Main eBay site (default)
+		 ar         |   Argentina
+                 at         |   Austria
+                 au         |   Australia
+                 nl_BE      |   Belgium (Flemish)
+                 fr_BE      |   Belgium (French)
+                 br         |   Brazil
+                 ca         |   Canada
+                 ch         |   Switzerland
+                 cn         |   China
+                 de         |   Germany
+                 es         |   Spain
+                 fr         |   France
+                 hk         |   Hong Kong
+                 ie         |   Ireland
+		 kr         |   Korea
+		 my         |   Malaysia
+		 mx         |   Mexico
+                 nl         |   Netherlands
+                 nz         |   New Zealand
+                 ph         |   Philippines
+                 pl         |   Poland
+                 sg         |   Singapore
+		 se         |   Sweden
+		 tw         |   Taiwan
+                 uk             UK
+                                Environment: SURFRAW_ebay_country, SURFRAW_lang
+  -results= | -r
+                                Amount of results per page
+                                Default: 50
+                                Environment: SURFRAW_ebay_results
+
+Examples:
+  $w3_argv0 -c=de sauerkraut
+EOF
+    w3_global_usage
+}
+mkopts country= results=
+# The values for -country= are not the same in the help and in the code.
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+	-country=*)	setopt	SURFRAW_ebay_country		$optarg	;;
+	-c=*)	setopt	SURFRAW_ebay_country		$optarg	;;
+	-results=*)	setopt	SURFRAW_ebay_results		$optarg	;;
+	-r=*)	setopt	SURFRAW_ebay_results		$optarg	;;
+	*) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+
+case "$SURFRAW_ebay_country" in
+    com|ar|at|be|br|ca|ch|\
+     de|es|fr|fr_BE|\
+     nl_BE|ie|kr|\
+     mx|nl|ph|pl) TLD="${SURFRAW_ebay_country}"       ;;
+    uk)        TLD="co.uk"    ;;
+    au|hk|sg|my)  TLD="com.${SURFRAW_ebay_country}"   ;;
+    cn|zh|zt)     TLD="cn"                        ;;
+    # nz uses ebay.com, presumably using referrer to tell it is .nz
+    # we can't affect referrer without getting browser-specific, so
+    # just use ebay.com
+    *)            TLD="com"                           ;;
+esac
+
+mainsite_search="/sch/i.html?"
+case "$SURFRAW_ebay_country" in
+	br)	base_url="www.mercadolivre.com.br"
+		search_url="lista.mercadolivre.com.br/"
+		;;
+	ar|mx)	base_url="www.mercadolibre.com.${TLD}"
+		search_url="listado.mercadolibre.com.${TLD}/"
+		;;
+	# Flemish and French Belgium search the same way as most other Ebay sites, but with a differently patterned base URL.
+	fr_BE)	base_url="www.befr.ebay.be"
+		search_url="${base_url}${mainsite_search}"
+		;;
+	nl_BE)	base_url="www.benl.ebay.be"
+		search_url="${base_url}${mainsite_search}"
+		;;
+	cn|zh|zt)
+		base_url="www.ebay.${TLD}"
+		# FIXME: I can't read Chinese characters, so someone else can fix this if it doesn't work.
+		search_url="${base_url}/newcms/search?"
+		# The old version:
+		#search_url="http://search.eachnet.com/search/basicsearch.do?satitle=${escaped_args}&sacat=0"
+		;;
+	kr)	base_url="www.auction.co.kr"
+		search_url="browse.auction.co.kr/search?"
+		;;
+	se)	base_url="www.tradera.com"
+		search_url="${base_url}/search?"
+		;;
+	tw)	base_url="twexport.ebay.com"
+		# This is done by POST...
+		# TODO: Find a way to search on the Taiwan Ebay.  Use Hong Kong for now.
+		search_url="www.ebay.com.hk${mainsite_search}"
+		;;
+	*)	base_url="www.ebay.${TLD}"
+		search_url="${base_url}${mainsite_search}"
+		;;
+esac
+
+if null "$w3_args"; then
+	url="$base_url"
+else
+	escaped_args=$(w3_url_of_arg $w3_args)
+
+	case "$SURFRAW_ebay_country" in
+		# Brazil, Argentina, and Mexico searches replace spaces with hyphens ("-") rather than "%20" or "+".
+		br|ar|mx)
+			query="$(echo "$escaped_args" | sed 's/%20\|+/-/g')" ;;
+		cn|zh|zt)
+			query="q=${escaped_args}&catid=0" ;;
+		kr)	query="keyword=${escaped_args}" ;;
+		se)	query="q=${escaped_args}" ;;
+		# `_sacat=0` appears to be the "All Categories" option.
+		*)	query="_nkw=${escaped_args}&_ipg=${SURFRAW_ebay_results}&_sacat=0" ;;
+	esac
+	# Avoid redundant prefixes.
+	url="${search_url}${query}"
+fi
+
+case "$SURFRAW_ebay_country" in
+	# Why?  In 2021?
+	# FYI, using HTTPS times me out.
+	kr)	url="http://$url" ;;
+	*)	url="https://$url" ;;
+esac
+w3_browse_url "$url"

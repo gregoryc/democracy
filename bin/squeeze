@@ -1,0 +1,17 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+f = $stdin.read.split("\n")
+a = ARGV[0].to_i
+b = if ARGV.length == 1
+      -ARGV[0].to_i - 1
+    else
+      -ARGV[1].to_i - 1
+
+    end
+
+if (ARGV.length == 3) || (ARGV.length > 3)
+  File.write ARGV[2], "#{f[a..b].join("\n")}\n"
+else
+  puts "#{f[a..b].join("\n")}\n"
+end

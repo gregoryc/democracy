@@ -1,0 +1,6 @@
+replace_in_place tool replaces a string, not a regular expression, with another string
+
+
+Example
+
+replace_in_place                      cat dog       file

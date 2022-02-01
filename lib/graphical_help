@@ -1,0 +1,90 @@
+require "gtk3"
+include   Gtk
+    class FileMenuItem < Gtk::MenuItem
+    def initialize(label, folder)
+      super()
+      set_label label
+      @file = "#{folder}/#{label}"
+    end
+
+    attr_reader :file
+  end
+  BPE = 'button-press-event'
+
+  class MenuWithText < Gtk::Menu
+    def initialize(_i)
+      super()
+      pwd = Dir.pwd
+      Dir.glob('*') do |i|
+        menu_item = FileMenuItem.new(i, pwd)
+        menu_item.signal_connect(BPE) do |menu_item|
+          button = menu_item
+          $foo.buffer.text = File.read button.file
+          false
+        end
+        append menu_item
+        if test 'd', i
+          Dir.chdir("#{pwd}/#{i}")
+          menu_item.set_submenu(MenuWithText.new(i))
+          Dir.chdir(pwd)
+        end
+      end
+    end; end
+
+  class SpecialMenuBar < Gtk::MenuBar
+    def initialize(labels)
+      super()
+
+      labels.length.times do |m|
+        e = MenuItem.new
+        e.set_label labels[m]
+        e.set_submenu MenuWithText.new labels[m]
+        add e
+      end
+    end
+  end
+
+  class CTextView < Gtk::TextView
+    def initialize(text)
+      super()
+      buffer = Gtk::TextBuffer.new
+      buffer.set_text text
+      set_buffer buffer
+    end
+  end
+
+  class Menumaker < Gtk::Window
+    def initialize(_arg)
+      puts 5
+      box = Box.new :vertical
+      super()
+      b = { 'Examples' => MenuWithText, 'About' => CTextView } # , "Contribute"=>CTextView, "Donate"=>CTextView, "Help"=>CTextView}
+      a = []
+      b.each do |_k, v|
+        if v == MenuWithText
+
+          box.add SpecialMenuBar.new b.keys
+        else
+          box.add($foo = CTextView.new(''))
+        end
+      end
+
+      $foo.buffer.text = File.read 'README'
+
+      add box
+    end
+  end
+
+  a = Menumaker.new ''
+  a.show_all
+  Gtk.main
+
+
+
+
+
+
+
+
+
+# Feedback and donation to gregorycohen2@gmail.com (money transfer or Paypal)

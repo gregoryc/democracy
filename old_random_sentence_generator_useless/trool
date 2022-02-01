@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+ss = ["espeak", "flite -voice awb", "flite"                          ].sample
+
+
+to_sing = [["rihanna", "umbrella"],["jay z","empire state of mind"]].sample
+to_sing.push ss
+
+str = "sing " + to_sing.map(&:dump).join(" ")
+
+IO.popen("sh -c 'toilet | green'", "w") do |f|
+	puts str
+	f.puts to_sing.map(&:capitalize)
+end
+
+system str                                         

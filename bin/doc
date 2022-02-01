@@ -1,0 +1,84 @@
+#!/usr/bin/env ruby
+
+def speak a
+	puts a.green
+	require "shellwords"
+	system "espeak #{a.shellescape}"
+end
+
+<<EOF
+speak "Documenting"
+EOF
+
+
+Dir.glob("*") { |pdf|
+	$pdf =  pdf
+	case pdf
+		when /DOC|sh$/
+			next
+	end
+
+	if %x[test -f ../documentation/#{pdf}; echo $?].strip.to_i == 0
+		next
+	end
+	program = pdf
+	require "FileUtils".downcase
+	include FileUtils
+
+	mkdir_p "../documentation"
+	cd ".."
+	cd "documentation"
+		         
+
+def get_line
+	require "readline"
+	$line = ok_or_no = Readline.readline.strip
+end
+
+
+$n = 0
+
+require "FileUtils".downcase
+require "colored"
+
+include FileUtils
+#require "coloed
+while true
+	cd Dir.home
+	cd "democracy"
+	cd "bin"
+	puts "Enter description of the practical utility of   `" + pdf + "'"
+
+	speak "#{pdf} tool"
+	$doc = STDIN.read
+	speak $doc
+	speak "Is this good?"
+
+	FileUtils.mkdir_p "../documentation"
+	FileUtils.cd "../documentation"
+
+	def g
+	$n += 1
+	if get_line.match /y|Y/; speak "On to the #{$n}th one"
+			#speak "yes"
+			File.open($pdf, "a") do |f|
+				puts pwd
+				puts $pdf
+				f.puts $doc
+			end
+
+			raise "End"
+		end
+	end
+	
+	
+	begin
+	g
+	rescue Object
+		break
+	end
+
+	#puts program
+end
+
+}

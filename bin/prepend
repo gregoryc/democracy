@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# !/usr/bin/env ruby
+require 'fileutils'
+
+input = $stdin.read
+ARGV.each do |arg|
+  unless test 'f', arg
+    FileUtils.rm_rf(arg)
+    FileUtils.touch(arg)
+  end
+  File.write arg, (input + File.read(arg))
+end

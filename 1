@@ -1,0 +1,27 @@
+
+Set X=PowerShell -Command ^
+"[void]  [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); ^
+$objNotifyIcon = New-Object System.Windows.Forms.NotifyIcon; ^
+$objNotifyIcon.Icon = [System.Drawing.SystemIcons]::Information; ^
+$objNotifyIcon.BalloonTipIcon = 'Info'; ^
+$objNotifyIcon.BalloonTipText = 'custom_title';  ^
+$objNotifyIcon.BalloonTipTitle = 'custom_title'; ^
+$objNotifyIcon.Visible = $True; ^
+$objNotifyIcon.ShowBalloonTip(10000); ^
+Start-Sleep 500;"
+
+
+
+cd /Program Files/Google/Chrome/Application
+
+Set B=ruby -e require\"cgi\";pwd=Dir.pwd;Dir.chdir\"C:/Users/user\";^
+Dir.chdir\"Downloads\";^
+Dir.glob(\"*Resume.html.pdf\").sort{a=_1;b=_2;a+String.new;b+String.new;[a,b];eval([a.split(\"_\").first.to_i,60.chr,61.chr,62.chr,_2.split(\"_\").first.to_i].join);}.each^
+{i=_1;^
+a=ARGV.join(32.chr).gsub(/custom_title/,\"Opening#{32.chr}Job#{32.chr}#{+i.split(\"_\")[0]}#{32.chr}:)\");spawn(a);Dir.chdir(pwd);i=i.split(\"_\")[1..].join(32.chr);sys=\"chrome.exe#{32.chr}https://ca.indeed.com/jobs?q=\"+CGI.escape(i.gsub(\"_\",32.chr).strip.gsub(\"Resume.html.pdf\",\"\").strip);puts(100.chr*200+sys);system(sys);sleep(0);} %X%
+
+
+
+%B%
+
+

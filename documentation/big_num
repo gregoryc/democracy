@@ -1,0 +1,34 @@
+big_num
+
+
+big_num speaks really big numbers
+
+
+Enter an expression, such as 2 ** 1000, and you'll see the result
+
+
+
+
+
+
+
+2 ** 5 =
+    32 =
+    32
+Example
+
+
+2 ** 300 =
+    2037035976334486086268445688409378161051468393665936250636140449354381299763336706183397376 =
+    2 novemvigintillion 037 octovigintillion 035 septenvigintillion 976 sexvigintillion 334 quinvigintillion 486 quattorvigintillion 086 trevigintillion 268 duovigintillion 445 unvigintillion 688 vigintillion 409 novemdecillion 378 octodecillion 161 septendecillion 051 sexdecillion 468 quindecillion 393 quattordecillion 665 tredecillion 936 duodecillion 250 undecillion 636 decillion 140 nonillion 449 octillion 354 septillion 381 sextillion 299 quintillion 763 quadrillion 336 trillion 706 billion 183 million 397 thousand 376
+Example
+
+
+2 * 3232 ** 20 =
+    30935492730650947127304288381713149944373924743878592216089667936714752 =
+    30 duovigintillion 935 unvigintillion 492 vigintillion 730 novemdecillion 650 octodecillion 947 septendecillion 127 sexdecillion 304 quindecillion 288 quattordecillion 381 tredecillion 713 duodecillion 149 undecillion 944 decillion 373 nonillion 924 octillion 743 septillion 878 sextillion 592 quintillion 216 quadrillion 089 trillion 667 billion 936 million 714 thousand 752
+
+2 ** 1000
+[H[2J[3J2 ** 1000 =
+    10715086071862673209484250490600018105614048117055336074437503883703510511249361224931983788156958581275946729175531468251871452856923140435984577574698574803934567774824230985421074605062371141877954182153046474983581941267398767559165543946077062914571196477686542167660429831652624386837205668069376 =
+    10 novemnonagintillion 715 octononagintillion 086 septennonagintillion 071 sexnonagintillion 862 quinnonagintillion 673 quattornonagintillion 209 trenonagintillion 484 duononagintillion 250 unnonagintillion 490 nonagintillion 600 novemoctogintillion 018 octooctogintillion 105 septenoctogintillion 614 sexoctogintillion 048 quinoctogintillion 117 quattoroctogintillion 055 treoctogintillion 336 duooctogintillion 074 unoctogintillion 437 octogintillion 503 novemseptuagintillion 883 octoseptuagintillion 703 septenseptuagintillion 510 sexseptuagintillion 511 quinseptuagintillion 249 quattorseptuagintillion 361 treseptuagintillion 224 duoseptuagintillion 931 unseptuagintillion 983 septuagintillion 788 novemsexagintillion 156 octosexagintillion 958 septensexagintillion 581 sexsexagintillion 275 quinsexagintillion 946 quattorsexagintillion 729 tresexagintillion 175 duosexagintillion 531 unsexagintillion 468 sexagintillion 251 novemquintigintillion 871 octoquintigintillion 452 septenquintigintillion 856 sexquintigintillion 923 quinquintigintillion 140 quattorquintigintillion 435 trequintigintillion 984 duoquintigintillion 577 unquintigintillion 574 quintigintillion 698 novemquatrigintillion 574 octoquatrigintillion 803 septenquatrigintillion 934 sexquatrigintillion 567 quinquatrigintillion 774 quattorquatrigintillion 824 trequatrigintillion 230 duoquatrigintillion 985 unquatrigintillion 421 quatrigintillion 074 novemtrigintillion 605 octotrigintillion 062 septentrigintillion 371 sextrigintillion 141 quintrigintillion 877 quattortrigintillion 954 tretrigintillion 182 duotrigintillion 153 untrigintillion 046 trigintillion 474 novemvigintillion 983 octovigintillion 581 septenvigintillion 941 sexvigintillion 267 quinvigintillion 398 quattorvigintillion 767 trevigintillion 559 duovigintillion 165 unvigintillion 543 vigintillion 946 novemdecillion 077 octodecillion 062 septendecillion 914 sexdecillion 571 quindecillion 196 quattordecillion 477 tredecillion 686 duodecillion 542 undecillion 167 decillion 660 nonillion 429 octillion 831 septillion 652 sextillion 624 quintillion 386 quadrillion 837 trillion 205 billion 668 million 069 thousand 376

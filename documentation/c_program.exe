@@ -1,0 +1,179 @@
+do_more is a work in progress, but it works, and it helps you to progress, in life
+
+do_more automatically generates resumes and cover letters for all of the jobs that you could have.
+
+COVID makes life hard.
+
+People are unemployed, etc.
+
+People could have more jobs.
+
+do_more is a graphical, cross platform program (generated from the inspect.rb program) that generates and downloads dynamic PDFs of Resumes and Cover Letters that are tailored for each and every possible job that you could apply for on Indeed. It is very freaking practical!!!!!!!!!!!!!!!!!!!!!
+
+
+First, you need to click on the bottom part of it. It copies that code into your browser. Then you  right click on a browser page and go to "Inspect" (the same can be done by doing Control + F12). Make sure you are on Indeed.
+
+
+Search for something on Indeed, like "labourer".
+
+
+For each result, a new resume and cover letter will be downloaded, each of which is geared for that specific job positing, with the company name and copy role in both of them
+
+
+This way, you can show employers that you really care!
+
+The script will open up later pages on Indeed as well.
+
+You can generate hundreds of resumes and cover letters as well
+
+HTML documents will be downloaded.
+
+You have to convert them to PDF, which chrome can do by doing --print-to-pdf  
+
+Or you can do it manually
+
+
+(On Windows, you can use Cygwin and do this  )
+
+
+(You need to be in the Downloads folder)
+
+(Find it by doing "cd [folder]", "cd ..",     etc.    )
+
+
+for i in Downloads/*; do  ./chrome --headless --print-to-pdf-no-header   --print-to-pdf="$i.pdf"; done
+
+
+
+
+Then you have to click on the second part, and run that in your command prompt or terminal (Windows or macOS or Linux)
+
+
+
+
+
+
+
+All of the generated resumes are numbered, starting from what you enter, which is probably 0
+
+
+
+They would look like 0_Business_Job.html
+
+
+The pdfs would look like 0_Business_Job.html.pdf
+
+
+
+
+When you run the second part, you will get notifications of the current number
+
+
+
+Then manually send all the custom resumes and cover letters to the companies.
+
+
+Chrome will be opened for you.
+
+For each job, Chrome is opened. 
+
+When you close chrome, that job is considered applied for, and chrome opens for the next job
+
+
+You get a notification for each job.
+
+It is REALLY streamlined.
+
+
+For each job, that job positing gets searched on Indeed.
+
+
+
+
+
+
+Oftentimes you will only see one result.
+
+
+
+
+
+
+
+
+Which is what you want. Because it is THAT job.
+
+
+
+
+
+This helps with so many things in life.
+
+
+This program makes job searching easy.
+
+
+When you click on the parts of the program, those TextViews get copied to your clipboard.
+
+
+You don't need to have anything installed on your computer.
+
+The only requirements are
+
+Ruby
+
+Google Chrome
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+This program gives people a "buffer", because it allows people to easily apply for more jobs.
+
+
+People can RELY on this program. Job searching doesn't need to be arduous. This program helps with job search management.
+
+
+
+
+
+Indeed is the most popular job search website.
+
+
+This program uses that.
+
+
+
+Count on this program, because it is here to serve all of humanity.
+
+
+
+
+
+
+
+
+
+
+
+
+This program can help fix unemployment problems of an economy, in a nonpartisan way.
+
+
+
+Have you ever thought, that people don't look for work, because it is hard?
+
+
+People can work 2 or 3 jobs

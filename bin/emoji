@@ -1,0 +1,190 @@
+#!/usr/bin/env ruby
+
+class Copier < IO
+	def puts a
+	if !SETTINGS.copy
+			$stdout.puts a
+		else
+#			puts IO
+			@text += (a.to_s + "\n")
+		end
+	end
+
+	def print a
+
+
+if !SETTINGS.copy
+			$stdout.print a
+		else
+			@text += a.to_s + ""
+		end
+	end
+
+	def initialize
+		@text = ""
+	end
+
+	def close
+		numbers = []
+		100.times {
+			numbers << [(rand * 10).to_i]
+		}
+
+		#puts numbers
+		file = "/tmp/ruby_tempfile#{numbers.join("")}"
+		#p file
+		#puts file
+		
+		File.open(file, "w") do |file|
+			#puts "Text #{@text}"
+#			$stdout.puts @text
+			file.print @text
+		end
+
+		spawn ("xclip -selection c #{file} > /dev/null") # /dev/ null is needed otherwise it will hang
+
+		
+		#File.unlink(file)
+		if !SETTINGS.silent#if !SILENT
+			$stdout.print @text
+			
+#			$stdout.flush
+#			$stdout.close
+		end
+
+		#Kernel.exit
+	end
+		
+end
+
+class SETTINGS_
+SPEAK_OPTION, COPY_OPTION, SILENT_OPTION = ((ARGV.length == 0 or ARGV[0].include? "-" ) ? ["\0"] * 3 : "ecs".split(""))
+@@argv = ARGV
+if @@argv.length == 0
+	@@argv = [""]
+end
+
+def speak
+	return @@argv[0].include? SPEAK_OPTION
+end
+
+def copy
+	return @@argv[0].include? COPY_OPTION
+#	return @@copy
+end
+
+def silent
+	return @@argv[0].include? SILENT_OPTION
+#	return @@copy
+end
+	
+
+end
+
+SETTINGS = SETTINGS_.new
+
+
+begin
+	require 'gemoji'
+rescue
+	system "sudo gem install gemoji"
+	require 'gemoji'
+end
+
+
+def e(arg)
+	if arg.nil?
+		arg = %w{The man walked down the street and saw some cute cats and dogs. The dogs were fun, and baked nice cakes. Japan is cool}
+	end
+
+	text = ""
+
+	arg.each do |word|
+		new_line = ""
+if word.length >= 2; if word[-1] == "."; new_line = "\n"; end; word.chomp! ".";; end;
+
+
+text += (
+(Emoji.find_by_alias(word)&.raw) or (Emoji.find_by_alias(word.downcase)&.raw) or (Emoji.find_by_alias(word.downcase.capitalize)&.raw) or \
+(Emoji.find_by_alias(word.chomp "s")&.raw) or (Emoji.find_by_alias(word.downcase.chomp "s")&.raw) or (Emoji.find_by_alias(word.downcase.capitalize.chomp "s")&.raw) or \
+(Emoji.find_by_alias(word.chomp "'s")&.raw) or (Emoji.find_by_alias(word.downcase.chomp "'s")&.raw) or (Emoji.find_by_alias(word.downcase.capitalize.chomp "'s")&.raw) \
+or word) + " ";
+
+text += new_line
+end
+	text
+	if SETTINGS.speak
+		#puts arg
+		system "espeak '#{arg.join(" ")}'"
+	end
+	return text
+end
+
+
+module Kernel
+	def puts a
+		COPIER.puts a
+	end
+
+
+	#def gets
+	#	$stdout.puts "Gets"
+	#end
+
+	COPIER = Copier.new
+	#$stdout = COPIER
+
+	def open(file, &block)
+		#puts block
+		if block.nil?
+			raise Exception.new("need block")
+		end
+		
+		begin
+			File.open(file) do |opened_file|
+				block.call opened_file
+			end
+		rescue Exception
+#			system
+
+			system("ping -c 1   '#{file}' > /dev/null 2>/dev/null")
+			if $?.exitstatus == 0
+				block.call IO.popen("curl -L '#{file}' 2>/dev/null")
+			else
+			
+#			if text.length == 0
+				IO.popen("grep #{file} /home/a/Downloads/wikipedia 2>/dev/null") do |wikipedia|
+					block.call wikipedia
+				end
+			end
+		#end
+	#end
+		end
+	end
+end
+
+def main
+
+$stdin.each_line do |line|
+	line = line.chomp
+	#line.chomp!
+
+	#puts e nil
+
+	puts e(line.split(/\s+/))
+end
+end
+
+if  File.basename(__FILE__) == "emoji"
+main
+#open("google.com") do |file|
+#	puts file.read
+#end
+end
+
+
+#COPIER.close
+#COPIER.copy
+
+COPIER.close
+#$stdout.puts "Closing"

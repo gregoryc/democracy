@@ -1,0 +1,19 @@
+undump is the opposite of dump
+
+Example
+
+
+echo cat | dump | undump
+
+=> cat
+
+echo cat | dump
+
+=> "cat"
+
+echo '"cat"' | undump
+
+
+
+
+=>     cat

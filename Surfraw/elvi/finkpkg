@@ -1,0 +1,199 @@
+#!/bin/sh
+# elvis: finkpkg		-- Search Fink packages (pdb.finkproject.org)
+# ianb@erislabs.net 20091111
+
+. surfraw || exit 1
+
+w3_config_hook () {
+def   SURFRAW_finkpkg_pkgname     ""
+def   SURFRAW_finkpkg_maintainer  ""
+def   SURFRAW_finkpkg_distro      default
+def   SURFRAW_finkpkg_arch        any
+def   SURFRAW_finkpkg_tree        any
+def   SURFRAW_finkpkg_section     any
+defyn SURFRAW_finkpkg_exact       no
+defyn SURFRAW_finkpkg_nomaint     no
+defyn SURFRAW_finkpkg_nochildren  no
+defyn SURFRAW_finkpkg_noshlibsdev no
+}
+
+w3_usage_hook () {
+    cat <<EOF
+Usage: $w3_argv0 [options] [search words]...
+Description:
+  Search Fink packages (pdb.finkproject.org)
+Local options:
+  -pkg=NAME                     Search by packagename for NAME
+  -maintainer=NAME              Search by maintainer for NAME
+  -dist=DIST                    Specify distribution DIST
+	default         |        Supported [10.9 through 10.15] (default)
+        any             |        Any
+        10.1            |        10.1
+        10.2            |        10.2
+        10.2-gcc3.3     |        10.2-gcc3.3
+        10.3            |        10.4
+        10.4            |        10.4
+        10.5            |        10.5
+        10.6            |        10.6
+        10.7            |        10.7
+        10.8            |        10.8
+        10.9            |        10.9
+        10.10           |        10.10
+        10.11           |        10.11
+        10.12           |        10.12
+        10.13           |        10.13
+        10.14           |        10.14
+        10.14.5         |        10.14.5
+        10.15           |        10.15
+	                        Default: $SURFRAW_finkpkg_distro
+	                        Environment: SURFRAW_finkpkg_distro
+  -arch=ARCH                    Search in arch ARCH
+        any             |        Any (default)
+	i386            |        i386
+	x86_64          |        X86_64 (aka AMD64)
+	powerpc         |        powerpc
+	                        Default: $SURFRAW_finkpkg_arch
+	                        Environment: SURFRAW_finkpkg_arch
+  -tree=TREE                    Search in tree TREE
+        any             |        Any (default)
+	unstable        |        Unstable
+	stable          |        Stable
+	bindist         |        Binary Distribution
+	testing         |        Packages that need testing
+	                        Default: $SURFRAW_finkpkg_tree
+	                        Environment: SURFRAW_finkpkg_tree
+  -section=SEC                  Search in section SEC
+        any             |        Any (default)
+        base            |        Core packages
+        crypto          |        Cryptographic software (subject to national regulations)
+        database        |        SQL and other database software
+        devel           |        Software for software development
+        editors         |        Text editors
+        games           |        Games and other fun stuff
+        gnome           |        The GNOME desktop environment (version 2.26)
+        graphics        |        Graphics applications and libraries
+        kde             |        K Desktop Environment (version 3.5.10 and 4.2.4)
+        kde/po          |        Translations for the K Desktop Environment (version 3.5.10 and 4.2.4)
+        languages       |        Programming languages (compilers, interpreters)
+        libs            |        General purpose libraries
+        libs/ghc        |        Glasgow Haskell Compiler libraries
+        libs/perlmods   |        Perl libraries
+        libs/pythonmods |        Python libraries
+        libs/rubymods   |        Ruby libraries
+        net             |        Network-related applications and libraries
+        sci             |        Scientific applications
+        shells          |        Shells (command line interpreters)
+        sound           |        Audio software
+        text            |        Text-processing software
+        utils           |        Utilities that do not fit elsewhere
+        web             |        Web-related software
+        x11             |        General X11 packages - toolkits and utilities
+        x11-system      |        X Window System core packages
+        x11-wm          |        Window managers for the X Window System
+	                        Default: $SURFRAW_finkpkg_section
+	                        Environment: SURFRAW_finkpkg_section
+  -exact                        Exact package matches only
+                                Default: $SURFRAW_finkpkg_exact
+                                Environment: SURFRAW_finkpkg_exact
+  -nomaint                      Find packages with no maintainer
+                                Default: $SURFRAW_finkpkg_nomaint
+                                Environment: SURFRAW_finkpkg_nomaint
+  -nochildren                   Exclude packages with parent
+                                 (includes most "-dev", "-shlibs", ... splitoffs)
+				Default: $SURFRAW_finkpkg_nochildren
+                                Environment: SURFRAW_finkpkg_nochildren
+  -noshlibsdev                  Exclude -shlibs, -dev, -bin, -common, -doc packages
+				Default: $SURFRAW_finkpkg_noshlibsdev
+                                Environment: SURFRAW_finkpkg_noshlibsdev
+EOF
+    w3_global_usage
+}
+mkopts pkg= maintainer= dist= arch= tree= section= exact nomaint nochildren noshlibsdev
+w3_complete_hook_opt ()
+{
+        local opt="$1"
+        case "$opt" in
+		# Not going to get optarg here because this should be enough.  Bash should be able to fill in the gaps.
+		-pkg=*) w3_complete_packages ;;
+                # Is this outdated?
+                -dist=*) echo default any 10.1 10.2 10.2-gcc3.3 10.3 10.4 10.5 10.6 10.7 10.8 10.9 10.10 10.11 10.12 10.13 10.14 10.14.5 10.15 ;;
+                -arch=*) echo any i386 x86_64 powerpc ;;
+                -tree=*) echo any unstable stable bindist testing ;;
+                -section=*) echo any base crypto database devel editors games gnome graphics kde kde/po languages libs libs/ghc libs/perlmods libs/pythonmods libs/rubymods net sci shells sound text utils web x11 x11-system x11-wm ;;
+                *) return 1 ;;
+        esac
+}
+
+w3_parse_option_hook () {
+    opt="$1"
+    optarg="$2"
+    case "$opt" in
+	-pkg*=*)    setopt   SURFRAW_finkpkg_pkgname      $optarg ;;
+	-maint*=*)  setopt   SURFRAW_finkpkg_maintainer   $optarg ;;
+	-dist*=*)   setopt   SURFRAW_finkpkg_distro       $optarg ;;
+	-arch=*)    setopt   SURFRAW_finkpkg_arch         $optarg ;;
+	-tree*=*)   setopt   SURFRAW_finkpkg_tree         $optarg ;;
+	-sec*=*)    setopt   SURFRAW_finkpkg_section      $optarg ;;
+	-ex*)       setoptyn SURFRAW_finkpkg_exact        yes     ;;
+	-nomaint*)  setoptyn SURFRAW_finkpkg_nomaint      yes     ;;
+	-noch*)     setoptyn SURFRAW_finkpkg_nochildren   yes     ;;
+	-noshlib*)  setoptyn SURFRAW_finkpkg_noshlibsdev  yes     ;;
+	*) return 1 ;;
+    esac
+    return 0
+}
+
+w3_config
+w3_parse_args "$@"
+# w3_args now contains a list of arguments
+escaped_args=$(w3_url_of_arg $w3_args)
+
+url="http://pdb.finkproject.org/pdb/browse.php"
+
+if [ -z "$escaped_args" ] && [ -z "$SURFRAW_finkpkg_pkgname" ] && [ -z "$SURFRAW_finkpkg_maintainer" ]
+then
+    w3_browse_url "$url"
+else
+    if [ "$SURFRAW_finkpkg_arch" = any ]
+    then
+	SURFRAW_finkpkg_arch=""
+    fi
+    if [ "$SURFRAW_finkpkg_section" = any ]
+    then
+	SURFRAW_finkpkg_section=""
+    fi
+    url="${url}?dist_name=${SURFRAW_finkpkg_distro}"
+    url="${url}&architecture=${SURFRAW_finkpkg_arch}"
+    url="${url}&tree=${SURFRAW_finkpkg_tree}"
+    url="${url}&sec=${SURFRAW_finkpkg_section}"
+    if [ -n "$escaped_args" ]
+    then
+	url="${url}&summary=${escaped_args}"
+    fi
+    if [ -n "$SURFRAW_finkpkg_pkgname" ]
+    then
+	url="${url}&name=${SURFRAW_finkpkg_pkgname}"
+    fi
+    if [ -n "$SURFRAW_finkpkg_maintainer" ]
+    then
+	url="${url}&maintainer=${SURFRAW_finkpkg_maintainer}"
+    fi
+    if ifyes SURFRAW_finkpkg_exact
+    then
+	url="${url}&name_exact=on"
+    fi
+    if ifyes SURFRAW_finkpkg_nomaint
+    then
+	url="$url&nomaintainer=on"
+    fi
+    if ifyes SURFRAW_finkpkg_nochildren
+    then
+	url="$url&nochildren=on"
+    fi
+    if ifyes SURFRAW_finkpkg_noshlibsdev
+    then
+	url="$url&noshlibsdev=on"
+    fi
+
+    w3_browse_url "$url"
+fi

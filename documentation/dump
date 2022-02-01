@@ -1,0 +1,12 @@
+Dump surrounds its input with quotes
+
+
+ls | dump
+
+=> "...."
+
+Use undump to get the reverse
+
+See also
+
+undump

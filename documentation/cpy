@@ -1,0 +1,6 @@
+cpy copies the standard input
+
+
+Example
+
+ls | cpy

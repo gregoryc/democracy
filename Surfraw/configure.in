@@ -1,0 +1,67 @@
+dnl $Id$
+
+dnl Process this file with autoconf to produce a configure script.
+
+dnl This is the only place where the package version appears
+dnl (apart from changelogs & NEWS)
+AC_INIT(surfraw, 2.3.0)
+AC_PREREQ(2.54)
+AC_CONFIG_SRCDIR([surfraw.IN])
+
+dnl minimum automake version, not surfraw version
+AM_INIT_AUTOMAKE([1.10])
+
+AC_MSG_CHECKING([whether to enable local OpenSearch support])
+AC_ARG_ENABLE([opensearch],
+	[AS_HELP_STRING([--disable-opensearch], [disable local OpenSearch support])],,
+	[enable_opensearch=yes])
+AC_MSG_RESULT([$enable_opensearch])
+AM_CONDITIONAL(OPENSEARCH, test "$enable_opensearch" = "yes")
+
+AC_MSG_CHECKING([wether to install Bash completions])
+AC_ARG_ENABLE([bash-completions],
+        [AS_HELP_STRING([--disable-bash-completions], [disable Bash completions support])],,
+        [enable_bashcompletions=yes])
+AC_MSG_RESULT([$enable_bashcompletions])
+AM_CONDITIONAL(BASHCOMPLETIONS, test "$enable_bashcompletions" = "yes")
+
+AC_MSG_CHECKING([whether to install sr alias])
+AC_ARG_ENABLE([sr],
+	[AS_HELP_STRING([--disable-sr], [disable sr alias])],,
+	[enable_sr=yes])
+AC_MSG_RESULT([$enable_sr])
+AM_CONDITIONAL(INSTALLSR, test "$enable_sr" = "yes")
+
+ELVIDIR="\$(libdir)/surfraw"
+AC_CHECK_PROGS(TEXTBROWSER, lynx links2 links elinks w3m netrik)
+AC_CHECK_PROGS(GRAPHICALBROWSER, iceweasel firefox google-chrome opera mozilla \
+    xombrero luakit safari epiphany-browser konqueror galeon kazenhakase \
+    conkeror dillo netscape chromium chrome)
+
+AC_ARG_WITH([elvidir],
+	[AS_HELP_STRING([--with-elvidir=ELVIDIR], [specify location of elvi])],
+	[if test -n "$withval" && test "$withval" != "no" ; then ELVIDIR="$withval";fi])
+
+AC_ARG_WITH([text-browser],
+	[AS_HELP_STRING([--with-text-browser=BROWSER], [specify default text browser])],
+	[if test -n "$withval" && test "$withval" != "no" ; then TEXTBROWSER="$withval";fi])
+AC_ARG_WITH([graphical-browser],
+	[AS_HELP_STRING([--with-graphical-browser=BROWSER], [specify default graphical browser])],
+	[if test -n "$withval" && test "$withval" != "no" ; then GRAPHICALBROWSER="$withval";fi])
+
+AC_SUBST(ELVIDIR)
+AC_SUBST(VERSION)
+AC_SUBST(TEXTBROWSER)
+AC_SUBST(GRAPHICALBROWSER)
+
+ISODATE=`date -u -r ChangeLog +%Y-%m-%d`
+AC_SUBST(ISODATE)
+
+dnl Checks for programs.
+AC_PROG_INSTALL
+AC_PROG_AWK
+AC_PATH_PROG([PERL], [perl], [perl])
+AC_SUBST(PERL)
+
+AC_CONFIG_FILES([Makefile surfraw.lsm surfraw.spec elvi/Makefile test/Makefile examples/Makefile])
+AC_OUTPUT

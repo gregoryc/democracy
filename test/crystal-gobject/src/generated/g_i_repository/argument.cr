@@ -1,0 +1,130 @@
+#!/usr/bin/env ruby
+#
+# Democracy software compilation VERSION 0.0., created on 2021-11-14 17:41:33 -0500
+# Get all of this code, and all of these files, with
+# gem install democracy
+# Linux ruby 2.7.0p0 (2019-12-25 revision 647ee6f091) [x86_64-linux-gnu]
+#
+# Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
+#
+# THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+
+
+
+# 20 of 16 source files
+module GIRepository
+require_relative "string__"
+    class Argument
+    include GObject::WrappedType
+    alias Union = Argument|::Bool|Int8|UInt8|Int16|UInt16|Int32|UInt32|Int64|UInt64|Float32|Float64|Int16|UInt16|Int32|UInt32|Int64|UInt64|Int64|UInt64|::String|Void*
+
+    def v_boolean
+      (to_unsafe.as(LibGIRepository::Argument*).value.v_boolean == 1)
+    end
+
+    def v_int8
+      to_unsafe.as(LibGIRepository::Argument*).value.v_int8
+    end
+
+    def v_uint8
+      to_unsafe.as(LibGIRepository::Argument*).value.v_uint8
+    end
+
+    def v_int16
+      to_unsafe.as(LibGIRepository::Argument*).value.v_int16
+    end
+
+    def v_uint16
+      to_unsafe.as(LibGIRepository::Argument*).value.v_uint16
+    end
+
+    def v_int32
+      to_unsafe.as(LibGIRepository::Argument*).value.v_int32
+    end
+
+    def v_uint32
+      to_unsafe.as(LibGIRepository::Argument*).value.v_uint32
+    end
+
+    def v_int64
+      to_unsafe.as(LibGIRepository::Argument*).value.v_int64
+    end
+
+    def v_uint64
+      to_unsafe.as(LibGIRepository::Argument*).value.v_uint64
+    end
+
+    def v_float
+      to_unsafe.as(LibGIRepository::Argument*).value.v_float
+    end
+
+    def v_double
+      to_unsafe.as(LibGIRepository::Argument*).value.v_double
+    end
+
+    def v_short
+      to_unsafe.as(LibGIRepository::Argument*).value.v_short
+    end
+
+    def v_ushort
+      to_unsafe.as(LibGIRepository::Argument*).value.v_ushort
+    end
+
+    def v_int
+      to_unsafe.as(LibGIRepository::Argument*).value.v_int
+    end
+
+    def v_uint
+      to_unsafe.as(LibGIRepository::Argument*).value.v_uint
+    end
+
+    def v_long
+      to_unsafe.as(LibGIRepository::Argument*).value.v_long
+    end
+
+    def v_ulong
+      to_unsafe.as(LibGIRepository::Argument*).value.v_ulong
+    end
+
+    def v_ssize
+      to_unsafe.as(LibGIRepository::Argument*).value.v_ssize
+    end
+
+    def v_size
+      to_unsafe.as(LibGIRepository::Argument*).value.v_size
+    end
+
+    def v_string
+      ::String.new(to_unsafe.as(LibGIRepository::Argument*).value.v_string)
+    end
+
+    def v_pointer
+      to_unsafe.as(LibGIRepository::Argument*).value.v_pointer
+    end
+
+    @pointer : Void*
+
+    def initialize(pointer : LibGIRepository::Argument*)
+      @pointer = pointer.as(Void*)
+    end
+
+    def to_unsafe
+      @pointer.not_nil!.as(LibGIRepository::Argument*)
+    end
+
+    def to_unsafe_girepository_argument
+      @pointer.not_nil!.as(LibGIRepository::Argument*)
+    end
+  end
+end
+
+
+
+
+
+
+
+
+# Feedback and donation to gregorycohen2@gmail.com (money transfer or Paypal)

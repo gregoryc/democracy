@@ -1,0 +1,93 @@
+#!/bin/bash
+RUBY_PROGRAMS=ruby_programs
+UTILITIES=utilities
+#UTILITIE
+
+green() {
+	echo -e "\e[32m$1\e[0m"
+}
+
+cd ..
+rm -rf $UTILITIES
+mkdir $UTILITIES
+cd build
+
+(grep -E '^\s*def\s*' functions | grep -Ev '_\('; cat code) | foreach /dev/null > /dev/null
+cd ..
+cd $UTILITIES
+
+
+#chmod +x *
+#cd ..
+
+green "First part done"
+
+cd ..
+rm -rf $RUBY_PROGRAMS
+mkdir $RUBY_PROGRAMS
+cd build
+
+(grep -E '^\s*def\s*' ruby_functions | grep -Ev '_\('; cat code) | foreach /dev/null || exit
+cd ..
+cd $RUBY_PROGRAMS || exit 1
+green "Starting compilation"; input=`cat ../build/ruby_functions | xargs echo`
+
+for i in $input; do
+mv ../utilities/$i .
+done
+
+
+
+#chmod +x *
+#cd ..
+
+green "Second part done"
+#pwd
+echo
+green "Starting compilation";
+
+#cat ../build/ruby_functions | xargs rm -f
+cd ..
+
+#clear
+cd utilities
+lines=`find -type f | wc -l`
+
+green "Checking the Syntax of $lines programs"
+
+
+
+
+
+
+#cd utilities
+for i in *; do
+crystal build --no-codegen $i -o $i.program || exit 1
+done
+
+#echo "Syntax OK"
+
+green "Syntax OK"
+for i in *; do
+#echo "\e[32mCompiling $i... \e[0m"
+
+green "Compiling $i with 30 threads  ..."
+
+
+
+viu $(find /usr/share/wallpapers/ -type f | grep -E 'jpg|png' | shuf | head -n 1) -w 80 -h 12 2>/dev/null &
+
+
+#ruby -e "Compiling $i... "
+crystal build --release $i --threads 30 -o $i.program || exit 1
+rm $i
+mv $i.program $i
+strip $i
+done
+
+#
+#
+#for i in *; do
+#echo Compiling 
+
+echo -e "\e[32m`toilet ALL DONE FOR COREUTILS --width=90`\e[0m"

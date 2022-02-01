@@ -1,0 +1,45 @@
+super_trans is an offline translation program
+
+It uses "Apertium", which can do offline translation.
+
+You can do translation anywhere with it.
+
+
+It generates a webpage from the input text that not only has all language translations embedded in it, it dynamically adjusts the website page content to the web browser's "current language".
+
+
+
+
+
+
+
+
+
+
+
+You need to have a folder called "translation_folder" in your home folder for it to work.
+
+
+You can use the resultant HTML on your website, and if the user is Spanish, French, German, etc., then that HTML element would automatically be different.
+
+This is really powerful.
+
+Some notes
+
+
+This is worse than t.js in this software project
+
+
+
+
+The resultant HTML is really big. It is too big.
+
+"Automatic translation" is really powerful.
+
+This translates into literally dozens of languages.
+
+
+
+See also
+
+t.js

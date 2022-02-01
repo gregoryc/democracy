@@ -1,0 +1,39 @@
+A simple and practical tool to email people using Himalaya
+
+
+Himalaya needs to be installed first
+
+
+
+
+
+
+
+
+
+You would need to configure the script by changing its source code.
+
+
+Modes
+
+
+email [no arguments]
+
+
+Email [yourself]
+
+
+
+
+email [addr]
+
+
+Email one email address
+
+email [Subject]  [addr] [option more addrs]
+
+
+Example
+
+
+Email 'Gregory, I love your software!'   gregorycohen2@gmail.com    my_friend@outlook.com      person@example.com

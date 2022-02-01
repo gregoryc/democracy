@@ -1,0 +1,64 @@
+#!/usr/bin/env   node
+function output(te) {
+  console.log(te);
+}
+
+const translate = require("extended-google-translate-api");
+
+argv = process.argv.slice(2);
+
+exit = process.exit;
+
+function cmd(arg) {
+  return argv.join("").match(arg);
+}
+
+if (cmd(/^(-h|--help)/)) {
+  output("Translate help\n");
+  exit(0);
+}
+
+if (cmd(/^(-l|--langs)/)) {
+  output(translate.languages);
+  exit(0);
+}
+
+async function translate_sentence(sentence) {
+//	console.log(process.argv
+ var langs = Object.keys(translate.languages);
+  var results = {};
+  //console.log(sentence)
+  for (var l of langs) {
+    if (l == "auto" || l == "getCode" || l == "isSupported" || (argv[1]  && l != argv[1])      ) continue;
+    async function a() {
+      var res = "";
+      for (const s of sentence.split(/\s*(\.|\n)(\s*|$)/)) {
+  //    	console.log("F");
+        if (s.trim() == "") continue;
+        const b = s + ". ";
+        //process.stderr.write(b);
+        const r = ((await translate(b, "en", l)).translation || "") + " ";
+        res += r;
+        process.stderr.write(r);
+//        if (argv[1] !== undefined) break;
+      }
+      return res;
+//      return res.trim(;
+    }
+    const res = await a();
+    results[l] = res;
+    if (argv[1]) break;
+  }
+ // process.stderr.write("]\n");
+  output(results);
+}
+
+function main_() {
+  ts(argv[0]);
+}
+
+function ts(s) {
+  translate_sentence(s);
+}
+
+main_();

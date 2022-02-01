@@ -1,0 +1,138 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# class String
+def speak(a)
+  system "cd; cd democracy;      ./google_speak #{a.dump} &"
+
+  a
+end
+
+
+
+require 'gtk3'
+# incl
+class Button < Gtk::Button
+	def self.generate_and_speak
+		a = File.read("quotes").split(/\n+/).sample;; speak a;     
+
+
+		a
+	end
+
+
+
+	
+def generate_and_speak
+	self.class.generate_and_speak
+end
+
+
+  def initialize(text)
+    super label: text.to_s, use_underline: true
+    signal_connect 'button-press-event' do |f|
+      #puts f.dir
+      Foo.window.title = generate_and_speak
+      f.label = Foo.window.title
+      callback
+    end
+  end
+
+  def callback *args
+  	args.each do |argument|
+  		system "#{argument} &"
+  	end
+  end
+#  d
+end
+
+# clas
+
+$klasses = [class CryptoButton < Button
+  def initialize
+    super 'Open Stock Program'
+  end
+
+  def callback
+  	super "crypto"
+  end
+
+  def generate_and_speak
+    text = 'Opening Crypto...'
+    speak text
+  end
+
+  new
+end,
+
+# clas
+
+class Chrome < Button
+  def initialize
+    super 'Open Chrome'
+    #    super 'Open Chrome'
+  end
+
+  def callback
+  	super "google-chrome"
+  end
+
+  def generate_and_speak
+    text = 'Opening Chrome...'
+    speak text
+  end; new
+end,   class Indeed < Button
+  def initialize
+    super 'Send Resumes  '
+    #    super 'Open Chrome'
+  end
+
+  def callback
+  	super Dir.home+"/query"
+  end
+
+  def generate_and_speak
+    text = 'Opening Indeed...'
+    speak text
+  end; new
+end
+
+
+]
+
+
+class Wid < Gtk::Box
+  def initialize(text)
+    super :vertical
+    add Button.new text
+        $klasses.each do |klass|
+        	puts $klasses.inspect
+#    	add klass.n
+    	add klass
+    end
+
+  end
+end
+
+class Foo < Gtk::Window
+  def initialize
+    Foo.window = self
+    super
+    set_size_request(*([800] * 2))
+    add Wid.new(Button.generate_and_speak)
+    show_all
+    Gtk.main
+  end
+
+  class << self
+    attr_reader :window
+  end
+
+  class << self
+    attr_writer :window
+  end
+
+  #	self.window = Foo.new(Foo.generate_and_speak)
+end
+
+Foo.new

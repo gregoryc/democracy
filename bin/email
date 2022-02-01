@@ -1,0 +1,146 @@
+#!/usr/bin/env ruby
+
+class IO
+	def decorate *args
+		print *args
+#		print *args
+	end
+end
+
+new_puts=true
+ARGV.each do |arg|
+	case arg
+		when /v/
+#			redf
+			new_puts = false
+#		end
+	end
+end
+
+if new_puts
+
+	class IO
+		def decorate *args
+		end
+	end
+end
+			
+GREGORYS_USERNAME = "a"
+if File.basename(Dir.home) == GREGORYS_USERNAME
+#if Dir.basename   (Dir.home) == "a"
+	PERSON = "Gregory"
+	EMAIL = "gregorycohen2@gmail.com"; else abort "Needs configuring in #{__FILE__} on line #{__LINE__}"
+end
+
+def main
+if `which himalaya`.empty?
+	abort "No himalaya
+	Install from here
+	https://github.com/soywod/himalaya"
+end
+
+args = case ARGV.length
+       when 0
+         ['From ' + PERSON] + ARGV + ["#{EMAIL}"]
+       when 1
+         #	subject = "From Gregory"
+         ["From #{PERSON}"] + ARGV
+       else
+         ARGV
+       end
+
+subject = args[0]
+
+from = PERSON + "<" + EMAIL + ">"
+begin
+content = $stdin.read
+rescue Object
+	print "  "
+	exit 1
+end
+# args = ARGV[1..]
+# args = ARGV[1..]
+
+
+colors = [:green] * 2
+args[1..].each do |arg|
+	a = fork do
+	time = 0.1
+	
+	IO.popen(colors[0].to_s, "w") do |file|
+	  	file.decorate  "Sending"
+	  	while true
+	  		file.decorate "."
+	  		sleep time
+
+			if time > 0.02
+		  		time = time * 0.975
+		  	end
+	  	end
+	end
+	end
+  # STDERR.puts "Sending to #{arg}"
+
+#begin
+  IO.popen("himalaya send 2>&1   | grep -viE '(^\s*$)|cannot|could not|folder|missing|caused by'", 'w') do |h|
+    h.puts <<~EOF
+      To: <#{arg}>
+      From: #{from}
+      Subject: #{subject}
+
+      #{content}
+
+
+      --
+      Regards,
+      Gregory Cohen
+    EOF
+  end
+
+  #puts a
+	Process.kill "HUP", a
+  IO.popen(colors[1].to_s, "w") do |file|
+  	#system "tput reset"
+  	def empty file
+  		80.times do
+  			file.decorate "*"
+  		end
+  		5.times do
+#  		if $
+  	file.decorate "*" + " " * 78 + "*"
+  	end
+ 	 	80.times do
+  	  			file.decorate "*"
+  	  		end
+  	end
+
+  	empty file
+	
+  	file.decorate"*" * 80
+	#w = 
+	w = " #{arg} DONE!!!!!!!!!!! :) "
+	n = ((80 - w.length) / 2.0)
+	q = "*" * n
+	t = "\r#{q}#{w}#{q + (n.to_i == n ? "" :"*")}\n"
+	file.decorate t
+  	file.decorate "*" * 80
+#  	file.puts "*"
+  	  	empty file
+
+  	#puts "*
+#  	file.puts z"\rSent to #{arg}" + " " * 76
+  end
+ # rescue Object => e
+  #	puts "Bye"
+ # end
+end
+end
+
+
+begin
+main
+#system "ls"
+rescue Object => e
+	STDOUT.puts e
+	#system "ls"
+end

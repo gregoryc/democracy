@@ -1,0 +1,3 @@
+
+
+lyrics -a "$1" -s         "$2"                      |       squeeze 0 0        |         tr "\n" "\n"      |                        $3                                

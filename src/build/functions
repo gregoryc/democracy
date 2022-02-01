@@ -1,0 +1,1038 @@
+# ruby -e 'require "colored"; puts "".colors' | t '([i, i + "_bold", i + "_underline", i + "_bold_underline"].each do |i|   warn "# It is really handy to have utilities like these.\ndef " + i + "()\n\ttty = STDOUT.tty?\n\n\tSTDIN.each_char do |character|\n\t\tif character.whitespace?\n\t\t\tprint character\n\t\telse\n\t\t\tif tty\n\t\t\t\tprint character.colorize(:#{t})#{(i.split("_").length >= 2) ? ("" +            i.gsub(q, "").gsub("_", ".")):";else;print character\n             end\n\n; if 1\n "            }\n\t\t\telse\n\t\t\t#{case i; when /bold|underline/; tags = ""; if i.match /bold/; tags += "<b>"; end; if i.match /underline/; tags += "<u>";end;"\tprint \"#{tags}\#{character}#{tags.gsub("<", "</")                                                     }\""; end}\n\t\t\tend\n\t\tend\n\tend\n\n\texit_with 0\nend" + "\n" * 2; end  )' > /dev/null                            2>function ; cat function
+
+
+# ruby -e 'require "colored"; puts "".colors' | t '([i, i + "_bold", i + "_underline", i + "_bold_underline"].each do |i|   warn "# It is really handy to have utilities like these.\ndef " + i + "()\n\ttty = STDIN.tty?\n\n\tSTDIN.each_char do |character|\n\t\tif character.whitespace?\n\t\t\tprint character\n\t\telse\n\t\t\tif tty\n\t\t\t\tprint character.colorize(:#{t})#{(i.split("_").length >= 2) ? ("" +            i.gsub(q, "").gsub("_", ".")) : ""            }\n\t\t\telse\n\t\t\t#{case i; when /bold|underline/; tags = ""; if i.match /bold/; tags += "<b>"; end; if i.match /underline/; tags += "<u>";end;"\tprint \"#{tags}\#{character}#{tags.gsub("<", "</")                                                     }\""; end}\n\t\t\tend\n\t\tend\n\tend\n\n\texit_with 0\nend" + "\n" * 2; end  )' > /dev/null                            2>>function ; cat function
+# For colors ruby -e 'require "colored"; puts "".colors' | t '([i, i + "_bold", i + "_underline", i + "_bold_underline"].each do |i|   warn "# It is really handy to have utilities like these.\ndef " + i + "()\n\ttty = STDIN.tty?\n\n\n\tSTDIN.each_char do |character|\n\t\tif character.whitespace?\n\t\t\tprint character\n\t\telse\n\t\t\tif tty\n\t\t\t\tprint character.colorize(:#{t})#{(i.split("_").length >= 2) ? ("" +            i.gsub(q, "").gsub("_", ".")) : ""            }\n\t\t\telse\n\t\t\t#{case i; when /bold|underline/; tags = ""; if i.match /bold/; tags += "<b>"; end; if i.match /underline/; tags += "<u>";end;"\tprint \"#{tags}\#{character}#{tags.gsub("<", "</")                                                     }\""; end}\n\t\t\tend\n\t\tend\n\tend\nend" + "\n" * 2; end  )' > /dev/null                            2>>functions 
+
+
+
+
+
+lib C
+	# There were problems with this function, so don't use it
+  fun printf(format : UInt8*, ...) : Int32
+  #fun fcloseall() : Int32
+  #fun fflush(format: 
+end
+
+# Indentation matters
+    def exit_with(status)
+
+
+
+
+    #C.fcloseall()
+	Process.exit status
+    end
+
+
+require "file_utils"
+require "json"
+
+
+include FileUtils
+#include FileU
+#include FileUtils
+#begin
+require "colorize"
+#rescue
+#end
+#rescue SyntaxError
+#end
+
+def lines()
+	if STDIN.tty? == false
+		puts STDIN.gets_to_end.count("\n")
+	else
+	system "(find . | wc -l; echo 1) | sub"; end
+	#	system "(find . -type f | wc -l; echo -) | wc -l) | sub "; end
+
+		exit_with 0
+end
+
+
+# files
+def files(arg1)
+#	return arg1 + arg
+
+	system "find #{arg1} "
+	exit_with 0
+end
+
+
+def args(arg1)
+	sections = Process.parse_arguments(arg1)
+	program, args = sections[0], sections[1..]
+
+	sections = Process.parse_arguments(arg1)
+	
+
+	program = Process.find_executable(program)
+	if program.nil?
+		puts "Can't find program #{arg1}"
+		raise "Error"
+	end
+
+	lines = STDIN.gets_to_end.strip
+	lines = lines.split "\n";
+
+	times = (lines.size % 2000000 == 0) ? 2 : 1
+
+	times += lines.size // 2000000
+	n = 0
+	times.times do
+		prog_args = args
+
+		prog_args += lines[n..(n + 2000000 - 1)]    ; n +=   2000000
+
+		#p program, prog_args
+
+
+		if (p = Process.fork()).nil?
+			Process.exec(
+			program,
+			prog_args
+			)
+#			Process.exec(program, prog_args)
+		else
+			p.wait
+		end
+		
+	end
+
+	
+exit_with 0
+end
+
+
+# copy
+def copy(arg1)
+	STDIN.each_line do |line|
+		cp line.chomp, arg1
+	end
+exit_with 0
+end
+
+
+def cpy()
+	command = "/usr/bin/xclip"
+	args = ["-selection", "c"]
+	Process.run(command, args, output: STDOUT) do |file|
+#	Process.run(", output: STDOUT) do    |file|
+		file.input.print  STDIN.gets_to_end
+	end
+	exit_with 0
+end
+
+def mul()
+	t = STDIN.read_line.to_i64
+	
+	i = 0i64; STDIN.each_line do |line|
+		t *= line.to_i64
+	end
+
+	puts t
+
+	
+	exit_with 0
+end
+
+def add()
+	t = STDIN.read_line.to_i64
+	
+	i = 0i64; STDIN.each_line do |line|
+		t += line.to_i64
+	end
+
+	puts t
+
+	
+	exit_with 0
+end
+
+def div()
+	t = STDIN.read_line.to_i64
+	
+	i = 0i64; STDIN.each_line do |line|
+		t //= line.to_i64
+	end
+
+	puts t
+
+	
+	exit_with 0
+end
+
+
+
+def sub()
+	t = STDIN.read_line.to_i64
+	
+	i = 0i64; STDIN.each_line do |line|
+		t -= line.to_i64
+	end
+
+	puts t
+
+	
+	exit_with 0
+end
+
+
+def floor()
+	t = STDIN.read_line.to_i64
+
+	puts t
+
+	
+	exit_with 0
+end
+
+def abs()
+	STDIN.each_line do |l|
+		l = l.to_i64.abs
+		puts l; end; exit_with 0; end
+
+
+
+
+
+
+
+def dump()
+	puts  STDIN.gets_to_end.dump
+	exit_with 0
+end
+
+#require "json"
+def undump()
+	print JSON.parse(STDIN.gets_to_end)
+
+	exit_with 0
+end
+
+def exp()
+	t = STDIN.read_line.to_i64
+	
+	i = 0i64; STDIN.each_line do |line|
+		t **= line.to_i64
+	end
+
+	puts t; exit_with 0
+end
+
+
+def nth(arg1)
+	end_ = arg1.to_i64
+	i = 0i64; STDIN.each_line do |line|
+		i += 1
+		if i == end_
+			puts line
+			break
+		end
+	end
+	exit_with 0
+end
+def last_nth(arg1)
+	end_ = arg1.to_i64
+	i = 0i64; STDIN.gets_to_end.reverse.each_line do |line|
+		i += 1
+		if i == end_
+			puts line
+			break
+		end
+	end;
+	exit_with 0
+end
+
+def t_()
+	File.tempname("coreutils","_tmp")
+end
+
+def gsub_in_place(arg1, arg2, arg3)
+	regex = Regex.new(arg1)
+	text = ""
+	#	puts line.gsub(regex, arg3).to_s
+	#end
+
+	File.open(arg3, "r").each_line do |line|;text+=line.gsub(regex, arg2).to_s; text += "\n";
+ end
+	File.open(t = t_, "w", File.info(arg3).permissions) do |h|
+		h.print text
+	end
+	begin
+		mv t, arg3
+	rescue
+		rm t
+	end
+	exit_with 0
+end
+
+
+def replace_in_place(arg1, arg2, arg3)
+	#regex = Regex.new(arg1)
+	text = ""
+	File.open(arg3, "r").each_line do |line|;text+=line.gsub(arg1, arg2).to_s; text += "\n" end
+	File.open(t = t_, "w", File.info(arg3).permissions) do |h|
+		h.print text
+	end
+
+	begin
+		mv t, arg3
+	rescue
+		rm t
+	end
+	exit_with 0
+
+end
+
+
+
+
+
+#end
+
+def sort_in_place(arg1)
+text = File.read(arg1).split("\n").sort.join
+	File.open(t = t_, "w", File.info(arg1).permissions) do |h|
+		h.print text
+	end
+	begin
+		mv t, arg1
+	rescue
+		rm t
+	end
+	exit_with 0
+end
+
+
+def count(arg1)
+	i = 0
+	max = arg1.to_i
+	while i < max
+		puts(i)
+		i += 1
+	end;
+	#STDOUT.close
+
+	exit_with 0
+end
+
+def gsub(arg1, arg2)
+regex = Regex.new(arg1)
+STDIN.each_line do |line|
+	puts( line.gsub(regex, arg2).to_s); end
+
+	exit_with 0; end
+	#; exit)w 0; end
+
+
+def replace_not_in_place(arg1, arg2)
+STDIN.each_line do |line|
+	puts(line.gsub(arg1, arg2).to_s)
+	#end
+end
+	exit_with 0
+	end
+# 0
+#end
+
+
+
+
+def selectlines()
+	STDIN.each_line do |line|
+if line.strip.size > 0
+	puts line
+end
+end
+end
+
+
+def bold_(arg, two="")
+	text = arg.to_s
+	text += two.to_s
+
+
+	if STDOUT.tty?
+		return text.colorize.bold.to_s
+	else
+		return "<b>" + text + "</b>"
+	end
+end
+
+
+def argument_data_(program)
+	if STDOUT.tty? == false
+	text="<!-- Generated by the functions file --><div style='border-radius: 50px; border: 10px dotted blue'>\n"
+	else
+		text = ""
+	end
+
+	
+	array = {
+		"args" => ["like xargs", "[program] [program arguments as one argument]", "better xargs, works flawlessly with spaces in name"]
+	}
+	short_desc, usage, long_desc = array[program]
+
+	text += bold_("NAME") + "\n\t" + program
+	text += " - "
+	text += short_desc + "\n" * 2 + bold_("SYNOPSIS") + "\n"
+#	tebold_("SYNOPSIS_")# + bold("SYNOPSIS")
+	text +=  "\t"
+	text += bold_(program) + " "
+	text +=  array[program][1] + "\n\n"
+	text +=  array[program][2] + "\n\n"
+	
+	if STDOUT.tty? == false
+		text = text.gsub("\n", "<br/>     ").gsub("\t", "&nbsp;" * 5)
+		text += "</div>\n\n"
+	end
+
+	puts text
+	
+#		puts "</
+#		puts "</
+end
+
+
+# It is really handy to have utilities like these.
+def black()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:black);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def black_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:black).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def black_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:black).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def black_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:black).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def blue()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:blue);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def blue_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:blue).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def blue_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:blue).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def blue_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:blue).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def cyan()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:cyan);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def cyan_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:cyan).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def cyan_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:cyan).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def cyan_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:cyan).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def green()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:green);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def green_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:green).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def green_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:green).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def green_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:green).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def magenta()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:magenta);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def magenta_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:magenta).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def magenta_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:magenta).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def magenta_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:magenta).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def red()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:red);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def red_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:red).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def red_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:red).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def red_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:red).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def white()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:white);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def white_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:white).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def white_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:white).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def white_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:white).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def yellow()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:yellow);else;print character
+             end
+
+; if 1
+ 
+			else
+			
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def yellow_bold()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:yellow).bold
+			else
+				print "<b>#{character}</b>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def yellow_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:yellow).underline
+			else
+				print "<u>#{character}</u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+
+# It is really handy to have utilities like these.
+def yellow_bold_underline()
+	tty = STDOUT.tty?
+
+	STDIN.each_char do |character|
+		if character.whitespace?
+			print character
+		else
+			if tty
+				print character.colorize(:yellow).bold.underline
+			else
+				print "<b><u>#{character}</b></u>"
+			end
+		end
+	end
+
+	exit_with 0
+end
+

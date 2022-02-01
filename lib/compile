@@ -1,0 +1,5 @@
+#!/bin/bash
+
+ls
+
+opal -I . p.rb -c  > temp_js.js; echo 'import * as std from "std"'|prepend temp_js.js; qjsc temp_js.js -o elf

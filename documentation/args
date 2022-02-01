@@ -1,0 +1,11 @@
+args is like a better xargs
+
+Args works properly with spaces in the name of commands
+
+
+
+It takes exactly one argument
+
+Example
+
+ls | args "mv -t  f"
