@@ -1,0 +1,99 @@
+#!/usr/bin/env ruby
+def main
+require "puppeteer-ruby"
+#Warning[:deprecated] = false
+def site; ARGV[0].strip; end
+
+def site
+"https://www.kijiji.ca/b-for-rent/ottawa/c30349001l1700185?price=320__780&sort=priceDesc"
+end
+
+
+def e
+	return   "list"
+	ARGV[1].strip
+end
+
+#def site;
+
+#	ARG
+Warning[:deprecated ]   = false
+require "shellwords"
+require "fileutils"
+
+require "colored"
+<<EOF
+
+
+puts "ho
+
+
+
+
+EOF
+#"
+
+
+Puppeteer.launch(headless:1         ) do |browser|
+	page = browser.pages[0]
+page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
+    page.goto(site, wait_until: 'domcontentloaded')
+#    sle
+#	sleep 2 ** 32
+	#sleep 10 ** 99
+#    page.wait_for_selector "body"
+	#browser.pages[0].goto process.argv[2];
+	str = (
+" () => {
+	var list = [];
+	for (var a of $$('a')) {
+		list.push(a.href);
+//		list.push(a.hre);
+	}
+	function $() { return document.querySelector(arguments[0]); }
+	function $$() { return document.querySelectorAll(arguments[0]); }
+
+	var ret = #{  e  };
+
+	if (ret.innerHTML) {
+		ret = ret.innerHTML;
+	}; return list; }")
+x = 0
+next_list = []
+a = page.evaluate(str)
+i = 0
+a.each do |i|
+	if i.match(/page-[0-9]+/)
+#		puts i.red
+#		abort 2
+		next_list.push(i)
+		next
+	end
+	#if i.match(/page-[0-9]/) return
+
+	if i.split("/")[3] =~ /rent/
+		x += 1; STDERR.print "#{x}. "
+#			x += 1; STDERR.print 
+#h		STDERR.print "#{x}. " #x.tO + ". "
+
+puts i
+#		puts i.red
+	end
+end
+#}")
+
+##} ;")
+#	a = page.e
+
+#	links = page.eval
+
+	links=page.evaluate(str)
+
+	STDERR.print next_list
+	dsa
+
+#	STDERR.print next_list
+
+	#puts str
+
+	puts links;end; end; main
