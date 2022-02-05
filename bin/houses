@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+
+
 if ARGV.length != 2
 #	puts "Usage min max"
 #	abort 1
