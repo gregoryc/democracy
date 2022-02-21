@@ -1,61 +1,4 @@
-a@a:~/democracy/bin$ doc
-Enter description of the practical utility of   `files'
-files tool
 
-
-"Files" is a simple command line computer program that lists all files in the current working directory.
-
-
-It is kind of like a program called "find", but it is specifically geared towards files.
-
-
-TODO 
-
-It only works on Linux and UNIX (macOS) right now.
-
-It works on Windows with Windows Subsystem for Linux as well.
-
-
-
-"Files" is a simple command line computer program that lists all files in the current working directory.
-
-
-It is kind of like a program called "find", but it is specifically geared towards files.
-
-
-TODO
-
-It only works on Linux and UNIX (macOS) right now.
-
-It works on Windows with Windows Subsystem for Linux as well.
-
-
-Is this good?
-n
-Enter description of the practical utility of   `files'
-files tool
-"Files" is a simple command line computer program that lists all files in the current working directory. 
-
-It takes exactly one argument, the directory from which to list files.
-
-TODO
-
-It only works on UNIX like system right now. (Linux + Mac + Windows with Windows Subsystem for Linux)
-
-"Files" is a simple command line computer program that lists all files in the current working directory.
-
-It takes exactly one argument, the directory from which to list files.
-
-TODO
-
-It only works on UNIX like system right now. (Linux + Mac + Windows with Windows Subsystem for Linux)
-
-
-                                                                                                                                                                                                                                                                                  Is this good?
-                                                                                                                                                                                                                                                                                  y
-On to the 2th one
-Enter description of the practical utility of   `close'
-close tool
 
 
 "Close" is a simple program that closes "Emerald Browser", a new web browser based on the same engine as Chrome. Currently, Emerald Browser only works on Linux and Mac (Or Windows with Windows Subsystem for Linux or a Virtual Machine, but getting it to work might be tricky).
@@ -201,7 +144,3 @@ It only works on UNIX like system right now. (Linux + Mac + Windows with Windows
 
 This will be fixed in the future.
 
-
-Is this good?
-y
-On to the 1th one
