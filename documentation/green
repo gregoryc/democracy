@@ -1,9 +1,0 @@
-Makes text green
-
-This is useful for scripts (for computer savvy users)
-
-For example
-
-echo Enter command | green
-
-echo All steps completed | green
