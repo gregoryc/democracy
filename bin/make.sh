@@ -2,6 +2,8 @@
 # frozen_string_literal: true
 bg = "#EEEEEE"
 
+num=`cd $HOME/democracy/bin/; lines`
+
 
 def p a
 end
@@ -81,19 +83,14 @@ a = "<html><body style='padding:10;margin:0;width:100%;font-family:Monospace; fo
 <pre>
 This lists all of the programs.
 
-There is also
-
-* t.js, which uses google translate
-* my old semantic metadata project, which is a valid idea
-* And very relevantly, the discourse generator
+There is also my old semantic metadata project, which is a valid idea, and very relevantly, the discourse generator
 
 (which is a work in progress at ethicify.online and is somewhat bugged right now)
 
 
 There is also a desktop widget for that site, and old random sentence generator (useless) and an old compiler for my own programming language.
 
-
-Those aside, there are these <span style=color:lightblue>85 programs</span>
+Those aside, there are these <span style=color:lightblue>#{$num}   programs</span>
 
 
 Most important are <b>c_program.exe</b> (<b>do_work</b> is an alternate name) and
@@ -106,7 +103,8 @@ and the <b>work-in-progress discourse generator</b>, but that's stored in a sepa
 
 <p>My email is gregorycohen2@gmail.com and I really would like to make open source software. Everything I have is BSD licensed.</p>
 
-<p><p>If this software gets you a job or makes you money or improves your life or makes things easier for you, please consider donating. I have released this software under the BSD license (a very liberal license) for everyone to use and modify. I would appreciate it greatly if some people could return the favor  :)</p></p>
+<b><i>
+If this software gets you a job or makes you money or improves your life or makes things easier for you, please consider donating. I have released this software under the BSD license (a very liberal license) for everyone to use and modify. I would appreciate it greatly if some people could return the favor :)</i></b>
 
 <div>
 <ul>
@@ -116,7 +114,7 @@ and the <b>work-in-progress discourse generator</b>, but that's stored in a sepa
 </div>
 
 
-<h1>Without further ado, here are the 85 documented programs</h1>
+<h1>Without further ado, here are the #{$num} documented programs.</h1>
 
 
 #{a}</body></html>"
@@ -125,3 +123,6 @@ d.print a
 end
 
 # `mv a.html ../DOCUMENTATION.html
+
+
+system "google-chrome index.html"
