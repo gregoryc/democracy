@@ -52,7 +52,9 @@ p `convert -size 800x120  xc:white -font Ubuntu   \
 +repage #{f}`
 # p e
 i = i.undump
+<<EOF
 puts i.send color
+EOF
 #orig = "echo #{i}" if /Open|Ac|Email|(exe$)/.match?(i)
 
 image_data = f.generate_image_data
