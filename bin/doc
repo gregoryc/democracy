@@ -59,7 +59,7 @@ while true
 
 	def g
 	$n += 1
-	if get_line.match /y|Y/; speak "On to the #{$n}th one"
+	if get_line.match /y|Y/; #speak "On to the #{$n}th one"
 			#speak "yes"
 			File.open($pdf, "a") do |f|
 				puts pwd

@@ -1,0 +1,23 @@
+Translate is like super_trans, but it uses google translate
+
+By default, it translates an argument into all languages
+
+Example
+
+
+translate 'I would like to donate.' 
+
+
+        
+
+You can also specify specific languages
+
+
+For example
+
+
+translate 'I would like to donate.' fr
+
+translate 'I would like to donate.' es
+
+
