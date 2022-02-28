@@ -7,7 +7,6 @@ def p a
 end
 
 
-# `which convert || echo Ne
 
 class String
 def generate_encoding_data(encoding)
@@ -21,7 +20,7 @@ generate_encoding_data 'image/png'
 end
 end
 
-system 'which convert || echo Need convert'
+system 'which convert >/dev/null || echo Need convert'
 eval(%w[Dir.chdir Dir.glob File.write].map do |i|
 <<~EOF
 def #{i.split('.').pop}(*args)
@@ -73,6 +72,12 @@ a += "<hr style='border: 0px; padding: 0px; display:   block; width: 100%;backgr
 end
 
 a = "<html><body style='padding:10;margin:0;width:100%;font-family:Monospace; font-size: 90%;'>
+<h1 style='font-size: 50px; font-family:Sans;text-align:center;text-shadow: 3px 3px 3px gold'>Practical self-empowerment utilities covering every facet of life</h1>
+<h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px gold'>These tools are for everyone</h2>
+<h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px gold'>It doesn't matter what political ideology you favor, these tools are all still very valuable. You can live in Canada, the US, Russia, China or Africa, it doesn't matter.  </h2>
+<h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px gold'>I intend to make people more able.</h2>
+<hr>
+
 <pre>
 This lists all of the programs.
 
