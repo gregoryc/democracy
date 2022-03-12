@@ -1,0 +1,152 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# This might be the most valuable computer program ever made
+def bg a
+	puts a.bg
+end
+
+class String
+	def bg
+		black_on_white
+	end
+end
+
+
+def puts *a
+	if a.length == 0
+		puts (" " * 80).bg
+		return
+	end
+
+
+	Kernel.puts *a
+	(0).times do
+		print " ".bg
+#		puts " ".black_on_white
+	end
+end
+
+
+def main
+	cl = File.expand_path('~/COMMUNICATION_LINES')
+
+	
+  def clear
+    system 'tput reset'
+    puts
+    a = "(Press Ctrl + C to quit, Ctrl + D to send email)"
+    while a.length < 80
+    	a = "~#{a}~"[0..79]
+    end
+    puts a.bold.bg
+#     a.bold.underline.green_on_white
+    puts
+  end
+
+  def get_line
+    require 'readline'
+    while true
+      begin
+        a = Readline.readline.to_s.strip # res
+      rescue StandardError
+      end
+      break unless a.empty?
+    end
+
+    a
+  end
+
+  def get_name
+    a = get_line
+    a[0].capitalize + a[1..-1]
+  end
+
+  require 'shellwords'
+  begin
+    require 'colored'
+  rescue Object
+    system 'gem install colored || sudo gem install colored'
+    main
+  end
+
+  begin
+    file = File.read(cl).split("\n")
+  rescue Object
+    file = open(cl, 'w')
+    begin
+      require 'readline'
+      print 'What is your name> '.red
+      name = get_name
+
+      file.puts name
+      clear
+      puts "#{name}, please enter all communication lines you have in your life (work, school, friends, etc.)"
+      puts "Enter `done' when done".red
+      puts "\n" * 3
+      #      puts "Enter done when done\n
+      i = 0
+      while true
+        i += 1
+        print "Enter name ##{i}> ".blue
+        name = get_name
+        break if name.casecmp('done').zero?
+
+        print "Enter #{name}'s email> ".blue
+        email = get_line
+        break if email.casecmp('done').zero?
+
+        file.puts "#{name} #{email}"
+      end
+    rescue Interrupt
+      nil
+    end
+
+    file.close
+    file = File.read(cl).split("\n")
+    #	input = STDIN.read
+  end
+
+  if file.length < 2
+    File.unlink cl
+    clear
+    puts 'Invalid file'
+    exit! 0
+  end
+  your_name = file[0]&.strip
+
+  rest = file[1..-1].map(&:split)
+  clear
+
+  print 'If stressed out, then sleep'.bold.black_on_white; bg " " * 53
+  puts
+  rest = rest.shuffle
+
+
+  rest.each_with_index do |i, index|
+  	index += 1
+    name, email = i
+    sub = "Hi #{name}"
+    cmd = "email #{sub.shellescape} #{email.shellescape}"
+#    print index.to_s.bg; print ". ".bg
+#    bg index.to
+ #   bg ". "
+ a = "#{your_name}, please enter topics for #{name} that you don't have a perfect philosophical grounding in"
+	print a.bg
+    #puts a.length, a.length % 80
+    bg " " * (80 - (a.length % 80))
+    bg ">" + " " * 79
+    puts
+    print "\n"
+    	message = "Hi #{name},\n\n#{$stdin.read.strip}\n\nBest regards,\n#{your_name}"
+    	puts "Sending to #{name}\n" + "#{("\n" + message).underline}".gsub("\n", "\n> ").bg
+#    	puts "Sending to #{name}" + message.red
+    IO.popen cmd do |f|
+      f.print message
+    end
+    puts "Emailed #{email}"
+
+  rescue Interrupt
+    puts
+  end
+end; main
