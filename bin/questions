@@ -120,7 +120,7 @@ def main
 
   print 'If stressed out, then sleep'.bold.black_on_white; bg " " * 53
   puts
-  rest = rest.shuffle
+  #rest = rest.shuffle
 
 
   rest.each_with_index do |i, index|
@@ -138,10 +138,10 @@ def main
     bg ">" + " " * 79
     puts
     print "\n"
-    	message = "Hi #{name},\n\n#{$stdin.read.strip}\n\nBest regards,\n#{your_name}"
+    	message = "Hi #{name},\n\n#{$stdin.read.strip}\n\nBest regards,\n#{your_name}\n(Asked via program 'questions' on actualdemocracy.net)"
     	puts "Sending to #{name}\n" + "#{("\n" + message).underline}".gsub("\n", "\n> ").bg
 #    	puts "Sending to #{name}" + message.red
-    IO.popen cmd do |f|
+    IO.popen cmd, "w" do |f|
       f.print message
     end
     puts "Emailed #{email}"

@@ -73,7 +73,13 @@ a += "<hr style='border: 0px; padding: 0px; display:   block; width: 100%;backgr
 </p>"
 end
 
-a = "<html><body style='padding:10;margin:0;width:100%;font-family:Monospace; font-size: 90%; background-color: #{bg}'>
+a = "<html>
+<head>
+<title>Tools</title>
+</head>
+
+
+<body style='padding:10;margin:0;width:100%;font-family:Monospace; font-size: 90%; background-color: #{bg}'>
 <h1 style='font-size: 50px; font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>Practical self-empowerment utilities covering every facet of life</h1>
 <h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>These tools are for everyone</h2>
 <h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>It doesn't matter what political ideology you favor, these tools are all still very valuable. You can live in Canada, the US, Russia, China or Africa, it doesn't matter.  </h2>
