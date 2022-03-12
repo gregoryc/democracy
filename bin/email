@@ -82,6 +82,7 @@ args[1..].each do |arg|
   # STDERR.puts "Sending to #{arg}"
 
 #begin
+while true
   IO.popen("himalaya send 2>&1   | grep -viE '(^\s*$)|cannot|could not|folder|missing|caused by'", 'w') do |h|
     h.puts <<~EOF
       To: <#{arg}>
@@ -91,6 +92,11 @@ args[1..].each do |arg|
       #{content.strip}
     EOF
   end
+  if $?.exitstatus == 0
+  	break
+  end
+  end
+  	
 
   #puts a
 	Process.kill "HUP", a
