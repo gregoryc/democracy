@@ -67,11 +67,14 @@ def main
           h.puts text
         end
         if File.read(file.path).strip == ''
-          exit 0
+          return
         else
+        	begin
+        	Dir.chdir __dir__
           Kernel.warn "Resending email to #{arg.shellescape}"
           require 'shellwords'
           system "notify-send 'Resending email to #{arg.shellescape}'"
+          exec __FILE__; rescue Object; end
         end
       end
     end
@@ -81,9 +84,11 @@ end
 def call
   yield
 end
-
+EXIT_SUCCESS = 0
 func = ENV['BG'] == 'true' ? :fork : :call
-
 send func do
   main
 end
+exit EXIT_SUCCESS
+
+
