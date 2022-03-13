@@ -125,18 +125,17 @@ def main
 
   rest.each_with_index do |i, index|
   	index += 1
-    name, email = i
+    name, email =i[0..-2].join(" "), i[-1]
     sub = "Hi #{name}"
     cmd = "email #{sub.shellescape} #{email.shellescape}"
 #    print index.to_s.bg; print ". ".bg
 #    bg index.to
  #   bg ". "
- a = "#{your_name}, please enter topics for #{name} that you don't have a perfect philosophical grounding in"
-	print a.bg
-    #puts a.length, a.length % 80
-    bg " " * (80 - (a.length % 80))
-    bg ">" + " " * 79
-    puts
+	 print a = ["#{your_name}, please enter topics for ", name.bold, " that you don't have a perfect philosophical grounding in\n"].join
+	print ">\n"
+	    #puts a.length, a.length % 80
+#    bg " " * (80 - (0))
+ #   bg ">" + " " * 79
     print "\n"
     	message = "Hi #{name},\n\n#{$stdin.read.strip}\n\nBest regards,\n#{your_name}\n(Asked via program 'questions' on actualdemocracy.net)"
     	puts "Sending to #{name}\n" + "#{("\n" + message).underline}".gsub("\n", "\n> ").bg
