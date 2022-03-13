@@ -5,17 +5,8 @@ class IO
 		print *args
 #		print *args
 	end
-end
+end; new_puts=true
 
-new_puts=true
-ARGV.each do |arg|
-	case arg
-		when /v/
-#			redf
-			new_puts = false
-#		end
-	end
-end
 
 if new_puts
 
