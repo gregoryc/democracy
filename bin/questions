@@ -137,7 +137,7 @@ def main
 #    bg " " * (80 - (0))
  #   bg ">" + " " * 79
     print "\n"
-    	message = "Hi #{name},\n\n#{$stdin.read.strip}\n\nBest regards,\n#{your_name}\n(Asked via program 'questions' on actualdemocracy.net)"
+    	message = "Hi #{name.split[0]},\n\n#{$stdin.read.strip}\n\nBest regards,\n#{your_name}\n(Asked via program 'questions' on actualdemocracy.net)"
     	puts "Sending to #{name}\n" + "#{("\n" + message).underline}".gsub("\n", "\n> ").bg
 #    	puts "Sending to #{name}" + message.red
     IO.popen cmd, "w" do |f|
