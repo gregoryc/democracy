@@ -68,7 +68,12 @@ var body = document.querySelectorAll("tbody")
 for (var b of body) {
 	b =[... b.childNodes  ];
 	
-for(var i=0; i < b.length;++i) {if(b.at(i).innerText?.match(/strong buy/i)) { list.push(b.at(i).querySelector("a").innerText); } }
+for(var i=0; i < b.length;++i) {
+	var text = b.at(i).innerText || "";
+	var split = text.split("\t");
+	var price = "$" + split?.at(1);
+	var up = split?.at(2);
+	if(text.match(/./i)) { list.push([b.at(i).querySelector("a").innerText,price,up]); } }
 }
 
 //alert(list);
@@ -83,10 +88,29 @@ next_list = []
 a = page.evaluate(str)
 i = 0
 #STDERR.puts "Strong buys for TSX for #{Time.new}".green
+length = a.map do |i|
+	i[0].size
+end.max
+puts length
+
+a = a.sort do |a, b|
+	a[2][0..].to_f <=> b[2][0..].to_f
+end
+
+class String
+	def color_
+#		puts colors
+		send((colors - ["yellow", "white", "cyan"]).sample)
+	end
+end
+
 a.each do |i|
 	if true
 		if STDOUT.tty?
-			puts i.send(i.colors.sample).bold.underline
+			puts ([i[0].color_.underline.bold + (" " * (length - i[0].length)), i[1].color_.underline.bold, i[2]].map do |i|
+				i
+			end).join(" | ")
+#			puts 
 	#		system "echo #{i}"
 		else
 			puts i; end
