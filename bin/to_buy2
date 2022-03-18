@@ -96,11 +96,17 @@ a = a.select do |f|
 #	p
 
 	val = f[2][0..-2].to_f
-	range = 0.1
-	neg_range = -range
-
-	val >= neg_range && val <= range
+	val2 = f[1][1..-1].to_f
+	
+	range = 10.0
+	neg_range = -range; val2 < 0.06 && (val <= neg_range || val >= range)
 end
+
+
+
+puts "Experemental inoffensive stock tech"
+
+
 
 a.sort do |a, b|
 	a[2][0..].to_f <=> b[2][0..].to_f
@@ -111,20 +117,27 @@ class String
 #		puts colors
 		send((colors - ["yellow", "white", "cyan"]).sample)
 	end
+
+	if STDOUT.tty?
+	else
+		def bold
+		self
+		end
+
+		def underline
+		self
+		end
+
+		def color_
+		self
+		end
+	end
 end
 
 a.each do |i|
-	if true
-		if STDOUT.tty?
 			puts ([i[0].color_.underline.bold + (" " * (length - i[0].length)), i[1].color_.underline.bold, i[2]].map do |i|
 				i
 			end).join(" | ")
-#			puts 
-	#		system "echo #{i}"
-		else
-			puts i; end
-#	page.goto(i, wait)
-end
 #puts i
 end
 
