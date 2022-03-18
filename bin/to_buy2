@@ -3,7 +3,6 @@
 require "colored"
 time = Time.now
 
-STDERR.puts "Strong buys for TSX for #{time.strftime("%A")}, #{time.strftime("%B %d (%Y)").bold}".send "".colors.sample #"
 
 
 if ARGV.length != 2
@@ -91,9 +90,19 @@ i = 0
 length = a.map do |i|
 	i[0].size
 end.max
-puts length
+#puts length
 
-a = a.sort do |a, b|
+a = a.select do |f|
+#	p
+
+	val = f[2][0..-2].to_f
+	range = 0.1
+	neg_range = -range
+
+	val >= neg_range && val <= range
+end
+
+a.sort do |a, b|
 	a[2][0..].to_f <=> b[2][0..].to_f
 end
 
