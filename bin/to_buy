@@ -3,6 +3,7 @@
 require "colored"
 time = Time.now
 
+STDERR.puts "Strong buys for TSX for #{time.strftime("%A")}, #{time.strftime("%B %d (%Y)").bold}".send "".colors.sample #"
 
 
 if ARGV.length != 2
@@ -67,12 +68,7 @@ var body = document.querySelectorAll("tbody")
 for (var b of body) {
 	b =[... b.childNodes  ];
 	
-for(var i=0; i < b.length;++i) {
-	var text = b.at(i).innerText || "";
-	var split = text.split("\t");
-	var price = "$" + split?.at(1);
-	var up = split?.at(2);
-	if(text.match(/./i)) { list.push([b.at(i).querySelector("a").innerText,price,up]); } }
+for(var i=0; i < b.length;++i) {if(b.at(i).innerText?.match(/strong buy/i)) { list.push(b.at(i).querySelector("a").innerText); } }
 }
 
 //alert(list);
@@ -87,66 +83,15 @@ next_list = []
 a = page.evaluate(str)
 i = 0
 #STDERR.puts "Strong buys for TSX for #{Time.new}".green
-#puts length
-
-a = a.select do |f|
-#	p
-
-	val = f[2][0..-2].to_f
-	val2 = f[1][1..-1].to_f
-	
-	range = 10.0
-	neg_range = -range; val2 == 0.03 && (val <= neg_range || val >= range)
-end
-
-
-puts <<EOF
-#{File.basename __FILE__} program
-
-
-This should be a low-liability, low-trouble, low-problem way of making money
-Run this in the morning, and put all of your money into it
-
-Limit sell all of them for 4 cents
-EOF
-
-
-
-a.sort do |a, b|
-	a[2][0..].to_f <=> b[2][0..].to_f
-end
-
-length = a.map do |i|
-	i[0].size
-end.max
-
-
-class String
-	def color_
-#		puts colors
-		send((colors - ["yellow", "white", "cyan"]).sample)
-	end
-
-	if STDOUT.tty?
-	else
-		def bold
-		self
-		end
-
-		def underline
-		self
-		end
-
-		def color_
-		self
-		end
-	end
-end
-
 a.each do |i|
-			puts ([i[0].color_.underline.bold + (" " * (length - i[0].length)), i[1].color_.underline.bold, i[2]].map do |i|
-				i
-			end).join(" | ")
+	if true
+		if STDOUT.tty?
+			puts i.send(i.colors.sample).bold.underline
+	#		system "echo #{i}"
+		else
+			puts i; end
+#	page.goto(i, wait)
+end
 #puts i
 end
 
