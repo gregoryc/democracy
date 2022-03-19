@@ -2,7 +2,7 @@
 # frozen_string_literal: true
 
 # time = Ti
-require 'colored'
+#require 'colored'
 # require "gtk"3
 
 time = Time.now
@@ -12,7 +12,6 @@ if ARGV.length != 2
   #	abort 1
 end
 
-require 'puppeteer-ruby'
 require 'gtk3'
 class TextView < Gtk::TextView
   def initialize(a)
@@ -45,21 +44,37 @@ class Button < Gtk::Button
 
     #    signal_connect 'button-press-event' do |i|
 
-    add_event_listener 'clicked' do |_i|
-      @tv.buffer.text = gettext
+    add_event_listener 'clicked' do
+    	@tv.buffer.text = gettext
     end
+
+#    add_event_listener 'clicked' do |_i|
+#	    @tv.buffer.text = gettext
+#    end
   end
 end
 
 # class Box < Gtk::VBox
 class EntryBox < Gtk::Box
-  def initialize
+  def initialize button
     super(:horizontal)
+    @button = button
+    
 
     pack_start(Gtk::Label.new('Enter free money $ '))
+#@button
     #	$entry.width = 1000
     #	pack_start $entry, true, true
+    def $entry.button
+    	button
+    end
+	$entry.add_event_listener('activate') do |_i|
+#		button.signal_emit_by_name "cl
 
+		button.signal_emit"clicked"
+	end
+#		@button.emit"clicked"
+#	end
     pack_start($entry, true, true)
   end
 end
@@ -71,11 +86,14 @@ class Box < Gtk::Box
   def initialize(a)
     super(:vertical)
     tv = TextView.new a
+#    button = Button.new(tv)
     pack_start(Scrolled.new(a, tv))
-    pack_start EntryBox.new, padding: 30
+ #   Button.new(tv)
+#    buButton.new(tv)
+  button = Button.new(tv)  ;    pack_start EntryBox.new(button), padding: 30
     # pack_start$entry
 
-    pack_start Button.new(tv), padding: 50
+    pack_start button, padding: 50
   end
 end
 
@@ -109,6 +127,7 @@ def site
 end
 
 def gettext
+require 'puppeteer-ruby'
   # puts "Gettext"
   puts 'Getttttttttttttttttttttttttttttt'
   Warning[:deprecated] = false
@@ -239,6 +258,6 @@ end
 $entry = Gtk::Entry.new
 $entry.text = '1000.0'
 
-OutputWindow.new gettext
+OutputWindow.new "Enter amount of money"
 
 # end
