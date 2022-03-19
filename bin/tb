@@ -1,0 +1,193 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# time = Ti
+require 'colored'
+# require "gtk"3
+
+time = Time.now
+
+if ARGV.length != 2
+  #	puts "Usage min max"
+  #	abort 1
+end
+
+require 'puppeteer-ruby'
+require 'gtk3'
+class TextView < Gtk::TextView
+  def initialize(a)
+    super()
+    buffer.text = a.to_s
+  end
+end
+
+module Gtk
+  class Widget
+    alias :add_event_listener signal_connect
+  end
+end
+
+# class Button < G
+class Button < Gtk::Button
+  def initialize(tv, _)
+    @tv = tv
+    super(label = 'Regenerate')
+
+    #    signal_connect 'button-press-event' do |i|
+
+    add_event_listener 'button-press-event' do |_i|
+      @tv.buffer.text = gettext
+    end
+  end
+end
+
+# class Box < Gtk::VBox
+
+class Box < Gtk::Box
+  #	def initialize
+
+  def initialize(a);    super(:vertical);                 tv = TextView.new a; 
+    pack_start(Scrolled.new(a, tv))
+    pack_start Gtk::Entry.new
+    
+    pack_start Button.new(tv, $entry)
+  end
+end
+
+class Scrolled < Gtk::ScrolledWindow
+  def initialize(a, tv)
+    super()
+    add tv
+    set_size_request 600, 600
+  end
+end
+
+class OutputWindow < Gtk::Window
+  def initialize(window_text)
+    super()
+    add Box.new window_text
+    show_all
+    Gtk.main
+  end
+end
+
+# system "killall google-chrome"#Warning[:deprecated] = false
+
+def site
+  'https://www.tradingview.com/markets/stocks-canada/market-movers-most-volatile/'
+
+  # "https://www.kijiji.ca/b-for-rent/ottawa/c30349001l1700185?price=" + min + "__" + max + "&sort=priceDesc"
+end
+
+def gettext
+	#puts "Gettext"
+  puts "Getttttttttttttttttttttttttttttt"
+  Warning[:deprecated] = false
+  require 'shellwords'
+  require 'fileutils'
+
+  #	system "killall chrome"
+  Puppeteer.launch(headless: true) do |browser|
+    page = browser.pages[0]
+    page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
+    page.goto(site, wait_until: 'domcontentloaded')
+    #    sle
+    #	sleep 2 ** 32
+    # sleep 10 ** 99
+    #    page.wait_for_selector "body"
+    # browser.pages[0].goto process.argv[2];
+    # s
+    str = <<~EOF
+      async function() {
+      //return [];
+      var list = [];
+      var body = document.querySelectorAll("tbody")
+      for (var b of body) {
+      	b =[... b.childNodes  ];
+
+      for(var i=0; i < b.length;++i) {
+      	var text = b.at(i).innerText || "";
+      	var split = text.split("\t");
+      	var price = "$" + split?.at(1);
+      	var up = split?.at(2);
+      	if(text.match(/./i)) { list.push([b.at(i).querySelector("a").innerText,price,up]); } }
+      }
+
+      //alert(list);
+
+      return list;
+      }
+
+    EOF
+
+    x = 0
+    next_list = []
+    a = page.evaluate(str)
+#   end
+
+   
+    i = 0
+    # STDERR.puts "Strong buys for TSX for #{Time.new}".green
+    # puts length
+
+    a = a.select do |f|
+      #	p
+
+      val = f[2][0..-2].to_f
+      val2 = f[1][1..-1].to_f
+
+      range = 10.0
+      neg_range = -range
+      val2 == 0.03 && (val <= neg_range || val >= range)
+    end; # print"Enter money>  "
+    money = $entry.text
+    money = (money.to_f / a.length)
+    shares = (money / 0.03).to_i
+
+    a.sort do |a, b|
+      a[2][0..-1].to_f <=> b[2][0..-1].to_f
+    end
+
+    length = a.map do |i|
+      i[0].size
+    end.max
+    n = 0.04.to_s
+
+    # out =  <<EOF
+    text = <<~EOF
+      This should be a low-liability, low-trouble, low-problem way of making money
+      Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks (#{a.map { |i| i[0]; }.join(', ')})"}
+
+      LIMIT SELL ALL OF THEM FOR #{n}
+    EOF
+
+    a.each do |i|
+      text += ([i[0] + (' ' * (length - i[0].length)), i[2]].map do |i|
+        i
+      end).join(' | ') + "\n"
+      # puts i
+     end
+
+		text += Time.now.to_s
+      # 500.times do
+      70.times do |_i|
+        text += "\n"
+      end
+#      text
+#    end
+
+puts "Got text"
+
+    text
+  end
+end
+# end
+# OutputWindow.new
+
+# end
+# end
+
+$entry=Gtk::Entry.new
+OutputWindow.new gettext
+
+# end
