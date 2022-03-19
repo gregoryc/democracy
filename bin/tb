@@ -107,11 +107,25 @@ class Scrolled < Gtk::ScrolledWindow
   end
 end
 
+def set_time
+    time = Time.now
+    sec = time.sec.to_s
+    min = time.min.to_s
+    hour  = time.hour.to_s
+    first = "\\1"
+    $window.title ="Current as of 0#{hour}:0#{min}:0#{sec}".gsub /[0-9]([0-9]{2})/, first
+end
+
 class OutputWindow < Gtk::Window
   def initialize(window_text)
     super()
     add Box.new window_text
-    self.title = ''
+#    self.title = "#{
+ #   self.title = "#{(time = Time.now).sec
+ 	$window = self
+
+	#set_time
+	self.title = "To Buy "
     #    self.padding = 20
     show_all
     Gtk.main
@@ -127,12 +141,13 @@ def site
 end
 
 def gettext
-require 'puppeteer-ruby'
+	require 'puppeteer-ruby'
   # puts "Gettext"
   puts 'Getttttttttttttttttttttttttttttt'
   Warning[:deprecated] = false
   require 'shellwords'
   require 'fileutils'
+  set_time
   a = [nil]
   if $entry.text.match(/^\s*-/)
   	return "Cant be negative"
