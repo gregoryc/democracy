@@ -241,6 +241,8 @@ def gettext
       This should be a low-liability, low-trouble, low-problem way of making money
       Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks (#{a.map { |i| i[0]; }.join(', ')})"}
 
+      Look at graph, limit buy for 0.2 or 0.25 cents
+
       LIMIT SELL ALL OF THEM FOR #{n}
 
 
@@ -271,7 +273,7 @@ end
 # end
 
 $entry = Gtk::Entry.new
-$entry.text = '1000.0'
+$entry.text = ''
 
 OutputWindow.new "Enter amount of money"
 
