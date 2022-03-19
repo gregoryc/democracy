@@ -18,6 +18,11 @@ class TextView < Gtk::TextView
   def initialize(a)
     super()
     buffer.text = a.to_s
+
+    self.cursor_visible = false
+    self.editable = false
+    self.left_margin = 20
+    self.right_margin = 20
   end
 end
 
@@ -29,28 +34,41 @@ end
 
 # class Button < G
 class Button < Gtk::Button
-  def initialize(tv, _)
+  def initialize(tv)
     @tv = tv
     super(label = 'Regenerate')
 
     #    signal_connect 'button-press-event' do |i|
 
     add_event_listener 'button-press-event' do |_i|
-      @tv.buffer.text = gettext
-    end
+	@tv.buffer.text = gettext
+	end
   end
 end
 
 # class Box < Gtk::VBox
+class EntryBox < Gtk::Box; def initialize
+	super(:horizontal)
 
+
+	pack_start               (Gtk::Label.new "Enter free money $" )
+#	$entry.width = 1000
+#	pack_start $entry, true, true
+
+	pack_start($entry, true, true)
+end
+end
+
+#	def initialize
 class Box < Gtk::Box
   #	def initialize
 
   def initialize(a);    super(:vertical);                 tv = TextView.new a; 
     pack_start(Scrolled.new(a, tv))
-    pack_start Gtk::Entry.new
+    pack_start EntryBox.new
+#pack_start$entry
     
-    pack_start Button.new(tv, $entry)
+    pack_start Button.new(tv)
   end
 end
 
@@ -58,6 +76,7 @@ class Scrolled < Gtk::ScrolledWindow
   def initialize(a, tv)
     super()
     add tv
+#    self.title = "There is no risk"
     set_size_request 600, 600
   end
 end
@@ -66,6 +85,7 @@ class OutputWindow < Gtk::Window
   def initialize(window_text)
     super()
     add Box.new window_text
+    self.title = "There is no risk"
     show_all
     Gtk.main
   end
@@ -140,7 +160,10 @@ def gettext
       neg_range = -range
       val2 == 0.03 && (val <= neg_range || val >= range)
     end; # print"Enter money>  "
-    money = $entry.text
+    money = $entry.text.gsub /[^\.0-9]/, ""
+    puts $entry
+    #print $entry.text.dump
+
     money = (money.to_f / a.length)
     shares = (money / 0.03).to_i
 
@@ -170,9 +193,7 @@ def gettext
 
 		text += Time.now.to_s
       # 500.times do
-      70.times do |_i|
-        text += "\n"
-      end
+begin;       end
 #      text
 #    end
 
@@ -188,6 +209,10 @@ end
 # end
 
 $entry=Gtk::Entry.new
+$entry.text = "1000.0"
+
+
+
 OutputWindow.new gettext
 
 # end
