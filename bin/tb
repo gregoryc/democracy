@@ -103,7 +103,7 @@ class Scrolled < Gtk::ScrolledWindow
     add tv
     #    self.title = "There is no risk"
 
-    set_size_request(*[300, 580].reverse)
+    set_size_request(*[300, 800].reverse)
   end
 end
 
@@ -223,7 +223,11 @@ def gettext
     money = $entry.text.gsub(/[^.0-9]/, '').to_f
     # print $entry.text.dump
 
-    money = (money.to_f / a.length)
+    new_money = money * (0.35 / 0.25)
+
+	#text += "Profit #{new_money}
+	text = "New money #{new_money}\nProfit #{(new_money - money)}\n#{(new_money - money) / 500.0} weeks slaving at some fake job with people who don't have good values and who don't care about you\n\n"
+    money = (money / a.length)
     shares = (money / 0.03).to_i
     return '' if shares.zero?
 
@@ -234,16 +238,15 @@ def gettext
     length = a.map do |i|
       i[0].size
     end.max
-    n = 0.04.to_s
 
     # out =  <<EOF
-    text = <<~EOF
+    text += <<~EOF
       This should be a low-liability, low-trouble, low-problem way of making money
       Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks (#{a.map { |i| i[0]; }.join(', ')})"}
 
-      Look at graph, limit buy for 0.2 or 0.25 cents
+      Look at graph, limit buy for 0.25 cents
 
-      LIMIT SELL ALL OF THEM FOR #{n}
+      Limit sell for 0.35 cents
 
 
     EOF
@@ -255,7 +258,6 @@ def gettext
       # puts i
     end
 
-    text += Time.now.to_s
     # 500.times do
     begin; end
     #      text
