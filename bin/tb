@@ -22,7 +22,12 @@ class TextView < Gtk::TextView
     self.cursor_visible = false
     self.editable = false
     self.left_margin = 20
+
     self.right_margin = 20
+
+    self.top_margin = 20
+
+    self.bottom_margin = 20
   end
 end
 
@@ -40,44 +45,47 @@ class Button < Gtk::Button
 
     #    signal_connect 'button-press-event' do |i|
 
-    add_event_listener 'button-press-event' do |_i|
-	@tv.buffer.text = gettext
-	end
+    add_event_listener 'clicked' do |_i|
+      @tv.buffer.text = gettext
+    end
   end
 end
 
 # class Box < Gtk::VBox
-class EntryBox < Gtk::Box; def initialize
-	super(:horizontal)
+class EntryBox < Gtk::Box
+  def initialize
+    super(:horizontal)
 
+    pack_start(Gtk::Label.new('Enter free money $ '))
+    #	$entry.width = 1000
+    #	pack_start $entry, true, true
 
-	pack_start               (Gtk::Label.new "Enter free money $" )
-#	$entry.width = 1000
-#	pack_start $entry, true, true
-
-	pack_start($entry, true, true)
-end
+    pack_start($entry, true, true)
+  end
 end
 
 #	def initialize
 class Box < Gtk::Box
   #	def initialize
 
-  def initialize(a);    super(:vertical);                 tv = TextView.new a; 
+  def initialize(a)
+    super(:vertical)
+    tv = TextView.new a
     pack_start(Scrolled.new(a, tv))
-    pack_start EntryBox.new
-#pack_start$entry
-    
-    pack_start Button.new(tv)
+    pack_start EntryBox.new, padding: 30
+    # pack_start$entry
+
+    pack_start Button.new(tv), padding: 50
   end
 end
 
 class Scrolled < Gtk::ScrolledWindow
-  def initialize(a, tv)
+  def initialize(_a, tv)
     super()
     add tv
-#    self.title = "There is no risk"
-    set_size_request 600, 600
+    #    self.title = "There is no risk"
+
+    set_size_request(*[300, 580].reverse)
   end
 end
 
@@ -85,7 +93,8 @@ class OutputWindow < Gtk::Window
   def initialize(window_text)
     super()
     add Box.new window_text
-    self.title = "There is no risk"
+    self.title = ''
+    #    self.padding = 20
     show_all
     Gtk.main
   end
@@ -100,11 +109,29 @@ def site
 end
 
 def gettext
-	#puts "Gettext"
-  puts "Getttttttttttttttttttttttttttttt"
+  # puts "Gettext"
+  puts 'Getttttttttttttttttttttttttttttt'
   Warning[:deprecated] = false
   require 'shellwords'
   require 'fileutils'
+  a = [nil]
+  if $entry.text.match(/^\s*-/)
+  	return "Cant be negative"
+  end
+  money = $entry.text.gsub(/[^.0-9]/, '').to_f
+  # print $entry.text.dump
+
+  money = (money.to_f / a.length)
+
+#  return 'Nothing' if money <= 0.02 # if money < 0.0
+
+  if money < 0.03
+  	return "Nothing"
+  end
+
+#  return 'Nothing'
+
+  #    return "No money
 
   #	system "killall chrome"
   Puppeteer.launch(headless: true) do |browser|
@@ -143,9 +170,8 @@ def gettext
     x = 0
     next_list = []
     a = page.evaluate(str)
-#   end
+    #   end
 
-   
     i = 0
     # STDERR.puts "Strong buys for TSX for #{Time.new}".green
     # puts length
@@ -160,12 +186,12 @@ def gettext
       neg_range = -range
       val2 == 0.03 && (val <= neg_range || val >= range)
     end; # print"Enter money>  "
-    money = $entry.text.gsub /[^\.0-9]/, ""
-    puts $entry
-    #print $entry.text.dump
+    money = $entry.text.gsub(/[^.0-9]/, '').to_f
+    # print $entry.text.dump
 
     money = (money.to_f / a.length)
     shares = (money / 0.03).to_i
+    return '' if shares.zero?
 
     a.sort do |a, b|
       a[2][0..-1].to_f <=> b[2][0..-1].to_f
@@ -182,6 +208,8 @@ def gettext
       Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks (#{a.map { |i| i[0]; }.join(', ')})"}
 
       LIMIT SELL ALL OF THEM FOR #{n}
+
+
     EOF
 
     a.each do |i|
@@ -189,15 +217,15 @@ def gettext
         i
       end).join(' | ') + "\n"
       # puts i
-     end
+    end
 
-		text += Time.now.to_s
-      # 500.times do
-begin;       end
-#      text
-#    end
+    text += Time.now.to_s
+    # 500.times do
+    begin; end
+    #      text
+    #    end
 
-puts "Got text"
+    puts 'Got text'
 
     text
   end
@@ -208,10 +236,8 @@ end
 # end
 # end
 
-$entry=Gtk::Entry.new
-$entry.text = "1000.0"
-
-
+$entry = Gtk::Entry.new
+$entry.text = '1000.0'
 
 OutputWindow.new gettext
 
