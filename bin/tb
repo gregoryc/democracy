@@ -126,7 +126,7 @@ class Scrolled < Gtk::ScrolledWindow
     add tv
     #    self.title = "There is no risk"
 
-    set_size_request(*[550, 800].reverse)
+    set_size_request(*[550, 830].reverse)
   end
 end
 
@@ -168,6 +168,8 @@ class OutputWindow < Gtk::Window
    a.add_event_listener("clicked") do |i| system "google-chrome #{site="ca.finance.yahoo.com"} || start iexplore.exe #{site}  "; end
    title.add (a = Gtk::Button.new "Take Screenshot of Program")
    a.add_event_listener("clicked") do |i| system "mate-screenshot"; end
+   title.add (a = Gtk::Button.new "Toggle Transparency")
+   a.add_event_listener("clicked") do |i| $window.set_opacity [0.95, 1.0].sample; end
 #   a.add_event_listener "clicked" do |i|
  #  	system "google-chrome
    realize
@@ -382,7 +384,6 @@ entry > * {
 	border-bottom-left-radius: 50px;
 	
 	border-bottom-right-radius: 50px;
-	opacity: 0.97;
 		margin: 5px;
 }
 
