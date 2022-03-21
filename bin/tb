@@ -2,66 +2,73 @@
 # frozen_string_literal: true
 
 def watch
-Thread.new do |i|
+  Thread.new do |_i|
+  loop do
+  if $args.nil?
+  	sleep 0.5
+  	next; end
+  new = ""
+  $args.each do |arg|; %w[TO CN V].each { |suf| new += arg + "." + suf + ","; }; # end
+                    puts new
+    # + suf + ","; end
+  end
 
-while true
-if $args.nil?
-	sleep 0.5
-	next; end
-args = $args.map do |i|
-	i + ".TO" + "," + i + ".CN"
-end
+  args = new
+  puts args
 
-args = args.join(",")
+  a = 'https://query1.finance.yahoo.com/v7/finance/quote?lang=en-CA&region=CA&corsDomain=ca.finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,preMarketPrice,preMarketChange,preMarketChangePercent,postMarketPrice,postMarketChange,postMarketChangePercent&symbols=' + args
+  text = ""
+  a = IO.popen("timeout 1s curl -s #{a.shellescape} 2>/dev/null") do |i|
+  	text = i.read.strip
+  end
+  if text == ""
+  	next
+  end
 
-a = 'https://query1.finance.yahoo.com/v7/finance/quote?lang=en-CA&region=CA&corsDomain=ca.finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,preMarketPrice,preMarketChange,preMarketChangePercent,postMarketPrice,postMarketChange,postMarketChangePercent&symbols=' + args
-text = ""
-a = IO.popen("timeout 1s curl -s #{a.shellescape} 2>/dev/null") do |i|
-	text = i.read.strip
-end
-if text == ""
-	next
-end
-#a =  JSON.parse(a)
+  # a =  JSON.parse(a)
 
-#a["quote
+  # a["quote
 
 
-a = JSON.parse(a)
+  a = JSON.parse(a)
 
-a = a["quoteResponse"]
+  a = a["quoteResponse"]
 
-result = a  ["result"]
-#	system "tput reset"
-#	puts Time.now
-msgs = ""
-result.each do |i|
-	#i = i.sortz
-	if i["market"] != "us_market"
-#	print i["market"], i["regularMarketPrice"]
-	market = i["market"]
-	p = i["regularMarketPrice"]
-#	arg = args[0]
-#	a
-	msgs  +=  "#{i['symbol']} #{p} #{market}" + "\n"
-#	if !$tv
+  result = a["result"]
+  #	system "tput reset"
+  #	puts Time.now
+  msgs = ""
+  result.each do |i|
+  	# i = i.sortz
+  	if i["market"] != "us_market"
+   #	print i["market"], i["regularMarketPrice"]
+  	market = i["market"]
+  	p = i["regularMarketPrice"]
+   #	arg = args[0]
+   #	a
+  	msgs += "#{i['symbol']} #{p} #{market}" + "\n"
+   #	if !$tv
 
-	if $tv
-		#$tv.buffer.text  = $tv.buffer.text.split("Prices") + msg
-	end
-	end
-end
-if $tv
-	$tv.buffer.text = $tv.buffer.text.split(/Prices below.+\n/m)[0] + "Prices below #{get_time}\n\n\n\n\n#{msgs}" #+ msg
-end
+  	if $tv
+  		 # $tv.buffer.text  = $tv.buffer.text.split("Prices") + msg
+  	end
+  	end
+  end
+  if $tv
+  	buffer = $tv.buffer
+  	$tv.buffer.text = $tv.buffer.text.split(/Prices below.+\n/m)[0] + "Prices below #{get_time}\n\n\n\n\n#{msgs}" #+ msg
 
-begin
-end
-	sleep 0.5
-end
-#end
-end
+  	mark = buffer.create_mark "", buffer.end_iter, false
+  	$tv.scroll_to_mark m, 0.0, false, 0.0, 0.0
 
+  end
+
+  begin
+  end
+  sleep 0.5
+  end
+    # end
+  end
 end
 
 
@@ -70,7 +77,7 @@ require "shellwords"
 
 watch
 
-#watch
+# watch
 
 
 # time = Ti
@@ -125,17 +132,17 @@ class Button < Gtk::Button
   end
 end
 
-#class CloseButton
-#	def i        
+# class CloseButton
+#	def i
 
 
 class B < Gtk::Button
-	def initialize a
-		super(label: a, use_underline: true)
-		add_event_listener "clicked" do |i|
-			Gtk.main_quit
-		end
-	end
+	 def initialize(a)
+ 		super(label: a, use_underline: true)
+ 		add_event_listener "clicked" do |_i|
+ 			Gtk.main_quit
+ 		end
+ 	end
 end
 
 # class Box < Gtk::VBox
@@ -176,19 +183,19 @@ class Box < Gtk::Box
     button = Button.new(tv)
     pack_start EntryBox.new(button)
     # pack_start$entry
-    
+
 
     pack_start BB.new(button), true, true, 5
   end
 end
 
 class BB < Gtk::Box
-def initialize a
-super(:horizontal)
-pack_start(a, true, false)
-pack_start(B.new("Quit"), true, false)
-#class BB < Gtk::
-end
+  def initialize(a)
+  super(:horizontal)
+  pack_start(a, true, false)
+  pack_start(B.new("Quit"), true, false)
+    # class BB < Gtk::
+  end
 end
 
 class Scrolled < Gtk::ScrolledWindow
@@ -201,7 +208,6 @@ class Scrolled < Gtk::ScrolledWindow
   end
 end
 
-
 def get_time
   time = Time.now
   sec = time.sec.to_s
@@ -209,27 +215,28 @@ def get_time
   hour  = time.hour
 
   pm = hour > 12
-  if pm
-  	text = "pm"
+  text = if pm
+  	 "pm"
   else
-  	text = "am"
-  end
+  	 "am"
+         end
   text = text.upcase
 
-  
+
   first = '\1'
-  " #{hour % 12}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/,  first); end
+  " #{hour % 12}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first); 
+end
 #  ,first)
 # end
 
 def set_time
-	$window.title = get_time
+	 $window.title = get_time
 end
 
 class OutputWindow < Gtk::Window
   def initialize(window_text)
     super()
-#    set_
+    #    set_
     add Box.new window_text
     #    self.title = "#{
     #   self.title = "#{(time = Time.now).sec
@@ -237,31 +244,35 @@ class OutputWindow < Gtk::Window
 
     # set_time
     self.title = 'To Buy '
-    #self.app_paintable = true
+   # self.app_paintable = true
    #    self.padding = 20
-   self.titlebar = title = Gtk::HeaderBar.new
-   title.add (a = Gtk::Button.new "See Graphs")
-   a.add_event_listener("clicked") do |i| system "google-chrome #{site="ca.finance.yahoo.com"} || start iexplore.exe #{site}  "; end
-   title.add (a = Gtk::Button.new "Take Screenshot of Program")
-   a.add_event_listener("clicked") do |i| system "mate-screenshot"; end
-   title.add (a = Gtk::Button.new "Toggle Transparency")
-   a.add_event_listener("clicked") do |i| $window.set_opacity [0.95, 1.0].sample; end
-#   a.add_event_listener "clicked" do |i|
- #  	system "google-chrome
-   realize
-#   a.hide
-#    set_opacity 0.5
-#    self.set_composited true
-#    set_decorated false
-#    set_header_bar Gtk::HeaderBar.new
+    self.titlebar = title = Gtk::HeaderBar.new
+    title.add(a = Gtk::Button.new "See Graphs")
+    a.add_event_listener("clicked") { |_i|
+ system "google-chrome #{site = 'ca.finance.yahoo.com'} || start iexplore.exe #{site}  "; }
+    title.add(a = Gtk::Button.new "Take Screenshot of Program")
+    a.add_event_listener("clicked") { |_i| system "mate-screenshot"; }
+    title.add(a = Gtk::Button.new "Toggle Transparency")
+    a.add_event_listener("clicked") { |_i| $window.set_opacity [0.95, 1.0].sample; }
+    title.add(a = Gtk::Button.new "Monitor email for changes to stocks")
+    a.add_event_listener("clicked") { |_i|
+ system "espeak 'Using espeak for this ';   while true; do himalaya | fgrep Wea -i && espeak Money || echo No money; done & "; }
+ #   a.add_event_listener "clicked" do |i|
+   #  	system "google-chrome
+    realize
+ #   a.hide
+ #    set_opacity 0.5
+ #    self.set_composited true
+ #    set_decorated false
+ #    set_header_bar Gtk::HeaderBar.new
 
- #   self.header_bar
-   # realize
-#    realize
-#    puts self.window.composited = true
-#    window.
+   #   self.header_bar
+# realize
+    #    realize
+    #    puts self.window.composited = true
+    #    window.
 
- 
+
     show_all
     Gtk.main
   end
@@ -277,45 +288,45 @@ end
 
 $num_times = 0
 def gettext
-	n = [0.9, 0.95, 1.0][$num_times % 3]
+	 n = [0.9, 0.95, 1.0][$num_times % 3]
 	$num_times += 1
   # puts "Gettext"
-  $window.opacity=n
-  puts 'Getttttttttttttttttttttttttttttt'
-  Warning[:deprecated] = false
-  require 'shellwords'
-  require 'fileutils'
-  set_time
-  a = [nil]
-  return 'Cant be negative' if /^\s*-/.match?($entry.text)
+ $window.opacity = n
+ puts 'Getttttttttttttttttttttttttttttt'
+ Warning[:deprecated] = false
+ require 'shellwords'
+ require 'fileutils'
+ set_time
+ a = [nil]
+ return 'Cant be negative' if /^\s*-/.match?($entry.text)
 
-  money = $entry.text.gsub(/[^.0-9]/, '').to_f
+ money = $entry.text.gsub(/[^.0-9]/, '').to_f
   # print $entry.text.dump
 
-  money = (money.to_f / a.length)
+ money = (money.to_f / a.length)
 
   #  return 'Nothing' if money <= 0.02 # if money < 0.0
 
-  return 'Nothing' if money < 0.03
+ return 'Nothing' if money < 0.03
 
-  require 'puppeteer-ruby'
+ require 'puppeteer-ruby'
 
   #  return 'Nothing'
 
   #    return "No money
 
   #	system "killall chrome"
-  Puppeteer.launch(headless: true) do |browser|
-    page = browser.pages[0]
-    page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
-    page.goto(site, wait_until: 'domcontentloaded')
-    #    sle
-    #	sleep 2 ** 32
-    # sleep 10 ** 99
-    #    page.wait_for_selector "body"
-    # browser.pages[0].goto process.argv[2];
-    # s
-    str = <<~EOF
+ Puppeteer.launch(headless: true) do |browser|
+   page = browser.pages[0]
+   page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
+   page.goto(site, wait_until: 'domcontentloaded')
+   #    sle
+   #	sleep 2 ** 32
+   # sleep 10 ** 99
+   #    page.wait_for_selector "body"
+   # browser.pages[0].goto process.argv[2];
+   # s
+   str = <<~EOF
       async function() {
       //return [];
       var list = [];
@@ -338,53 +349,53 @@ def gettext
 
     EOF
 
-    x = 0
-    next_list = []
-    a = page.evaluate(str)
-    #   end
+   x = 0
+   next_list = []
+   a = page.evaluate(str)
+   #   end
 
-    i = 0
-    # STDERR.puts "Strong buys for TSX for #{Time.new}".green
-    # puts length
+   i = 0
+   # STDERR.puts "Strong buys for TSX for #{Time.new}".green
+   # puts length
 
-    a = a.select do |f|
-      #	p
+   a = a.select do |f|
+     #	p
 
-      val = f[2][0..-2].to_f
-      val2 = f[1][1..-1].to_f
+     val = f[2][0..-2].to_f
+     val2 = f[1][1..-1].to_f
 
-      range = 10.0
-      neg_range = -range
-      val2 == 0.03 && (val <= neg_range || val >= range)
-    end; # print"Enter money>  "
-    money = $entry.text.gsub(/[^.0-9]/, '').to_f
-    # print $entry.text.dump
+     range = 10.0
+     neg_range = -range
+     val2 == 0.03 && (val <= neg_range || val >= range)
+   end; # print"Enter money>  "
+   money = $entry.text.gsub(/[^.0-9]/, '').to_f
+   # print $entry.text.dump
 
-    new_money = money * (0.035 / 0.025)
+   new_money = money * (0.035 / 0.025)
 
-    # text += "Profit #{new_money}
-    text = "New money $#{new_money}\nProfit $#{new_money - money}\n#{(new_money - money) / 500.0} weeks slaving at some fake job with people who don't have good values and who don't care about you\n\n"
-    money = (money / a.length)
-    shares = (money / 0.03).to_i
-    return '' if shares.zero?
+   # text += "Profit #{new_money}
+   text = "New money $#{new_money}\nProfit $#{new_money - money}\n#{(new_money - money) / 500.0} weeks slaving at some fake job with people who don't have good values and who don't care about you\n\n"
+   money = (money / a.length)
+   shares = (money / 0.03).to_i
+   return '' if shares.zero?
 
-    a.sort do |a, b|
-      a[2][0..-1].to_f <=> b[2][0..-1].to_f
-    end
-    length = a.map do |i|
-      i[0].size
-#      names.push(i [0])
- #     names << i[0]
-#      names.push(i[0])
-    end.max
- #   $args = names
-# puts names
-	$args = a.map do |i| i[0]; end
+   a.sort do |a, b|
+     a[2][0..-1].to_f <=> b[2][0..-1].to_f
+   end
+   length = a.map do |i|
+     i[0].size
+ #      names.push(i [0])
+#     names << i[0]
+      #      names.push(i[0])
+   end.max
+#   $args = names
+ # puts names
+	$args = a.map { |i| i[0]; }
 	puts $args
 
 
-    # out =  <<EOF
-    text += <<~EOF
+   # out =  <<EOF
+   text += <<~EOF
       This should be a low-liability, low-trouble, low-problem way of making money
       Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks})"}
 
@@ -402,23 +413,23 @@ def gettext
 
     EOF
 
-    a.each do |i|
-      text += ([i[0] + (' ' * (length - i[0].length)), i[2]].map do |i|
-        i
-      end).join(' | ') + "\n"
-      # puts i
-    end
+   a.each do |i|
+     text += ([i[0] + (' ' * (length - i[0].length)), i[2]].map do |i|
+       i
+     end).join(' | ') + "\n"
+     # puts i
+   end
 
-    # 500.times do
-    begin; end
-    #      text
-    #    end
-    text += "Prices below\n\n\n"
+   # 500.times do
+   begin; end
+   #      text
+   #    end
+   text += "\n\n\nPrices below\n\n\n"
 
-    puts 'Got text'
+   puts 'Got text'
 
-    text
-  end
+   text
+ end
 end
 # end
 # OutputWindow.new
@@ -427,15 +438,15 @@ end
 # end
 
 $entry = Gtk::Entry.new
-$entry.alignment=   0.5
+$entry.alignment = 0.5
 
 $entry.text = ''
-#$entry.se
+  # $entry.se
 
 
 
-  provider = Gtk::CssProvider.new
-provider.load data: <<EOF
+provider = Gtk::CssProvider.new
+provider.load data: <<~EOF
 window {
 }
 
@@ -484,7 +495,7 @@ window {
 }
 EOF
 Gtk::StyleContext.add_provider_for_screen(Gdk::Screen.default,
-                                            provider,
-                                            Gtk::StyleProvider::PRIORITY_APPLICATION)
+                                          provider,
+                                          Gtk::StyleProvider::PRIORITY_APPLICATION)
 OutputWindow.new 'Enter amount of money'
 # end
