@@ -483,7 +483,6 @@ entry > * {
 }
 
 *:focus {
-	color: #aaaadd;
 }
 
 entry * {
