@@ -1,6 +1,78 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
+def watch
+Thread.new do |i|
+
+while true
+if $args.nil?
+	sleep 0.5
+	next; end
+args = $args.map do |i|
+	i + ".TO" + "," + i + ".CN"
+end
+
+args = args.join(",")
+
+a = 'https://query1.finance.yahoo.com/v7/finance/quote?lang=en-CA&region=CA&corsDomain=ca.finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,preMarketPrice,preMarketChange,preMarketChangePercent,postMarketPrice,postMarketChange,postMarketChangePercent&symbols=' + args
+text = ""
+a = IO.popen("timeout 1s curl -s #{a.shellescape} 2>/dev/null") do |i|
+	text = i.read.strip
+end
+if text == ""
+	next
+end
+#a =  JSON.parse(a)
+
+#a["quote
+
+
+a = JSON.parse(a)
+
+a = a["quoteResponse"]
+
+result = a  ["result"]
+#	system "tput reset"
+#	puts Time.now
+msgs = ""
+result.each do |i|
+	#i = i.sortz
+	if i["market"] != "us_market"
+#	print i["market"], i["regularMarketPrice"]
+	market = i["market"]
+	p = i["regularMarketPrice"]
+#	arg = args[0]
+#	a
+	msgs  +=  "#{i['symbol']} #{p} #{market}" + "\n"
+#	if !$tv
+
+	if $tv
+		#$tv.buffer.text  = $tv.buffer.text.split("Prices") + msg
+	end
+	end
+end
+if $tv
+	$tv.buffer.text = $tv.buffer.text.split(/Prices below.+\n/m)[0] + "Prices below #{get_time}\n\n\n\n\n#{msgs}" #+ msg
+end
+
+begin
+end
+	sleep 0.5
+end
+#end
+end
+
+end
+
+
+require "json"
+require "shellwords"
+
+watch
+
+#watch
+
+
 # time = Ti
 # require 'colored'
 # require "gtk"3
@@ -8,8 +80,6 @@
 time = Time.now
 
 if ARGV.length != 2
-  #	puts "Usage min max"
-  #	abort 1
 end
 
 require 'gtk3'
@@ -40,6 +110,7 @@ end
 class Button < Gtk::Button
   def initialize(tv)
     @tv = tv
+    $tv = tv
     super(label: '_Regenerate', use_underline: true)
 
     #    signal_connect 'button-press-event' do |i|
@@ -130,7 +201,8 @@ class Scrolled < Gtk::ScrolledWindow
   end
 end
 
-def set_time
+
+def get_time
   time = Time.now
   sec = time.sec.to_s
   min = time.min.to_s
@@ -146,8 +218,12 @@ def set_time
 
   
   first = '\1'
-  $window.title = "Current as of #{hour % 12}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first)
-#  $window.decorated = fa
+  " #{hour % 12}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/,  first); end
+#  ,first)
+# end
+
+def set_time
+	$window.title = get_time
 end
 
 class OutputWindow < Gtk::Window
@@ -284,7 +360,7 @@ def gettext
     money = $entry.text.gsub(/[^.0-9]/, '').to_f
     # print $entry.text.dump
 
-    new_money = money * (0.35 / 0.25)
+    new_money = money * (0.035 / 0.025)
 
     # text += "Profit #{new_money}
     text = "New money $#{new_money}\nProfit $#{new_money - money}\n#{(new_money - money) / 500.0} weeks slaving at some fake job with people who don't have good values and who don't care about you\n\n"
@@ -295,21 +371,28 @@ def gettext
     a.sort do |a, b|
       a[2][0..-1].to_f <=> b[2][0..-1].to_f
     end
-
     length = a.map do |i|
       i[0].size
+#      names.push(i [0])
+ #     names << i[0]
+#      names.push(i[0])
     end.max
+ #   $args = names
+# puts names
+	$args = a.map do |i| i[0]; end
+	puts $args
+
 
     # out =  <<EOF
     text += <<~EOF
       This should be a low-liability, low-trouble, low-problem way of making money
-      Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks (#{a.map { |i| i[0]; }.join(', ')})"}
+      Run this at 9:30 or 9:45am, #{'LIMIT BUY ' + "#{shares} shares of each #{a.length} stocks})"}
 
       For each stock, apply the following steps
       	Look at graph, reject if not swingy
-      	If you can, Limit buy for 0.25 or 0.27 cents, NEVER 0.3 cents
-      	If you can, Limit sell for 0.3 or 0.35 cents
-      	Profit will be 0.3 - 0.10 cents times #{shares}
+      	If you can, Limit buy for 0.025 or 0.027 cents, NEVER 0.3 cents
+      	If you can, Limit sell for 0.03 or 0.035 cents
+      	Profit will be 0.03 - 0.10 cents times #{shares}
       	Repeat until market close
 
       Spend your time doing meaningful things, and not being a slave for a sociopathic system
@@ -330,6 +413,7 @@ def gettext
     begin; end
     #      text
     #    end
+    text += "Prices below\n\n\n"
 
     puts 'Got text'
 
