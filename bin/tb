@@ -59,7 +59,7 @@ def watch
   	$tv.buffer.text = $tv.buffer.text.split(/Prices below.+\n/m)[0] + "Prices below #{get_time}\n\n\n\n\n#{msgs}" #+ msg
 
   	mark = buffer.create_mark "", buffer.end_iter, false
-  	$tv.scroll_to_mark m, 0.0, false, 0.0, 0.0
+  	$tv.scroll_to_mark  mark, 0.0, false, 0.0, 0.0
 
   end
 
@@ -247,14 +247,14 @@ class OutputWindow < Gtk::Window
    # self.app_paintable = true
    #    self.padding = 20
     self.titlebar = title = Gtk::HeaderBar.new
-    title.add(a = Gtk::Button.new "See Graphs")
+    title.add(a = Gtk::Button.new("See Graphs"))
     a.add_event_listener("clicked") { |_i|
  system "google-chrome #{site = 'ca.finance.yahoo.com'} || start iexplore.exe #{site}  "; }
-    title.add(a = Gtk::Button.new "Take Screenshot of Program")
+    title.add(a = Gtk::Button.new("Take Screenshot of Program"))
     a.add_event_listener("clicked") { |_i| system "mate-screenshot"; }
-    title.add(a = Gtk::Button.new "Toggle Transparency")
+    title.add(a = Gtk::Button.new("Toggle Transparency"))
     a.add_event_listener("clicked") { |_i| $window.set_opacity [0.95, 1.0].sample; }
-    title.add(a = Gtk::Button.new "Monitor email for changes to stocks")
+    title.add(a = Gtk::Button.new("Monitor email for changes to stocks"))
     a.add_event_listener("clicked") { |_i|
  system "espeak 'Using espeak for this ';   while true; do himalaya | fgrep Wea -i && espeak Money || echo No money; done & "; }
  #   a.add_event_listener "clicked" do |i|

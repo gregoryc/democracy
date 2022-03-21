@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
-
+#def puts *unused
+#end
 # BG env variable controls whether or not it's background
 GREGORYS_USERNAME = 'a'
 if File.basename(Dir.home) == GREGORYS_USERNAME
@@ -23,15 +24,28 @@ def main
   end
 
   system "notify-send 'Connectivity established'" if done
+  next_is_attachment = false
+    attachments = []
+    args = ARGV.reject do |i|
+    	if   next_is_attachment
+    		next_is_attachment     = false
+    		attachments.push i
+    		true
+    	else
+    		next_is_attachment=(i=="-a")
+    end
+    end
 
-  args = case ARGV.length
+#    puts args.length
+
+  args = case args.length
          when 0
-           ["From #{PERSON}"] + ARGV + [EMAIL.to_s]
+           ["From #{PERSON}"] + args+[EMAIL.to_s]
          when 1
            #	subject = "From Gregory"
-           ["From #{PERSON}"] + ARGV
+           ["From #{PERSON}"]+args
          else
-           ARGV
+         args
          end
 
   subject = args[0]
@@ -45,13 +59,18 @@ def main
   end
   require 'tempfile'
   # STRING=
-
-  args = args.reverse
-  args.pop
-  args = args.reverse
-
+  
+#  puts args
+#  exit! 0
+#  pu
+  #puts args
+  if args.length == 0
+  	raise
+  end
   loop do
-    args.each do |arg|
+#  	"Loop"
+#	args	
+      args[1..].each do |arg|
       text = <<~EOF
         To: <#{arg}>
         From: #{from}
@@ -61,8 +80,11 @@ def main
       EOF
       #    puts text
       Tempfile.open do |file|
+      	puts attachments
+      	require "shellwords"
+      	attachment_shell =  (attachments.map do |i| "-a #{i.shellescape}"; end).join(" ") #.to_a.join
         a = IO.popen(
-          "himalaya send 2>&1  | grep -viE '(^\s*$)|cannot|could not|folder|missing|caused by'   1> #{file.path}", 'w'
+          "himalaya send 2>&1 #{attachment_shell} | grep -viE '(^\s*$)|cannot|could not|folder|missing|caused by'   1> #{file.path}", 'w'
         ) do |h|
           h.puts text
         end
