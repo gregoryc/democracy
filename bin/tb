@@ -1,7 +1,24 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
+class KillOther
+def initialize
+a = `pidof ruby`.split
+(a - [Process.pid.to_s]).each { |i| puts i; `kill #{i} -9` }; end; end
+KillOther.new
+		
 
-system 'killall sh -9'
+def browser(headless = false)
+    Puppeteer.launch(headless: headless,
+                               ignore_default_args: ['--enable-blink-features=IdleDetection', '--enable-automation'], slow_mo: 0, args: ['--window-size=1280,800']) do |i|
+#                               	yiel
+#page = browser.pages[0]
+    i.pages.first.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
+
+    yield i
+end
+
+
+end
 
 # def download(i)
 #
@@ -40,7 +57,6 @@ def watch
       a = a['quoteResponse']
 
       result = a['result']
-      #	system "tput reset"
       #	puts Time.now
       msgs = ''
       x = 0
@@ -50,7 +66,7 @@ def watch
       $symbols = symbols
 
       result.each do |i|
-        # i = i.sortz
+        # i = i.
         next unless i['market'] != 'us_market'
 
         #	print i["market"], i["regularMarketPrice"]
@@ -93,7 +109,7 @@ end
 
 require 'json'
 require 'shellwords'
-
+#__END__
 watch
 
 # watch
@@ -159,7 +175,6 @@ class B < Gtk::Button
     super(label: a, use_underline: true)
     add_event_listener 'clicked' do |_i|
       fade($window, 1, 0) do |_i|
-        system 'tput reset &'
         Gtk.main_quit
         exit 0
       end
@@ -245,7 +260,7 @@ def get_time
   min = time.min.to_s
   hour  = time.hour
 
-  pm = hour > 12
+  pm = hour >= 12
   text = if pm
            'pm'
          else
@@ -254,7 +269,7 @@ def get_time
   text = text.upcase
 
   first = '\1'
-  " #{hour % 12}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first)
+  " #{hour%13}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first)
 end
 #  ,first)
 # end
@@ -281,24 +296,44 @@ class OutputWindow < Gtk::Window
     a.add_event_listener('clicked') do |_i|
       Thread.new do |_i|
         require 'shellwords'
-        def show(a, b)
-          puts a
+        def show(a, b              ,          n)
+#          puts a
           Dir.chdir Dir.home
           require 'fileutils'
+          page = b.pages.first
 #			FileUtils.rm_rf 'Stock Screenshots'
-          FileUtils.mkdir_p 'Stock Screenshots'
-          Dir.chdir 'Stock Screenshots'
-
-          b.pages.first.goto "https://ca.finance.yahoo.com/chart/#{a}", wait_until: 'domcontentloaded' rescue puts "Error"
-          sleep 3.5
-          b.pages.first.screenshot path: "#{a}.png" rescue "No SS"
+  #        FileUtils.mkdir_p 'Stock Screenshots'
+#puts'CHDIR'
+#Dir.chdir 'Stock Screenshots'
+#          File.open("#{
+#			begin
+          page.goto "https://ca.finance.yahoo.com/chart/#{a}" rescue retry
+#          rescue => e
+ #         	puts e
+  #        end
+  Dir.chdir 'Stock Screenshots' rescue retry
+          sleep 5
+          page.screenshot path: "#{n}_#{a}.png" rescue retry
+#          b.new_page
+ #         page.close
           
 
-          #    		system "notify-send Took\ screenshot\ of\ #{a.shellescape} &"
         end
-        Puppeteer.launch do |b|
+        Dir.chdir Dir.home
+          require 'fileutils'
+          	folder = "Stock Screenshots"
+          	
+			FileUtils.rm_rf    folder
+			FileUtils.mkdir_p folder
+			`caja #{folder.shellescape}`
+#			IO.
+
+#			abort if $symbols.size < 40
+
+        browser do |b|
+        	n = 0
           $symbols.each do |i|
-            show i, b
+            show i, b  , n += 1
           end
           #    	end
         end if $symbols
@@ -308,27 +343,26 @@ class OutputWindow < Gtk::Window
     end
 
     title.add(a = Gtk::Button.new('Take Screenshot of Program'))
-    a.add_event_listener('clicked') { |_i| system 'mate-screenshot'; }
+    a.add_event_listener('clicked') { |_i| `mate-screenshot &`; }
     title.add(a = Gtk::Button.new('Toggle Transparency'))
     a.add_event_listener('clicked') { |_i| $window.set_opacity [0.95, 1.0].sample; }
     title.add(a = Gtk::Button.new('Monitor email for changes to stocks'))
     a.add_event_listener('clicked') do |_i|
-      system "espeak 'Using espeak for this ';   while true; do himalaya | fgrep Wea -i && espeak Money || echo No money; done & "
-    end
-    #   a.add_event_listener "clicked" do |i|
-    #  	system "google-chrome
-    realize
-    #   a.hide
-    #    set_opacity 0.5
-    #    self.set_composited true
-    #    set_decorated false
-    #    set_header_bar Gtk::HeaderBar.new
+    	Thread.new do |i|
+    		IO.popen("espeak", "w") do |i| i.puts "Using espeak for this"; end
 
-    #   self.header_bar
-    # realize
-    #    realize
-    #    puts self.window.composited = true
-    #    window.
+    		while true
+    			if `himalaya | grep -F Wea -i`.strip != ""
+    				while true
+    				(IO.popen("espeak", "w") do |i| i.puts "Money"; end)
+    				end
+    else #			else
+   Kernel.puts "No money" 	#			Kernel.puts "No money"
+    			end
+    		end
+    	end
+    end
+    realize
     fade(self, 0, 1)
     Thread.new do |i|
     	$tv.buffer.text = gettext
@@ -338,7 +372,6 @@ class OutputWindow < Gtk::Window
     Gtk.main
   end
 end
-
 def fade(obj, start, stop)
   Thread.new do |i|
     i = start.to_f
@@ -356,12 +389,10 @@ def fade(obj, start, stop)
   end
 end
 
-# system "killall google-chrome"#Warning[:deprecated] = false
 
 def site
   'https://www.tradingview.com/markets/stocks-canada/market-movers-most-volatile/'
 
-  # "https://www.kijiji.ca/b-for-rent/ottawa/c30349001l1700185?price=" + min + "__" + max + "&sort=priceDesc"
 end
 Warning[:deprecated] = false
 require 'shellwords'
@@ -388,10 +419,10 @@ def gettext
 
   #    return "No money
 
-  #	system "killall chrome"
-  Puppeteer.launch(headless: true) do |browser|
+  #	owser do |browser|
+  browser do |browser|
     page = browser.pages[0]
-    page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
+#    page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
     page.goto(site, wait_until: 'domcontentloaded')
     #    sle
     #	sleep 2 ** 32
@@ -430,7 +461,7 @@ def gettext
     i = 0
     # STDERR.puts "Strong buys for TSX for #{Time.new}".green
     # puts length
-
+<<EOF
     a = a.select do |f|
       #	p
 
@@ -441,7 +472,12 @@ def gettext
       neg_range = -range
       (val <= neg_range || val >= range)
     end; # print"Enter money>  "
-    money = $entry.text.gsub(/[^.0-9]/, '').to_f
+EOF
+
+
+
+
+money = $entry.text.gsub(/[^.0-9]/, '').to_f
     # print $entry.text.dump
 
     new_money = money * (0.035 / 0.025)
@@ -452,7 +488,14 @@ def gettext
     shares = (money / 0.03).to_i
     return '' if shares.zero?
 
-    a.sort!
+    a = a.sort do |a, b|
+    	def get(a)
+    		a[2][0..-2].to_f
+    	end
+
+    	get(a) <=> get(b)
+    end
+#    a
     length = a.map do |i|
       i[0].size
       #      names.push(i [0])
@@ -467,9 +510,46 @@ def gettext
     # out =  <<EOF
     text += <<~EOF
       Swingiest TSX stocks possible shown.
-      Look at graph, reject if not swingy, you can be really picky.
-      ONLY limit buy and limit sell.
-      Spend your time doing meaningful things, and not being a slave for a sociopathic system.
+      Generate graphs, they will be stored in a folder called 'Stock Screenshots'
+      * ONLY limit buy and limit sell.
+      * Your best bet is this
+      * Before market close, like maybe at 1pm, buy the stocks that are unusually down.
+      * Its hard to predict what will go up, maybe almost impossible, but strategies of making money could be
+
+      * See what is abnormally down, due to a mistake,
+      fear or something of the sort. There are a lot of reasons why a company might go down,
+      but companies wouldn't want their stock price to be down. Dips are temporary.
+      Unless a company is legitimately failing.
+
+
+
+      __Swingy stocks aren't failing stocks.__
+
+      
+      The stocks that dip the most after a regeneration
+      are likely to be up in the following morning in the first few hours.
+
+      All listed stocks are the most volatile stocks.
+
+      The best strategy would be
+
+      1) Regenerate around 3:30 or so, 2) purchase SWINGY stocks that have been failing,
+      3) limit buy for higher than current price (which would be low, like -33% or something)
+      4) Limit sell the following day
+
+      ALL swingy stock prices are listed, and are updated every 0.5 seconds.
+
+
+      This would be hard to do if you had a full time job. Unless one automates it, which is possible.
+
+      Program is self-contained and multithreaded, one window maximum.
+
+      
+
+      
+
+      
+      Spend your time doing meaningful things, and not being a slave for a sociopathic #{"sys" + "tem."}
     EOF
 
     a.each do |i|
@@ -480,7 +560,6 @@ def gettext
     end
 
     # 500.times do
-    begin; end
     #      text
     #    end
     text += "\n\n\nPrices below\n\n\n"
@@ -488,14 +567,14 @@ def gettext
     puts 'Got text'
 
     text
-  end
+#  end
+end
 end
 # end
 # OutputWindow.new
 
 # end
 # end
-
 $entry = Gtk::Entry.new
 $entry.alignment = 0.5
 $entry.text = '10,000'
@@ -556,4 +635,3 @@ Gtk::StyleContext.add_provider_for_screen(Gdk::Screen.default,
                                           provider,
                                           Gtk::StyleProvider::PRIORITY_APPLICATION)
 OutputWindow.new 'Enter amount of money'
-# end

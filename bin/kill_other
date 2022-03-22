@@ -1,7 +1,0 @@
-class KillOther
-	def initialize
-		a = `pidof ruby`.split
-		(a - [Process.pid.to_s]).each { |i| puts i; `kill #{i} -9` }; end; end
-
-		KillOther.new
-		
