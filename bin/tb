@@ -90,7 +90,7 @@ def watch
         x += 1
         if $tv
         end
-      end; if $tv2; $tv2.set "<i>Volatile stock prices <b>#{get_time}</b></i>\n#{msgs}" ; end
+      end; if $tv2; $tv2.set "<i>Volatile stock prices <b>#{get_time}</b></i>\n\n\n#{msgs}" ; end
      # $tv2&.text =          (m = "Prices below #{get_time}\n#{msgs}")
 
 
@@ -537,11 +537,18 @@ money = $entry.text.gsub(/[^.0-9]/, '').to_f
     # puts names
     $args = a.map { |i| i[0]; }
     puts $args
+header = "Most volatile stocks\nas of #{get_time}"
+def markup i
+	"<span color=#{"blue".dump}><big><i><b>#{i}</b></i></big></span>"
+end
+
 
     # out =  <<EOF
     text = [
     text, <<EOF
-#{get_time} | Swingiest stocks
+    #{markup(header)}
+
+    
 EOF
    ]
 a.each do |i|      text[1] += ([i[0] + (' ' * (length - i[0].length)), i[2]].map do |i|
@@ -615,6 +622,10 @@ provider.load data: <<~EOF
 
   	border-bottom-right-radius: 50px;
   		margin: 5px;
+  }
+
+  #volatile {
+  	font-size: 130%;
   }
 
   *:focus {
