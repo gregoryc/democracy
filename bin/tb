@@ -1,4 +1,6 @@
-#!/usr/bin/env ruby
+#!/usr/bin/ruby
+
+
 # frozen_string_literal: true
 class KillOther
 def initialize
@@ -87,17 +89,10 @@ def watch
         #	if !$tv
         x += 1
         if $tv
-          # $tv.buffer.text  = $tv.buffer.text.split("Prices") + msg
         end
-      end
-      if $tv2
-        buffer = $tv.buffer
-        $tv2.buffer.text = "Prices below #{get_time}\n#{msgs}" #+ msg
+      end; if $tv2; $tv2.set "<i>Volatile stock prices <b>#{get_time}</b></i>\n#{msgs}" ; end
+     # $tv2&.text =          (m = "Prices below #{get_time}\n#{msgs}")
 
-        # 	mark = buffer.create_mark "", buffer.end_iter, false
-        #  	$tv.scroll_to_mark  mark, 0.0, false, 0.0, 0.0
-
-      end
 
       begin
       end
@@ -124,10 +119,11 @@ if ARGV.length != 2
 end
 
 require 'gtk3'
+#def GtkWidget
 class TextView < Gtk::TextView
   def initialize(a)
     super()
-    buffer.text = a.to_s
+    set a.to_s
 
     self.cursor_visible = false
     self.editable = false
@@ -139,7 +135,15 @@ class TextView < Gtk::TextView
 
     self.bottom_margin = 20
   end
+
+#  def set
+def set(arg)
+  	self.buffer&.text = ""
+self.buffer.insert_markup((self.buffer.start_iter),arg,arg.length); 
 end
+
+end
+#end
 
 module Gtk
   class Widget
@@ -150,20 +154,12 @@ end
 # class Button < G
 class Button < Gtk::Button
   def initialize(tv)
-    @tv = tv
     super(label: '_Regenerate', use_underline: true)
 
     #    signal_connect 'button-press-event' do |i|
 
     add_event_listener 'clicked' do
-      Thread.new do |_i|
-        @tv.buffer.text = gettext
-      end
     end
-
-    #    add_event_listener 'clicked' do |_i|
-    #	    @tv.buffer.text = gettext
-    #    end
   end
 end
 
@@ -205,6 +201,20 @@ class EntryBox < Gtk::Box
     pack_start($entry, true, true)
   end
 end
+class Box2 < Gtk::Box
+	def initialize(o, *args)
+		super(o)
+		args.each do |i|
+			pack_start i,false; end;
+			end
+			end
+
+			begin
+			end
+
+			#end; end #, false
+#		end
+#	e
 
 #	def initialize
 class Box < Gtk::Box
@@ -212,15 +222,17 @@ class Box < Gtk::Box
 
   def initialize(a)
     super(:vertical)
-    $tv2 = TextView.new(text2 = 'Real time yahoo stocks will display here')
-
-    $tv = TextView.new a
     #    button = Button.new(tv)
     #    pack_start Scrolled.new a,$tv, big: true# $tv2
 
-    pack_start Scrolled.new a, $tv, true
+    pack_start Scrolled.new $tv, true
+#    pack_st
 
-    pack_start $tv2, false
+scrolled = Scrolled.new $tv3, true
+
+    box = Box2.new :horizontal, $tv2,scrolled
+    pack_start box, true
+#    pack_start $tv3, false
     #   Button.new(tv)
     #    buButton.new(tv)
     button = Button.new($tv)
@@ -241,16 +253,16 @@ class BB < Gtk::Box
 end
 
 class Scrolled < Gtk::ScrolledWindow
-  def initialize(_a, tv, big)
+  def initialize(tv, big)
     super()
     add tv
     #    self.title = "There is no risk"
     if big
-      set_size_request(*[200, 830].reverse)
+      set_size_request(*[330, 200])
       return
     end
 
-    set_size_request(*[160, 830].reverse)
+    set_size_request(*[400,200])
   end
 end
 
@@ -269,7 +281,9 @@ def get_time
   text = text.upcase
 
   first = '\1'
-  " #{hour%13}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first)
+  hour %= 13
+  hour += 1
+  " #{hour}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first)
 end
 #  ,first)
 # end
@@ -281,6 +295,11 @@ end
 class OutputWindow < Gtk::Window
   def initialize(window_text)
     super()
+    $tv = TextView.new(window_text)
+        $tv2 = TextView.new(text2 = 'Real time Yahoo stocks will display here')
+    
+        $tv3 = TextView.new("")
+        
     #    set_
     add Box.new window_text
     #    self.title = "#{
@@ -353,9 +372,9 @@ class OutputWindow < Gtk::Window
 
     		while true
     			if `himalaya | grep -F Wea -i`.strip != ""
-    				while true
+    				#while true
     				(IO.popen("espeak", "w") do |i| i.puts "Money"; end)
-    				end
+    				#end
     else #			else
    Kernel.puts "No money" 	#			Kernel.puts "No money"
     			end
@@ -364,10 +383,19 @@ class OutputWindow < Gtk::Window
     end
     realize
     fade(self, 0, 1)
+
+
     Thread.new do |i|
-    	$tv.buffer.text = gettext
-#	$buffer.text = gettext
+    	while true
+    	text = gettext
+    	
+    	$tv3.set text[1]
+
+    	$tv3.set text[1]
+    	sleep(0.5)
+    	end
     end
+    
     show_all
     Gtk.main
   end
@@ -420,7 +448,10 @@ def gettext
   #    return "No money
 
   #	owser do |browser|
-  browser do |browser|
+#  browser(headlessdo |browser|
+ # browser(headless: true)  
+
+  browser(headless:1)                                    do|browser|
     page = browser.pages[0]
 #    page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
     page.goto(site, wait_until: 'domcontentloaded')
@@ -483,7 +514,7 @@ money = $entry.text.gsub(/[^.0-9]/, '').to_f
     new_money = money * (0.035 / 0.025)
 
     # text += "Profit #{new_money}
-    text = "New money $#{new_money}\nProfit $#{new_money - money}\n#{(new_money - money) / 500.0} weeks slaving at some fake job with people who don't have good values and who don't care about you\n\n"
+    #text = "#{get_time}, New money $#{new_money}, Profit $#{new_money - money}\n#{(new_money - money) / 500.0} weeks slaving at some fake job with people who don't have good values and who don't care about you\n\n"
     money = (money / a.length)
     shares = (money / 0.03).to_i
     return '' if shares.zero?
@@ -508,61 +539,22 @@ money = $entry.text.gsub(/[^.0-9]/, '').to_f
     puts $args
 
     # out =  <<EOF
-    text += <<~EOF
-      Swingiest TSX stocks possible shown.
-      Generate graphs, they will be stored in a folder called 'Stock Screenshots'
-      * ONLY limit buy and limit sell.
-      * Your best bet is this
-      * Before market close, like maybe at 1pm, buy the stocks that are unusually down.
-      * Its hard to predict what will go up, maybe almost impossible, but strategies of making money could be
-
-      * See what is abnormally down, due to a mistake,
-      fear or something of the sort. There are a lot of reasons why a company might go down,
-      but companies wouldn't want their stock price to be down. Dips are temporary.
-      Unless a company is legitimately failing.
-
-
-
-      __Swingy stocks aren't failing stocks.__
-
-      
-      The stocks that dip the most after a regeneration
-      are likely to be up in the following morning in the first few hours.
-
-      All listed stocks are the most volatile stocks.
-
-      The best strategy would be
-
-      1) Regenerate around 3:30 or so, 2) purchase SWINGY stocks that have been failing,
-      3) limit buy for higher than current price (which would be low, like -33% or something)
-      4) Limit sell the following day
-
-      ALL swingy stock prices are listed, and are updated every 0.5 seconds.
-
-
-      This would be hard to do if you had a full time job. Unless one automates it, which is possible.
-
-      Program is self-contained and multithreaded, one window maximum.
-
-      
-
-      
-
-      
-      Spend your time doing meaningful things, and not being a slave for a sociopathic #{"sys" + "tem."}
-    EOF
-
-    a.each do |i|
-      text += ([i[0] + (' ' * (length - i[0].length)), i[2]].map do |i|
+    text = [
+    text, <<EOF
+#{get_time} | Swingiest stocks
+EOF
+   ]
+a.each do |i|      text[1] += ([i[0] + (' ' * (length - i[0].length)), i[2]].map do |i|
         i
       end).join(' | ') + "\n"
       # puts i
     end
 
+    text[1] = text[1].strip
+
     # 500.times do
     #      text
     #    end
-    text += "\n\n\nPrices below\n\n\n"
 
     puts 'Got text'
 
@@ -581,6 +573,8 @@ $entry.text = '10,000'
 
 
 # $entry.se
+
+
 
 provider = Gtk::CssProvider.new
 provider.load data: <<~EOF
@@ -605,8 +599,11 @@ provider.load data: <<~EOF
 
 
   textview {
-  font-family: Monospace;
+  font-family: "DejaVu Sans", "Sans";
   }
+
+  scrollbar {
+  	opacity: 0; }
 
   entry > * {
   }
@@ -634,4 +631,43 @@ EOF
 Gtk::StyleContext.add_provider_for_screen(Gdk::Screen.default,
                                           provider,
                                           Gtk::StyleProvider::PRIORITY_APPLICATION)
-OutputWindow.new 'Enter amount of money'
+
+
+text = <<EOF
+
+<span size="x-large">Swingiest TSX stocks possible shown.</span>
+
+
+Generate graphs, they will be stored in a folder called &quot;Stock Screenshots&quot;
+* See what is abnormally down, due to a mistake,
+fear or something of the sort. There are a lot of reasons why a company might go down,
+but companies wouldn't want their stock price to be down. Dips are temporary.
+Unless a company is legitimately failing.
+
+
+
+__Swingy stocks aren't failing stocks.__
+
+
+The stocks that dip the most are likely to be up in the following morning in the first few hours.
+
+All listed stocks are the most volatile stocks.
+
+ALL swingy stock prices are listed, and are updated every 0.5 seconds.
+
+
+This would be hard to do if you had a full time job. Unless one automates it, which is possible.
+
+Program is self-contained and multithreaded, one window maximum.
+
+
+
+
+
+
+Spend your time doing meaningful things, and not being a slave for a sociopathic #{"sys" + "tem."}
+EOF
+
+text = text.gsub /\n{2,}/, "\n\n"
+OutputWindow.new text.strip
+#a
