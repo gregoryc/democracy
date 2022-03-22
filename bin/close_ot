@@ -1,0 +1,10 @@
+#!/bin/bash
+search="--class mate-terminal"
+a=$(xdotool getactivewindow getwindowpid)
+b="$(xdotool search $search getwindowpid %@)"
+echo $b
+
+for i in $b; do
+  [[ $a -ne $i ]] &&
+  echo kill $i
+done
