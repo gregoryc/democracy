@@ -350,8 +350,9 @@ if Dir.exists?("~/Stock Screenshots".path)
     end
     end
     $title = title
-
-
+    "Communicate with all people in life".button do |i|
+    	`mate-terminal -e "questions" &`
+    end
     "Quit".button do |i|
     	fade($window, 1, 0) do
     		Gtk.main_quit
@@ -359,17 +360,21 @@ if Dir.exists?("~/Stock Screenshots".path)
     	end
     end
 
-    "Open Chrome".button do |i|
-    	`google-chrome yahoo.ca`
+    "Open Expedia".button do |i|
+    	`google-chrome expedia.ca &`
+    end
+
+    "Houses for Sale".button do |i|
+    	`google-chrome   https://www.google.com/search?q=houses+for+sale&oq=houses+for+sale&aqs=chrome.0.69i59j0i67i457j0i402l2j0i67j0i512l5.1742j0j7&sourceid=chrome&ie=UTF-8`
     end
 
     
 
-    title.add(a = Gtk::Button.new('Take Screenshot of Program'))
+    title.add(a = Gtk::Button.new('S.shot'))
     a.add_event_listener('clicked') { |_i| `mate-screenshot &`; }
-    title.add(a = Gtk::Button.new('Toggle Transparency'))
+    title.add(a = Gtk::Button.new('Transparency'))
     a.add_event_listener('clicked') { |_i| $window.set_opacity({1.0=>0.2}[$window.opacity] || 1.0); }
-    title.add($monitor_button = a = Gtk::Button.new('Monitor email for changes to stocks'))
+    title.add($monitor_button = a = Gtk::Button.new('Monitor email'))
     a.add_event_listener('clicked') do |_i|
     	Thread.new do |i|
     		IO.popen("espeak", "w") do |i| i.print "Using espeak for this"; end
@@ -542,6 +547,7 @@ provider.load data: <<~EOF
   margin: 0px;
   padding: 0px;
   border-radius: 0px;
+/*  float: left;*/
   }
 
 
