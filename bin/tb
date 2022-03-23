@@ -1,4 +1,11 @@
 #!/usr/bin/ruby
+def exit
+    	fade($window, 1, 0) do
+    		Gtk.main_quit
+    		exit! 0
+    	end
+end
+
 
 
 class String
@@ -11,6 +18,10 @@ button.add_event_listener "clicked" do |*a|
 end
 
 $title.add button
+
+button
+
+
 end
 end
 
@@ -300,6 +311,14 @@ end
 class OutputWindow < Gtk::Window
   def initialize(window_text)
     super()
+    add_event_listener 'destroy' do |i|
+    	puts "Quitting"
+    	Gtk.main_quit
+
+    	
+    end
+
+    
     $tv = TextView.new(window_text)
         $tv2 = TextView.new(text2 = 'Real time Yahoo stocks will display here')
     
@@ -353,11 +372,8 @@ if Dir.exists?("~/Stock Screenshots".path)
     "Communicate with all people in life".button do |i|
     	`mate-terminal -e "questions" &`
     end
-    "Quit".button do |i|
-    	fade($window, 1, 0) do
-    		Gtk.main_quit
-    		exit 0
-    	end
+    $quit_button = "Quit".button do |i|
+    	exit
     end
 
     "Open Expedia".button do |i|
