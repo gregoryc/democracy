@@ -3,7 +3,7 @@ function output(te) {
   console.log(te);
 }
 
-const translate = require("extended-google-translate-api");
+const translate = require("google-translate-extended-api");
 
 argv = process.argv.slice(2);
 
