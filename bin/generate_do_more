@@ -1,0 +1,6 @@
+
+
+
+# This generates the c_program.exe file and linux_c_program
+
+inspect.rb "[File.read('../1'), File.read('../2')]"

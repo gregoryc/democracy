@@ -1,3 +1,0 @@
-#!/bin/bash
-
-inspect.rb "[File.read('../1'), File.read('../2')]"
