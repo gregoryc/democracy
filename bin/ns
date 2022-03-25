@@ -43,8 +43,9 @@ t = setInterval(c_tiles,12); t2 = setInterval(get_link, 0); } ');
 thread = Thread.new do |_|
 	warn arg.green
 	l = []
-	time = Time.now
-	while l.length <= 30 && time <= time + 3.5
+	num=10
+	end_time = Time.now + 3.5
+	while l.length<=num&&Time.now<=end_time # &&    Time.now <= 
 	l = (i.pages.first.evaluate(" () => { return qs; } ").map do |a, b|
 		a
 	end).to_a
