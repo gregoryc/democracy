@@ -1,5 +1,11 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
+LANG='us'
+LANG='ca'
+LANG2='en-us'
+LANG2='en-ca'
+LANG3='usa'
+LANG3='canada'
 
 begin
   require 'puppeteer-ruby'
@@ -50,19 +56,26 @@ def curl(*args)
   new = ''
   #      args.each do |arg|
   args.each do |arg|
-    %w[TO CN V].each { |suf| new += "#{arg}.#{suf},"; }; # end
+  	case LANG
+  	when /^ca$/i
+  	words = %w[.TO .CN .V]
+  	else
+  		words = [""]
+  	end
+  	words.each do |n|
+  		new += [arg, n, ","].join; end
   end
   #      end
 
   new = new.chomp ','
 
-  a = "https://query1.finance.yahoo.com/v7/finance/quote?lang=en-CA&region=CA&corsDomain=finance.yahoo.com&fields=symbol,regularMarketPrice&symbols=#{new}"
+  a = "https://query1.finance.yahoo.com/v7/finance/quote?lang=#{LANG2}&region=#{LANG}&corsDomain=finance.yahoo.com&fields=symbol,regularMarketPrice&symbols=#{new}"
   '
 
 #      			pts a
 
 puts a '
-
+	puts a
   a = `curl -s '#{a}' 2>/dev/null`.strip
 end
 
@@ -71,12 +84,12 @@ def watch
     loop do
       if $args.nil?
         sleep 0.5
-        puts 'Args nil'
+        #puts 'Args nil'
         next; end
 
-      puts 'Curling'
+      #puts 'Curling'
       def unused
-        a = "https://query1.finance.yahoo.com/v7/finance/quote?lang=en-CA&region=CA&corsDomain=ca.finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,preMarketPrice,preMarketChange,preMarketChangePercent,postMarketPrice,postMarketChange,postMarketChangePercent&symbols=#{new.chomp ','}"
+        a = "https://query1.finance.yahoo.com/v7/finance/quote?lang=en-#{LANG}&region=#{LANG}&corsDomain=finance.yahoo.com&fields=symbol,marketState,regularMarketPrice,regularMarketChange,regularMarketChangePercent,preMarketPrice,preMarketChange,preMarketChangePercent,postMarketPrice,postMarketChange,postMarketChangePercent&symbols=#{new.chomp ','}"
       end
 
       a = curl(*$args)
@@ -98,9 +111,14 @@ def watch
       $symbols = symbols
 
       result.each do |i|
-        next unless i['market'] != 'us_market'
-
-        market = i['market']
+#      	if 
+		market = i['market'].gsub "_market", ""
+		if market.downcase.strip == LANG
+			true
+		else
+			next
+		end
+		market = i['market']
         p = i['regularMarketPrice']
 
         symbol = i['symbol']
@@ -365,7 +383,7 @@ class OutputWindow < Gtk::Window
       exit
     end
 
-    'Open Expedia'.button do |_i|
+    'Open Expedia'.button do|_i|
       `google-chrome expedia.ca &`
     end
 
@@ -374,7 +392,7 @@ class OutputWindow < Gtk::Window
     end
 
     title.add(a = Gtk::Button.new('S.shot'))
-    a.add_event_listener('clicked') { |_i| `mate-screenshot &`; }
+    a.add_event_listener('clicked') { |_i| system "mate-screenshot & "; }
     title.add(a = Gtk::Button.new('Transparency'))
     a.add_event_listener('clicked') do |_i|
       $window.set_opacity({ 1.0 => 0.2 }[$window.opacity] || 1.0)
@@ -428,7 +446,7 @@ def fade(obj, start, stop)
 end
 
 def site
-  'https://www.tradingview.com/markets/stocks-canada/market-movers-most-volatile/'
+  "https://www.tradingview.com/markets/stocks-#{LANG3}/market-movers-most-volatile/"
 end
 Warning[:deprecated] = false
 require 'shellwords'
@@ -576,7 +594,7 @@ Gtk::StyleContext.add_provider_for_screen(Gdk::Screen.default,
 text = <<~EOF
 
 
-  <span size="x-large"><i><span color="#0000AA">Swingiest TSX stocks possible shown</span></i></span>
+  <span size="x-large"><i><span color="#0000AA">Swingiest #{LANG3.upcase} stocks possible shown</span></i></span>
 
   Generate graphs, they will be stored in a folder called &quot;Stock Screenshots&quot;
   * See what is abnormally down, due to a mistake,
@@ -588,8 +606,12 @@ text = <<~EOF
 
   __Swingy stocks aren't failing stocks.__
 
+  Two methodologies
 
-  The stocks that dip the most are likely to be up in the following morning in the first few hours.
+  <i>Buy the most swingy stock for low, then sell for like +50%.This might take some time. Or you could have a quick +20% profit.</i>
+
+  Buy a swingy stock for -5% or so, then sell for 1.1x that, +5%. You could do this daily.
+
 
   All listed stocks are the most volatile stocks.
 
@@ -603,6 +625,10 @@ text = <<~EOF
 
 
   Spend your time doing meaningful things, and not being a slave for a sociopathic system.
+
+  Open #{File.expand_path(__FILE__)} and change language settings on top of file to change lang settings.
+
+  Since I am Canadian, default is canada
 EOF
 
 text = text.gsub(/\n{2,}/, "\n\n")

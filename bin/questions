@@ -148,4 +148,4 @@ def main
   rescue Interrupt
     puts
   end
-end; main
+end; while true; main;break;end
