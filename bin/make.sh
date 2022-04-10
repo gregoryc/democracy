@@ -110,7 +110,7 @@ and the <b>work-in-progress discourse generator</b>, but that's stored in a sepa
 
 <h1>Few or no dependencies!</h1>
 
-<p>My email is gregorycohen2@gmail.com and I really would like to make open source software. Everything I have is BSD licensed.</p>
+<p>My email is <a href=mailto:gregorycohen@gmail.com>gregorycohen2@gmail.com</a> and I really would like to make open source software. Everything I have is BSD licensed.</p>
 
 <b><i>
 If this software gets you a job or makes you money or improves your life or makes things easier for you, please consider donating. I have released this software under the BSD license (a very liberal license) for everyone to use and modify. I would appreciate it greatly if some people could return the favor :)</i></b>
