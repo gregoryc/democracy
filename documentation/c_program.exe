@@ -8,7 +8,7 @@ People are unemployed, etc.
 
 People could have more jobs.
 
-do_more is a graphical, cross platform program (generated from the inspect.rb program) that generates and downloads dynamic PDFs of Resumes and Cover Letters that are tailored for each and every possible job that you could apply for on Indeed. It is very freaking practical!!!!!!!!!!!!!!!!!!!!!
+do_more is a graphical, cross platform program (generated from the inspect_list program) that generates and downloads dynamic PDFs of Resumes and Cover Letters that are tailored for each and every possible job that you could apply for on Indeed. It is very freaking practical!!!!!!!!!!!!!!!!!!!!!
 
 
 First, you need to click on the bottom part of it. It copies that code into your browser. Then you  right click on a browser page and go to "Inspect" (the same can be done by doing Control + F12). Make sure you are on Indeed.
@@ -41,7 +41,7 @@ Or you can do it manually
 (Find it by doing "cd [folder]", "cd ..",     etc.    )
 
 
-for i in Downloads/*; do  ./chrome --headless --print-to-pdf-no-header   --print-to-pdf="$i.pdf"; done
+for i in Downloads/*; do  ./chrome --headless --print-to-pdf-no-header "$i"    --print-to-pdf="$i.pdf"; done
 
 
 

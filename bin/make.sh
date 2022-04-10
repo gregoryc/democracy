@@ -79,15 +79,18 @@ a = "<html>
 </head>
 
 
-<body style='padding:10;margin:0;width:100%;font-family:Monospace; font-size: 90%; background-color: #{bg}'>
-<h1 style='font-size: 50px; font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>Practical self-empowerment utilities covering every facet of life</h1>
+<body style='padding:10;margin:0;width:100%;font-size: 90%; background-color: #{bg}'>
+<h1 style='font-size: 50px; text-align:center;text-shadow: 3px 3px 3px black; color:gold;'>Practical self-empowerment utilities covering every facet of life</h1>
 <h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>These tools are for everyone</h2>
 <h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>It doesn't matter what political ideology you favor, these tools are all still very valuable. You can live in Canada, the US, Russia, China or Africa, it doesn't matter.  </h2>
 <h2 style='font-family:Sans;text-align:center;text-shadow: 3px 3px 3px white'>I intend to make people more able.</h2>
 <hr>
 
 <pre>
-This lists all of the programs.
+<iframe width='100%' height='100%' src='https://www.youtube.com/embed/ojzPxEKqldk' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
+
+
+This lists all of the programs. The most important might be tb, see <a href=\"https://www.youtube.com/GregoryCohen1\">Democracy YouTube Channel (youtube.com/gregorycohen1</a> and <a href=https://facebook.com/democracygregoryc>facebook.com/democracygregoryc</a>
 
 There is also my old semantic metadata project, which is a valid idea, and very relevantly, the discourse generator
 

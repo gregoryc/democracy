@@ -1,6 +1,0 @@
-#!/bin/bash
-
-killall kazam -9    2>/dev/null; tput reset && kazam 2>/dev/null 1>/dev/null &
-
-sleep 0.1
-tput reset
