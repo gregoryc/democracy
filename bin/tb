@@ -1,5 +1,7 @@
 #!/usr/bin/ruby
 # frozen_string_literal: true
+# BSD license, all sites are for personal use, etc.
+
 LANG='us'
 LANG='ca'
 LANG2='en-us'
