@@ -73,9 +73,11 @@ a += "<hr style='border: 0px; padding: 0px; display:   block; width: 100%;backgr
 </p>"
 end
 
-a = "<html>
+a = <<EOF
+<html>
 <head>
 <title>Tools</title>
+<script data-ad-client="ca-pub-1541978815872006" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
 </head>
 
 
@@ -90,7 +92,7 @@ a = "<html>
 <iframe width='100%' height='100%' src='https://www.youtube.com/embed/ojzPxEKqldk' title='YouTube video player' frameborder='0' allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture' allowfullscreen></iframe>
 
 
-This lists all of the programs. The most important might be tb, see <a href=\"https://www.youtube.com/GregoryCohen1\">Democracy YouTube Channel (youtube.com/gregorycohen1</a> and <a href=https://facebook.com/democracygregoryc>facebook.com/democracygregoryc</a>
+This lists all of the programs. The most important might be tb, see <a href=\"https://www.youtube.com/GregoryCohen1\">Democracy YouTube Channel (youtube.com/gregorycohen1)</a> and <a href=https://facebook.com/democracygregoryc>facebook.com/democracygregoryc</a>
 
 There is also my old semantic metadata project, which is a valid idea, and very relevantly, the discourse generator
 
@@ -126,7 +128,9 @@ If this software gets you a job or makes you money or improves your life or make
 <h1>Without further ado, here are the #{$num} documented programs.</h1>
 
 
-#{a}</body></html>"
+#{a}</body></html>
+
+EOF
 open('index.html', 'w') do |d|
 d.print a
 end
