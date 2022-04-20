@@ -2,6 +2,7 @@
 require "json"
 require "colorize"
 days_lists = [] of typeof(["", 0])
+days_lists2={} of String=>String
 
 def green(i)
   print i.colorize :green
@@ -13,6 +14,8 @@ class IO
 end
 
 Dir.glob "*" do |file|
+	days_lists2[file] = ""
+#	d
   file;list = [""]
   list.pop
   File.open(file).each_line do |line|
@@ -54,12 +57,14 @@ Dir.glob "*" do |file|
         #	if item.split.size < 4
         #		raise item.dump
         #	end
+#        puts [item.split[1].to_f, "current #{i} #{l.size} <=>base", l[i_].split[4].to_f].join
         if (up = item.split[1].to_f / l[i_].split[4].to_f) >=ARGV[1].to_f64 # >= 1.2
           #      	puts "20% up! #{list[i_#{item}
           #     	green list[i_][1.. + "=>" + item
           #
           #	print("#{list[i_]} | #{up} #{index} days (#{item.split})\n")
           days_lists[-1].push(index)
+           days_lists2[file] += "Sale on #{item.split[0]} with #{i_} of #{l.size} "
           #			puts "UP"
           i += index
           break
@@ -133,14 +138,16 @@ print "\n"; puts "#{sums.size} sales"
 sums[..].each do |sum|
 	n = [] of Float64
 	if !sum.nil?
-	print sum[0]
+	print sum[0],   days_lists2[sum[0]]
 	sum.each do |i|
 		val = i.to_f64 rescue next
 #		print "val"
 #		pri
-#		print val
-print " ", val, "days";	end
-	print "[#{sum}]"
+#		print val#.split
+print " ", val, "days | ";	end
+print JSON.parse(sum[2].to_s).as_a[1..].size/ARGV[0].to_f64*100.0
+print "%"
+print " there was a sale"
 	print "\n"
 
 	end
