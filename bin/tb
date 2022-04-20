@@ -439,6 +439,7 @@ class OutputWindow < Gtk::Window
 end
 
 def fade(obj, start, stop)
+if ARGV[0] != "-n"
   Thread.new do |i|
     i = start.to_f
     loop do
@@ -450,6 +451,7 @@ def fade(obj, start, stop)
       end
     end
     yield if block_given?
+  end
   end
 end
 
