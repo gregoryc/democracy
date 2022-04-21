@@ -53,12 +53,25 @@ a = a["quoteResponse"]["result"].as_a
 
 a = a.sort do   |a, b|
 	k = "regularMarketChangePercent"
+	begin
 	a[k].as_f <=> b[k].as_f
+	rescue
+		a.to_s <=>b.to_s
+	end
 #	a[k] <=> b[
 end
 rank = 0
 puts "Most failing good stocks".upcase
-a.each do |i| rank += 1;	list.push  ([
+a.each do |i|
+
+
+rank += 1;	
+
+
+if (!i.as_h.has_key? "regularMarketPrice"); next; end
+
+
+list.push  ([
 		[rank,".",s=i["symbol"],  (i["regularMarketPrice"].as_f.to_s || (0.0/0).to_s)].join(""),              	"failing" ,       
 	].join.colorize(:green).bold.to_s + #" failing " + \
 	i["regularMarketChangePercent"].to_s.colorize(:red).to_s + [s].old_prices(20).join(" "))
