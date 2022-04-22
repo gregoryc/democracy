@@ -1,5 +1,12 @@
 #!/usr/bin/crystal
 #class Aray
+#Best function name ver...pure...ocean
+#def clarity
+def clarity(a)
+	puts a.strip.colorize(:blue).bold
+end
+
+
 class Object
 def +(obj : String)
 	to_s + obj
@@ -181,7 +188,20 @@ end
 
 
 
-system "tput reset"
+#system "tput reset"
+print "\ec\e]104\a\e[!p\e[?3;4l\e[4l\e>"
+clarity "
+
+The opening 9:30 a.m. to 10:30 a.m. Eastern time (ET) period is often one of the best hours of the day for day trading, offering the biggest moves in the shortest amount of time. A lot of professional day traders stop trading around 11:30 a.m. because that is when volatility and volume tend to taper off. Once that happens, trades take longer and moves are smaller with less volume. "#.colorize(:blue)
+
+clarity "Think of your spiritual freedom.... It's within your grasp...."
+clarity "
+
+
+In the last hours of the trading day, volatility and volume increase again. In fact, common intraday stock market patterns show the last hour can be like the first—sharp reversals and big moves, especially in the last several minutes of trading. From 3 p.m. to 4 p.m. ET, day traders are often trying to close out their positions, or they may be attempting to join a late-day rally in the hope that the momentum will carry forward into the next trading day. 
+
+"
+
 puts list.join("\n")
 end
 
