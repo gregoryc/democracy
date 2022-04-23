@@ -40,8 +40,8 @@ class Array
   end
 end
 
-def check_if_low(i)
-  i.split[1..-3].each do |i|
+def check_if_low(sp)
+  sp[1..-3].each do |i|
     if i.to_f <= 2.0
       raise BadStock.new
     end
@@ -60,67 +60,72 @@ def process(n)
   #	pu,ts a
   #	a = a
   count = 0
+  sp = a[-1].split
 #  percent_sum = percent_sum2 = percent_sum3 = percent_sum4 = percent_sum5 = percent_sum6 =     0.0
   str = ""
-  if ARGV.size > 0 && ARGV[0] == "q"
-    q = true
-  end
   a.each do |i|
-    check_if_low(i)
+  
+  
+    check_if_low(sp)
     #			v=get_diff#).to_s + " "
-    v = get_diff i
+#    v = get_diff i
 #    percent_sum += v
     #		end
-    if v.negative?
-      count += 1
-    end
     #		end
   end
 
   if a[-1].split[1..4].uniq.size==1
   raise BadStock.new
  end
- begin
-if a[-1].split[1]<a[         -(1000)].split[1] # < a[0]
-	raise BadStock.new
-end
-rescue IndexError
-#	ra
-
-	raise BadStock.new
-end
 
  begin
 
-if a[-1].split[1]<a[              -300].split[1] # < a[0]
+if sp[1].to_f < a[0].split[1].to_f
+#if sp[1].to_f<a[0].split[1].to_ # < a[0]
 	raise BadStock.new
 end
 rescue IndexError
 	raise BadStock.new
 end
+
+if 0
+end
+
+# 
+
+[300, 90, 150, 500, 1000, 400, 60].each do |days|
+ begin
+
+if sp[1].to_f<a[              -days].split[1].to_f # < a[0]
+	raise BadStock.new
+end
+rescue IndexError
+	raise BadStock.new
+end
+end
+
+#(1..30).each do |day|
+(1..50).each do |day|
 
 
 begin
-if a[-1].split[1]<a[         -90].split[1] # < a[0]
+if sp[1].to_f   < a[-day].split[1].to_f
+#if sp[1]<a[      -day].split[1].to # < a[0]
 	raise BadStock.new
 end
 rescue IndexError
 	raise BadStock.new
 
 end
-
-if a[-1].split[1]<a[         -5].split[1] # < a[0]
-	raise BadStock.new
 end
 
-if a[-1].split[1]<a[0].split[1] # < a[0]
-	raise BadStock.new
-end
 
+
+#return
 
 
   c = :cyan
-  str += "overall 50 50 10 5 90"
+  str = "overall 50 50 10 5 90"
   str += "%"
   str += " percent sum"
   str += [count, "had lower market close than open", count, "of", a.size].join " "
@@ -137,9 +142,7 @@ class Array
 
     each do |i|
     	count += 1
-    	print count
-    	print " "
-    	STDOUT.flush
+    	puts count
       begin
         if (!i.nil?)
           [i].old_prices
@@ -219,7 +222,7 @@ In the last hours of the trading day, volatility and volume increase again. In f
     lines = [] of typeof("")
 
     to_a.each do |i|
-      lines.push process(`tail /home/a/s/#{i} -n +3`)
+      lines.push process(`tail /home/a/#{ARGV[0]}/#{i} -n +3`)
     end
 
     return lines
@@ -232,7 +235,7 @@ require "file_utils"
 # include FileUtils
 
 def main
-  FileUtils.cd "/home/a/s/"
+  FileUtils.cd ARGV[0]
   glob = Dir.glob("*").map do |i|
   info = File.info i
   if info.size < 29
