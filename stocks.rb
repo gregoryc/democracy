@@ -132,9 +132,14 @@ end
 class Array
   def prices # args=0
     # puts a
+    count = 0
     args = [] of typeof("")
 
     each do |i|
+    	count += 1
+    	print count
+    	print " "
+    	STDOUT.flush
       begin
         if (!i.nil?)
           [i].old_prices
@@ -229,13 +234,15 @@ require "file_utils"
 def main
   FileUtils.cd "/home/a/s/"
   glob = Dir.glob("*").map do |i|
-    if File.read(i).size < 29
+  info = File.info i
+  if info.size < 29
       nil
     else
       i
     end
   end
   glob.compact!
+  puts "Found all non-empty"
 
   # puts "Read globs"
 
@@ -252,4 +259,5 @@ end
 
 require "json"
 require "colorize"
+puts "Running"
 main
