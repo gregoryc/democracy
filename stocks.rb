@@ -236,12 +236,24 @@ require "file_utils"
 
 def main
   FileUtils.cd ARGV[0]
+  l = %w[K
+  BANFP
+  DKL
+  FOE
+  ESQ
+  ]
+
+  
   glob = Dir.glob("*").map do |i|
+  if l.includes? i
+  	nil
+  else
   info = File.info i
   if info.size < 29
       nil
     else
       i
+    end
     end
   end
   glob.compact!
