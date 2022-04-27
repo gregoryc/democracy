@@ -41,9 +41,12 @@ class Array
 end
 
 def check_if_low(sp)
+#	if ARGV.si
   sp[1..-3].each do |i|
     if i.to_f <= 2.0
+    	if ARGV.size == 1
       raise BadStock.new
+      end
     end
   end
 end
@@ -55,7 +58,12 @@ def get_diff(i)
 end
 
 def process(n)
-  # def procedss(n : Strin)
+if ARGV.size   != 1
+if ARGV.size != 1
+return ""
+end
+
+
   a = n.strip.split("\n")      #.reverse
   #	pu,ts a
   #	a = a
@@ -222,7 +230,14 @@ In the last hours of the trading day, volatility and volume increase again. In f
     lines = [] of typeof("")
 
     to_a.each do |i|
-      lines.push process(`tail /home/a/#{ARGV[0]}/#{i} -n +3`)
+    if ARGV.size == 1
+    	if true
+	      lines.push process(`tail /home/a/#{ARGV[0].to_s}/#{i} -n +3`)
+	     end
+      else
+      
+      lines.push process(`tail /home/a/stocks/#{i} -n +3`)
+      end
     end
 
     return lines
@@ -235,16 +250,33 @@ require "file_utils"
 # include FileUtils
 
 def main
+if ARGV.size == 1
   FileUtils.cd ARGV[0]
+  end
+  l = %w[K
+  BANFP
+  DKL
+  FOE
+  ESQ
+  ]
+if ARGV.size == 1
+  
   glob = Dir.glob("*").map do |i|
+  if l.includes? i
+  	nil
+  else
   info = File.info i
   if info.size < 29
       nil
     else
       i
     end
+    end
   end
   glob.compact!
+  else
+  	glob = ARGV
+  end
   puts "Found all non-empty"
 
   # puts "Read globs"
