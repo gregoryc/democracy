@@ -6,7 +6,7 @@
 # Any sites this program downloads from are being used for personal, non-commerical use.
 # If any legal problems do arise, feel free to contact me at my
 # email and I can modify this program to use some ohter site.
-
+def puts *a; end
 
 LANG='us'
 #LANG='ca'
@@ -122,6 +122,12 @@ def watch
 
 #      puts results.in                                 
 #lts.inspect
+#	max = symo
+
+	max = (result.map do |i|
+		i["symbol"].size
+#		i["sym
+	end).max
       result.each do |i|
 #      	if 
 #puts i
@@ -133,21 +139,22 @@ def watch
 		end
 		market = i['market']
         p = i['regularMarketPrice']
-
-        symbol = i['symbol']
+        symbol=i['symbol'];mx=symbol.size
+        mx=max-mx
         '''
         msgs += "}\n"
         '''
-
-        msgs += "<span>#{symbol}</span>" + " " * 5 + "<span color='green'>#{p}"
-        msgs+="</span>"
+#size=max
+        msgs += "<span>#{symbol}</span>  " + " " *(mx)+ "<span color='green'>#{p}</span>\n"
 #        msgs += "</span>"
 #        msgs += " " * 5
 #        msgs
 #        msgs += "\n" if (x % 5).zero?
 
         x += 1
-      end; $tv2&.set "<i>Hot stocks and 'Strong Buys' for <b>#{get_time}</b></i>\n\n\n#{msgs}"
+      end; Thread.new do |i|
+      	$tv2&.set "<i>Hot stocks and 'Strong Buys' for <b>#{get_time}</b></i>\n\n\n#{msgs}"
+      	end
 
     end
   end
@@ -311,7 +318,7 @@ def get_time
            'am'
          end
   text = text.upcase
-  ret = " #{$map[hour]}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, "\1")
+  ret = " #{$map[hour]}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, "\\1")
   if ret[0] == ":"
   ret = "0" + ret
   end
