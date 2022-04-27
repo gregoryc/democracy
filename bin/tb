@@ -140,7 +140,7 @@ def watch
         '''
 
         msgs += "<span>#{symbol}</span>" + " " * 5 + "<span color='green'>#{p}"
-        msgs+="</span>\n"
+        msgs+="</span>"
 #        msgs += "</span>"
 #        msgs += " " * 5
 #        msgs
@@ -311,9 +311,7 @@ def get_time
            'am'
          end
   text = text.upcase
-
-  first = "\\1"
-  ret = " #{$map[hour]}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, first)
+  ret = " #{$map[hour]}:0#{min}:0#{sec}#{text}".gsub(/[0-9]([0-9]{2})/, "\1")
   if ret[0] == ":"
   ret = "0" + ret
   end
