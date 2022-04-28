@@ -58,7 +58,7 @@ def get_diff(i)
 end
 
 def process(n)
-if ARGV.size   != 1
+#if ARGV.size   != 1
 if ARGV.size != 1
 return ""
 end
