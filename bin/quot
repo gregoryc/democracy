@@ -1,0 +1,23 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+ARGV.each do |arg|
+
+val = if arg.nil?
+        $stdin.read
+      else
+        File.read(arg)
+      end
+
+d = (val.gsub(/(?<=\s)".*?"/) do |i|
+  "“#{i[1..-2]}”"
+end).gsub(/\s*”\s*([,.?!])/, '\\1”').gsub(/([ \t])[ \t]+/, '\\1').gsub(/\n\n\n*/, "\n\n").gsub("--", "—").strip
+
+if arg.nil?
+  print d
+else
+  File.write arg, d
+end
+
+end
+

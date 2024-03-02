@@ -1,0 +1,44 @@
+#!/usr/bin/ruby
+# This is a work in progress.
+
+ROMAN = /^([limcdvx]|[[:punct:]])+$/i
+
+def capitalize(a)
+  a = a.gsub(/\s*(-|–|—|:)(-|–|—|:)*\s*/, "\\1 ")
+  w = a.split
+  not_major = /^(?:to|a|an|the|on|in|of|at|and|or|but|nor|for|yet|so)$/i
+  w = w.map do |i|
+    case i
+    when ROMAN
+      i.upcase
+    when /^(?:not|no|be|is|are|was|were|have|has|had|do|does|did|that|it|my|me|we|our|you|he|his|she|her|they|them|who)$/i
+      i.capitalize
+    when /(-|–|—|:)/
+      i.capitalize
+    when not_major
+      i.downcase
+    else
+      i.capitalize
+    end
+  end
+  w = w.to_a
+  if w.size == 0
+    w = [" "]
+  end
+  if w[0].match(ROMAN)
+    w[0] = w[0].upcase
+  else
+    w[0] = w[0].capitalize
+  end
+  if (w[-1].match(ROMAN))
+    w[-1] = w[-1].upcase
+  else
+    w[-1] = w[-1].capitalize
+  end
+  w = w.join(" ")
+  w = w.gsub "- ", "-"
+  w
+end
+
+
+print (capitalize ARGV.join(" "))

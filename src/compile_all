@@ -1,0 +1,43 @@
+#!/bin/bash
+
+cd src 2>/dev/null
+cd src 2>/dev/null
+cd ..
+
+
+for i in rsub swap; do
+test -e $i || (gcc -O3 -s -Wall -Wextra -fwhole-program $i.c -o $i && cp -v $i ../bin/$i)
+done
+
+CPP=g++
+test -e ../bin/left_right || (cp -v left_right ../bin/left_right || ($CPP -s -O3 -s -fno-rtti -Wall -Wextra -fwhole-program left_right.cc -o left_right && cp -v left_right ../bin/left_right))
+CPP=/usr/lib/mxe/usr/bin/x86_64-w64-mingw32.static-g++
+test -e ../bin/left_right.exe || (cp -v left_right.exe ../bin/left_right.exe || ($CPP -s -std=c++17 -O3 -s -fno-rtti -Wall -Wextra -fwhole-program left_right.cc -o left_right.exe && cp -v left_right.exe ../bin/left_right.exe && true))
+
+echo rsub
+test -e ../bin/news || (
+	cp -v news ../bin/news || crystal build news.cr --release -o ../bin/news
+	strip ../bin/news
+)
+
+echo news
+test -e ../bin/clock || (
+	cp -v clock ../bin/clock || crystal build clock.cr --release -o ../bin/clock
+	strip ../bin/clock
+)
+echo clock
+cd src 2>/dev/null
+make || exit 1
+cd ..
+
+cd programs && for i in *; do
+
+	file=../../bin/"$i"
+	(/usr/bin/test -e $file && echo ${file} Exist) || (
+		echo Need a copy
+		cp -v "$i" ../../bin/"$i"
+	)
+
+done
+
+cd ..

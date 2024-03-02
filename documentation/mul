@@ -1,0 +1,11 @@
+Multiply numbers
+
+echo 1 > file
+echo 2 >> file
+echo 3 >> file
+echo 4 >> file
+echo 5 >> file
+
+cat file | mul
+
+=> 120

@@ -1,0 +1,15 @@
+#!/bin/bash
+
+DEBUG=1
+
+if [ "$1" = "" ]; then
+	EXECUTABLE=ui
+else
+	EXECUTABLE=$1
+fi
+
+if [ $DEBUG = 1 ]; then
+	g++ -g -DDEBUG=1 -Wall -Wextra -fno-exceptions -fno-rtti ui.cpp -o $EXECUTABLE
+else
+	g++ -O3 -DDEBUG=0 -Wall -Wextra -fno-exceptions -fno-rtti -s ui.cpp -o $EXECUTABLE
+fi

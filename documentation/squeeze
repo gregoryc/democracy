@@ -1,0 +1,13 @@
+Squeeze reads all input from stdin, then it prints it back omitting argument 1 line from the front, and argument 2 lines from the back
+
+Example
+
+squeeze 1 1
+
+This would omit the first line and the last line
+
+squeeze 5 3
+
+This would omit the first 5 lines and the last 3 lines
+
+squeeze 2 2 [file] also works, it outputs text to file

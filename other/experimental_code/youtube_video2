@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require 'colored'
+topics = []
+$stdin.each_line do |topic|
+  topics.push topic
+  begin
+    system 'tput civis'
+
+    # i = top
+
+    i = topic
+
+    puts topic.cyan
+    str = <<~EOF
+      green() {
+      	echo -ne "\e[32m$1\e[0m"
+      }
+
+
+      timeout 550s padsp ffmpeg -f alsa -ac 2 -i pulse -f x11grab -r 30 -s 1366x768 -i :0.0 -acodec pcm_s16le -vcodec libx264 -preset ultrafast -crf 0 -threads 0 output#{i.chomp}.mkv -y -loglevel quiet &
+      # && echo Video done) & 2>/dev
+
+      let i=0
+      while true; do
+      	let i=$i+1
+      	let minutes=$i/60
+      	let seconds=($i)%60
+      	green "$i/550 seconds of video, $minutes $seconds\r"
+      	sleep 1
+      done
+      done
+    EOF
+
+    File.write('/tmp/screencast', str)
+    system 'bash /tmp/screencast'; rescue Interrupt
+                                     system 'killall ffmpeg -9 -q'
+                                     system 'tput cnorm'
+  end
+end
+
+system 'clear'
+
+puts topics.green

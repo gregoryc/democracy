@@ -1,0 +1,68 @@
+#!/usr/bin/ruby
+
+LANG='us'
+LANG='ca'
+LANG2='en-us'
+LANG2='en-ca'
+LANG3='usa'
+LANG3='canada'
+
+
+
+if true
+a = File.read "/home/a/tsx"
+a  =a.split
+
+
+require "fileutils"
+FileUtils.cd"/home/a/s"
+#system 'find -size 0 -exec rm {} \;'
+#Dir.chdir "/home/a/s"
+
+a.each do |w|
+	%w[.TO -A.TO .V .CN].each {|end_|
+		end_ = w + end_
+		if test "e", end_
+		puts "Skipping #{end_}"
+		next
+		end
+		system "python3 /home/a/a.py " + end_ + " > " + end_
+#	end
+	}
+end
+
+
+puts a
+end
+
+
+
+a = File.read "/home/a/us_stocks"
+a  =a.split
+
+
+require "fileutils"
+FileUtils.cd"/home/a/stocks"
+#system 'find -size 0 -exec rm {} \;'
+#Dir.chdir "/home/a/s"
+
+a.each do |w|
+	[""].each {|end_|
+		end_ = w + end_
+		if test "e", end_
+		puts "Skipping #{end_}"
+		next
+		end
+		system "python3 /home/a/a.py " + end_ + " > " + end_
+#	end
+	}
+end
+
+
+puts a
+
+
+
+
+
+

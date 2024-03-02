@@ -1,0 +1,154 @@
+#!/home/a/wrapper
+require "json"
+require "colorize"
+days_lists = [] of typeof(["", 0])
+days_lists2={} of String=>String
+
+def green(i)
+  print i.colorize :green
+end
+#alias :puts green
+
+class IO
+  #	alias :gets_to_end read
+end
+
+Dir.glob "*" do |file|
+	days_lists2[file] = ""
+#	d
+  file;list = [""]
+  list.pop
+  File.open(file).each_line do |line|
+    list.push line
+  end
+  if list.size <= 29
+    # puts "not valid"
+    next
+  end
+    days_lists.push([file] of (String | Int32))
+
+  list = list[2..]
+  if list.size > ARGV[0].to_i
+    list = list[-(ARGV[0].to_i)..]
+  end
+  # puts list.size
+  # puts list
+  while true
+    # puts
+    #list = list[1..]
+    #if list.size == 1
+    #  break
+    #end
+    # puts list.size
+    #  	puts list.size
+    l = list
+    i = 0
+    while true
+      i_ = i
+      index = 0
+      if i >= l.size
+        break
+      end
+      l[i..-1].each do |item|
+        #		puts list[0].split.join(" ")
+        #		puts i.split.inspect
+        #		puts up rescue 0
+        index += 1
+        #	if item.split.size < 4
+        #		raise item.dump
+        #	end
+#        puts [item.split[1].to_f, "current #{i} #{l.size} <=>base", l[i_].split[4].to_f].join
+        if (up = item.split[1].to_f / l[i_].split[4].to_f) >=ARGV[1].to_f64 # >= 1.2
+          #      	puts "20% up! #{list[i_#{item}
+          #     	green list[i_][1.. + "=>" + item
+          #
+          #	print("#{list[i_]} | #{up} #{index} days (#{item.split})\n")
+          days_lists[-1].push(index)
+           days_lists2[file] += "Sale on #{item.split[0]} with #{i_} of #{l.size} "
+          #			puts "UP"
+          i += index
+          break
+        else
+          # puts item.split
+        end
+        #			break
+        # break
+        #		en
+      end
+      i += index; end; break
+  end
+end
+# putd
+# puts days_lists
+sums = days_lists.map do |i|
+  a_ = [] of Int64
+  i[1..].each do |i|
+    a_.push i.to_i64
+  end
+  sum = 0.0
+#  a_.
+
+  a_.each do |n|
+  	sum += n.to_f64
+  end
+#  size_
+#  size=        
+
+
+size=a_.size;  if size!=0; [i.first, sum / size, i.to_s]                 ; else         nil; end; end
+# eend
+
+#sums=sums.sel
+
+sums = sums.reject do |i|
+	i == nil
+end
+
+
+NaN = 0.0/0
+sums = sums.sort do |a, b|
+	if a.nil? || b.nil?
+		-1
+	else
+	#a = a[1].to_f64
+	a = a[1].to_f64
+	b = b[1].to_f64
+	a.nan? && (a=-1.0f64)
+	b.nan? &&(b=-1.0f64)
+	a<=>b
+	end
+end
+# end
+# puts a
+puts "Fewest number #{sums[0..5]}\n" + "-" * 80 + "\n"
+
+sums = sums.sort do |a, b|
+	if a.nil? || b.nil?
+		-1
+	else
+	a = JSON.parse(a[-1].to_s).size
+	b = JSON.parse(b[-1].to_s).size
+	-(a<=>b)
+	end
+end
+# end
+
+print "\n"; puts "#{sums.size} sales"
+
+sums[..].each do |sum|
+	n = [] of Float64
+	if !sum.nil?
+	print sum[0],   days_lists2[sum[0]]
+	sum.each do |i|
+		val = i.to_f64 rescue next
+#		print "val"
+#		pri
+#		print val#.split
+print " ", val, "days | ";	end
+print JSON.parse(sum[2].to_s).as_a[1..].size/ARGV[0].to_f64*100.0
+print "%"
+print " there was a sale"
+	print "\n"
+
+	end
+end

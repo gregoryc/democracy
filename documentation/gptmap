@@ -1,0 +1,5 @@
+gptmap
+Usage: [glob] [new folder] [prompt for data of each file]
+
+Maps all files in [glob] to chatgpt, and makes a new folder
+

@@ -1,0 +1,27 @@
+Global Substitute (Gsub) In Place
+
+gsubip is like gsub, which replaces all instances of a regular expression globally
+
+[regular expression 1] [regular expression 2] => result
+
+Example
+
+gsubip . FOO file
+
+Would make all characters in “file” become “FOO”
+
+gsubip cat dog file
+
+Would make all instances of “cat” “dog”
+
+It is much cleaner than “sed.”
+
+You don't need to have “sed” installed to run this program.
+
+It doesn't read from the standard input
+
+It takes exactly 3 arguments, no more, no fewer.
+
+See also
+
+gsub

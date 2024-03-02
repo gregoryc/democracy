@@ -1,0 +1,17 @@
+Abs gets the absolute value of an integer
+
+The absolute value of a number is the value of that number without its sign
+
+echo -300 | abs
+
+=> 300
+
+echo 200 | abs
+
+=> 200 
+
+(echo -2; echo -10) | sub | abs
+
+=> 12
+
+The last one would do -2 - -10, the result would be -12, and then the absolute value would be computed, and so the result would be 12.

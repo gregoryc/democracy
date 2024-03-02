@@ -1,0 +1,122 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+# BSD 2-Clause License
+# 
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+   # list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+   # this list of conditions and the following disclaimer in the documentation
+   # and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# time = Ti
+require 'colored'
+time = Time.now
+
+warn "Strong buys for TSX for #{time.strftime('%A')}, #{time.strftime('%B %d (%Y)').bold}".send ''.colors.sample # "
+
+if ARGV.length != 2
+  #	puts "Usage min max"
+  #	abort 1
+end
+
+require 'puppeteer-ruby'
+# system "killall google-chrome"#Warning[:deprecated] = false
+def site
+  ARGV[0].strip
+end
+
+def site
+  min, max = ARGV
+  min ||= '400'
+  max ||= '600'
+  'https://www.tradingview.com/markets/stocks-canada/market-movers-most-volatile/'
+end
+
+def e
+  return 'list'
+  ARGV[1].strip
+end
+
+# def site;
+
+#	ARG
+Warning[:deprecated] = false
+require 'shellwords'
+require 'fileutils'
+
+<<~EOF
+
+
+  puts "ho
+
+
+
+
+EOF
+# "
+
+#	system "killall chrome"
+Puppeteer.launch(headless: true) do |browser|
+  page = browser.pages[0]
+  page.viewport = Puppeteer::Viewport.new(width: 1280, height: 800)
+  page.goto(site, wait_until: 'domcontentloaded')
+  #    sle
+  #	sleep 2 ** 32
+  # sleep 10 ** 99
+  #    page.wait_for_selector "body"
+  # browser.pages[0].goto process.argv[2];
+  # s
+  str = <<~EOF
+    async function() {
+    //return [];
+    var list = [];
+    var body = document.querySelectorAll("tbody")
+    for (var b of body) {
+    	b =[... b.childNodes  ];
+
+    for(var i=0; i < b.length;++i) {if(b.at(i).innerText?.match(/strong buy/i)) { list.push(b.at(i).querySelector("a").innerText); } }
+    }
+
+    //alert(list);
+
+    return list;
+    }
+
+  EOF
+
+  x = 0
+  next_list = []
+  a = page.evaluate(str)
+  i = 0
+  # STDERR.puts "Strong buys for TSX for #{Time.new}".green
+  a.each do |i|
+    if true
+      if $stdout.tty?
+        puts i.send(i.colors.sample).bold.underline
+      #		system "echo #{i}"
+      else
+        puts i; end
+      #	page.goto(i, wait)
+    end
+    # puts i
+  end
+end
+# end

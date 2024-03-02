@@ -1,0 +1,83 @@
+#!/bin/bash
+
+which apertium > /dev/null || (echo Install Apertium;   exit 1)
+#apt install apertium-all-devel
+
+if [ "$2" == '' ]; then
+	OUTPUT=$HOME/translate_folder
+else
+	OUTPUT="$2"
+fi
+DEST=$(basename $OUTPUT)
+
+LANGS=`apertium -l | grep -vE 'eng-kmr-nocg|eng-srn|eng-nob|eng-ina|tagger|bytecode|disam|morph' | grep -E eng?- | xargs`
+text=`cat /dev/stdin`
+for i in   $LANGS; do
+
+f() {
+a=`echo "$text" | timeout 15s apertium -u "$i" 2>/dev/null`
+if [ "$a" == '' ]; then
+	echo "Warning | $i | No translation.  " | red;
+else
+#tput bold
+echo -e              "\e[1m$i → $a\e[0m"
+
+
+mkdir -p $OUTPUT 2>/dev/null
+echo $a > $OUTPUT/$i
+fi
+}
+f &
+done
+wait
+
+#l() {
+
+l()
+{
+#ruby -e 'require "colored"; (80 * 4).times { |i| print "~! ^#@-=*".chars.sample.send(["itself", "bold"].sample).send "".colors.sample } '
+echo
+}
+
+echo -n Saved in $OUTPUT|green
+q=`printf "%s\n" $LANGS | wc -l`
+
+#echo "Translated the phrase, \"$text\", into $q other languages in $DEST" | flite -voice    slt &
+
+
+cd $OUTPUT
+cp eng-spa eng-espanol
+
+cp eng-spa eng-español
+
+
+
+for i in *; do                      false; done
+	#echo $i | dump
+	ruby -e '
+
+	require "json"  ; list=[]
+
+
+
+	for q in Dir.glob("*");
+		l= q.gsub(/^.*?-/,"");
+		c=File.read(q).strip.dump  ;   
+		l.length.times do |i| list.push  "#{ l[0..l.length-i-1].dump}: #{c}"; end; end;            ;
+list.push ("#{"en".dump}: #{ARGV[1].dump}")
+		File.open(".t.html", "w") do |f|
+		f.print ("<div><div>#{ARGV[1]}</div><script>(function() { var text_div = document.currentScript.parentNode.firstChild; function f () {       text_div.innerText = (");
+	
+		f.puts JSON.dump(JSON.parse("{" + list.join(", ") + "}"))
+
+		f.print ")" # (")");
+		f.print "[navigator.language.split(\"-\")[0]]    /*) */  }; f(); window.addEventListener(\"languagechange\", f);                          })(); </script>  </div>";
+		f.print "\n"; end
+' -- "$1" "$text"
+                                             for i in *; do true; done
+
+#printf "}"
+
+google-chrome .t.html
+
+#for (var i = language.length

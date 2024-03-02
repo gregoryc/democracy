@@ -1,0 +1,4 @@
+echo Copying and saving
+our=`history | tail -n 2 | head -n 1 | gsub '.+?\s+(.+)' '\1' | tee "$1"`
+echo "$our" | xclip -selection c
+echo \""$our"\" | green

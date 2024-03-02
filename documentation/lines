@@ -1,0 +1,3 @@
+Lines gets the number of files in the current folder that you are in.
+
+It can also act like “wc -l” if you pipe data into it.

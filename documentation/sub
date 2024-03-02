@@ -1,0 +1,25 @@
+Sub is a simple command line program that subtracts integers.
+
+For some reason, no simple program did this.
+
+Which is weird
+
+Example
+
+sub
+(Input)
+10
+3
+1
+
+Result =>
+
+6
+
+Example
+
+ (echo 5; echo 2) | sub
+
+Result =>
+
+3

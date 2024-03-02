@@ -1,0 +1,21 @@
+“Close” is a simple program that closes “Emerald Browser,” a new web browser based on the same engine as Chrome. Currently, Emerald Browser only works on Linux and Mac (Or Windows with Windows Subsystem for Linux or a Virtual Machine, but getting it to work might be tricky).
+“close” closes the Web Browser, which is normally full-screen.
+More accurately, it kills the browser, and all other copies of Emerald Browser.
+Since they are normally full screen, presumably the user would only have one instance of the browser open.
+The browser can have multiple panes (kind of like tabs) open, depending on how the browser is compiled.
+The browser can also be transparent, depending on how it is compiled.
+“Close” is supposed to be used in tandem with “open,” which is a command line tool to open the browser.
+open [query] ——> [query] gets searched in google, and then opened
+When you are done, you can do
+close
+Which closes the browser. It is a simple command.
+Currently, Emerald Browser is incomplete. A program exists in this software project that allows you to open up multiple browser tabs (one or more tabs) simply by speaking.
+Voice recognition would google the multiple sites that you say in your query (separated by “and”)
+“facebook and youtube and google”
+It's hard to get more direct than that!
+Emerald browser has a built in the top. The terminal is the navigation bar.
+Some more work needs to be put into the browser.
+Currently, new tabs can't be opened, which might be a dealbreaker for some people.
+Currently, content, like YouTube videos, can't be made fullscreen.
+
+If anyone wants to contribute, feel free to!

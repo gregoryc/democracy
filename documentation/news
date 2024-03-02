@@ -1,0 +1,11 @@
+Gets the news from bbc
+
+Usage
+
+news
+
+news speak
+
+uses google_speak to SPEAK the news, one story at a time.
+
+![UCA](./images/5.png)

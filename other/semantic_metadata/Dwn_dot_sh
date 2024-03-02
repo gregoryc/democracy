@@ -1,0 +1,9 @@
+#!/bin/bash
+
+url=`curl -L dumps.wikimedia.org/backup-index.html | fgrep enwiki      | head -n 1 |  sed -r 
+"s/.*\"\(.+\)\".*/https:\/\/dumps.wikimedia.org\/\1-\1-pages-articles-multistream.xml.bz2/"`
+
+# | sed "s/-enwiki\//\/enwiki-/"`
+echo $url
+exit
+(nohup xargs wget -O wikipedia.bz2 $url &&  nohup bunzip2  wikipedia.bz2 && head wikipedia > head && tail wikipedia > tail &)

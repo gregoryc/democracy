@@ -1,0 +1,194 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+# BSD 2-Clause License
+# 
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+   # list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+   # this list of conditions and the following disclaimer in the documentation
+   # and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+system 'tput reset &'
+require 'colored'
+puts `head -c 300 < /dev/urandom`.blue, "\n"
+
+
+if ARGV.join(' ') =~ /--cd=([^\s]+)/
+  Dir.chdir Regexp.last_match(1)
+else
+  Dir.chdir Dir.home
+
+end
+
+def read(n)
+  num = [0, 'one', 'two'][n]
+  loop do
+    require 'readline'
+    line = Readline.readline(
+      "#{n.to_s.prepend(num).blue.bold}#{Dir.pwd.sub(Dir.home, '$HOME').green.bold}$ ", true
+    )&.strip
+
+    case line
+    when nil
+      puts
+      exit
+      next
+    when ''
+      next
+    when 'po'
+      require 'colored'
+      system 'poweroff' if Readline.readline('Poweroff? '.red, true).strip == 'y'
+    when /^(date|micro.*)$/; system line
+                             next; # end
+    when 'term'
+      require 'shellwords'
+      system "mate-terminal -e #{__FILE__.shellescape} 2>/dev/null 1>/dev/null &"
+      next
+    when 'help'
+      puts "Commands
+cat, pwd, ls shell builtins
+file add file to chatgpt input
+c run command in sh
+ll, ls -l, Show the contents of folder and beginning of files
+chrome, run chrome\nrs, restart\nexit, exit\nupdate, update sys\nhelp\nshow this help"; next
+    when /^file\s/
+      line = line.sub(/^file\s+/, '')
+      line = File.read(line)
+    when 'exit'
+      exit
+    when 'update'
+      system 'sudo apt update && sudo apt upgrade'
+    when 'rs'
+      exec "ruby #{File.expand_path(__FILE__)} --cd=#{Dir.pwd}"
+    when /^cat\s*[^\s]+$/
+      require 'colored'
+      l = File.read(line.sub(/^cat\s+/, ''))
+      print l, "\n", '[', l.count("\n"), ' lines', ']', "\n", "\n"
+      next
+    when /^pwd$/
+      puts Dir.pwd
+      next
+    when /^cd\s*.*$/
+      require 'colored'
+      line = line.sub(/^cd\s*/, '').strip
+      line = Dir.home if line == ''
+      begin
+        Dir.chdir line
+      rescue StandardError
+        begin
+          print "No directory\n"
+          next
+        end
+      end
+      system 'tput reset'
+      puts Dir.pwd.bold
+      puts
+      system ' ls --color=auto'
+      next
+    when 'chrome'
+      system 'google-chrome 2>/dev/null&'
+      next
+    when /rgrep.+/
+    when /^ll|(ls -l)($|\s)/
+      require 'colored'
+      system 'tput reset'
+      Dir.glob('*').sort.each do |path|
+        File.open(path) do |f|
+          if path.match?(/(png|jpg)$/)
+            puts path.magenta.bold
+          else
+            puts "#{path} >   ".bold + f.read(100).dump
+          end
+        end
+      rescue Errno::EISDIR
+        puts path.blue.bold
+      end
+
+      next
+    when /^ls(.*?)$/
+      system "ls --color=auto #{Regexp.last_match(1)}"
+      next
+
+    when /^c\s/
+      line = line.sub(/^c\s+/, '')
+      begin
+        system line, exception: true
+      rescue Exception => e
+        begin
+          begin
+            Dir.chdir(line)
+          rescue StandardError
+            puts File.read(line)
+          end
+          next
+        rescue StandardError
+        end
+        puts e.message
+        #      raise
+      end
+      next
+
+    end
+    begin
+      if line.split.size == 1
+        begin
+          File.open(line).each_line do |ln|
+            print ln
+          end; rescue Errno::EISDIR
+                 Dir.chdir(line)
+                 system 'tput reset; ls --color=auto'
+        end
+        next
+      end
+    rescue StandardError
+      nil
+    end
+
+    return line
+  end
+end
+
+
+loop do
+  $d = read(1)
+  $t = read(2) # r
+  puts 'Running chatgpt'
+  require 'ruby/openai'
+  $client ||= OpenAI::Client.new(access_token: File.read('/home/a/OPEN_API_USED').strip)
+  response = begin
+    $client.chat(
+      parameters: {
+        model: 'gpt-3.5-turbo', # Required.
+        messages: [{ role: 'user', content: "#{$d}\n-------------\n#{$t}" }] # Required.
+      }
+    )
+  rescue StandardError
+    retry
+  end
+  out = response.dig('choices', 0, 'message', 'content')
+  File.write 'out', out
+  File.write Time.new.to_i.to_s, out
+  system 'xclip -selection c < out'
+  puts out
+rescue Interrupt
+  puts
+end

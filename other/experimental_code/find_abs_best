@@ -1,0 +1,49 @@
+#!/bin/bash
+
+espeak One
+cd s; (for ((i=1;i<=420;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail -n 30 > 420
+espeak One
+
+cd s; (for ((i=1;i<=200;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail -n 30>200
+espeak One
+
+cd s; (for ((i=1;i<=150;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail -n 30 > 150
+espeak One
+
+
+cd s; (for ((i=1;i<=120;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail -n 30 > 120
+espeak One
+
+
+cd s; (for ((i=1;i<=50;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail -n 30 > 50
+espeak One
+
+cd s; (for ((i=1;i<=90;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail -n 30 > 90
+espeak One
+
+cd s; (for ((i=1;i<=10;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail > 10
+espeak One
+
+cd s; (for ((i=1;i<=5;++i));do                 ../c_program_faster $i 1.05;   done) | fgrep -v 'Fewer'   |   grep -P 'Sale on.*Sale on.*Sale on' | t 'i.split("Sale on")[0] if i[0].to_s.match /[A-Z]/' | sort | uniq -c | sort -h | t i.strip | tail > 5
+
+espeak One
+
+
+tput reset
+echo These are the best stocks that exist for 1.05 reselling
+echo Put all your money into them
+cat 200 120 420 150 50 90 | selectlines | t i.split[1] | sort | uniq -c | sort | tee REAL_BEST_STOCKS
+
+
+#head -n 60000 
+
+echo Press enter to look at the stocks that have sold recently.
+
+
+
+echo Find one in common with the old good stocks
+read
+
+
+head -n 70000 10 5
+#cat REAL_BEST_STOCKS                              

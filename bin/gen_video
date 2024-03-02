@@ -1,0 +1,244 @@
+#!/usr/bin/ruby
+# frozen_string_literal: false
+THREADS = " "
+
+require "shellwords"
+require "fileutils"
+
+# Generates a video from command line arguments.
+
+RESIZED_NAME = "#{rand * 100_000}_resized"
+at_exit do
+  system "rm -r -f #{RESIZED_NAME}"
+end
+
+require "optparse"
+
+def generate_generative_video_with_audio(
+  output_file,
+  duration_seconds,
+  width,
+  height,
+  audio_file,
+  image_directory,
+  frame_rate,
+  start_time_seconds,
+  text_post_folder,
+  shuffle,
+  shuffle_all_images,
+  images_repeat_times, height_adjustment_pixels, width_adjustment_pixels
+)
+  frame_rate = frame_rate.to_i
+  width = width.to_i
+  height = height.to_i
+  duration_seconds = duration_seconds.to_i
+  start_time_seconds = start_time_seconds.to_i
+  total_frames = (duration_seconds * frame_rate).to_i
+  images_repeat_times = images_repeat_times.to_i
+  height_adjustment_pixels = height_adjustment_pixels.to_i
+  width_adjustment_pixels = width_adjustment_pixels.to_i
+
+  
+  folder = if text_post_folder != ""
+      text_post_folder
+    else
+      image_directory
+    end
+
+  # Calculate the frame duration based on the number of images
+  frame_duration = duration_seconds / (glob_ = Dir.glob(File.join(folder, "*")).size.to_f)
+  raise "Folder doesnt exist" if glob_ == 0.0
+
+  puts "Image duration is #{duration_seconds} / #{glob_} = #{frame_duration} per image."
+  puts "Fps is #{frame_rate}"
+
+  FileUtils.mkdir_p(RESIZED_NAME)
+  if text_post_folder != ""
+    puts "text mode"
+    posts = []
+    text_mode = true
+    unless File.exist?(text_post_folder)
+      puts "Folder doesn't exist #{text_post_folder}"
+      exit 1
+    end
+    Dir.glob(text_post_folder + "/*").sort.each do |text_post|
+      posts << File.read(text_post)
+    end
+    require "shellwords"
+    posts.each_with_index do |post, index|
+      out_file = "#{RESIZED_NAME}/#{index}.png"
+      text = post
+      puts Dir.pwd
+
+      cmd = <<~CMD
+        convert #{THREADS} -size #{width}x#{height} xc:none -fill black -font DejaVu-Sans -pointsize 40 -gravity center -size #{width - 100}x#{height - 100}            caption:"#{post.gsub('"', "")}"      -bordercolor "#FFFFFF" -border        20x20                           #{RESIZED_NAME}/centered_text#{index}.png;
+      CMD
+
+      puts cmd
+
+      system cmd, exception: true
+    end
+
+    system "rm -f #{RESIZED_NAME}/*-0.png"
+
+#    system "google-chrome                        #{RESIZED_NAME}/*; "
+#    puts "Hi"
+  else
+    puts "non text mode"
+    text_mode = false
+
+    Dir.glob(image_directory + "/*").sort.each do |img|
+      img = File.basename(img)
+      (new_file = ("#{RESIZED_NAME}/" + img.gsub(/\)|\(| /, "_")))
+      old_file = "\"#{image_directory}/#{img}\""
+      ncmd = "convert #{THREADS} #{old_file} -resize #{width - width_adjustment_pixels}x#{height - height_adjustment_pixels}^ -gravity center -filter Lanczos -quality 100 -extent #{width}x#{height} #{new_file}"
+
+      require "colored"
+      puts ncmd.to_s
+
+      system ncmd
+
+      if false
+        raise unless File.exist?(image_directory)
+        raise unless File.exist?(new_file)
+
+        size_a, size_b = `identify #{new_file}`.scan(/\d+x\d+/m)[0].split("x")
+        size_a = size_a.to_i
+        size_b = size_b.to_i
+
+        if size_a != width
+          #      	raise "Width error #{size_a} #{width}"
+        end
+        if size_b != height
+          #     	raise "Height error #{size_b} #{height}"
+        end
+      end
+    end
+  end
+
+  imgs = Dir.glob(RESIZED_NAME + "/*").sort.to_a * images_repeat_times
+  imgs.shuffle! if shuffle == "y"
+
+  puts "#{imgs.size} images #{imgs}"
+
+  if imgs.size < 2
+    begin "too few images"
+      exit! 1     end
+  end
+  #  sleep 3000
+
+  #  threads = []
+
+  # Generate frames with changing colors in the bottom half
+  (0...total_frames).each do |frame_num|
+    if frame_num == 5
+      if text_mode; system "#google-chrome frame_00000004.png &"; end
+    end
+    red = (Math.sin(frame_num * 0.1) * 127 + 128).to_i
+    green = (Math.cos(frame_num * 0.1) * 127 + 128).to_i
+    blue = (Math.sin(frame_num * 0.05) * 127 + 128).to_i
+
+    xc = "'xc:rgb(#{red},#{green},#{blue})'"
+    system "convert #{THREADS} -size #{width}x#{height} #{xc} frame_#{frame_num.to_s.rjust(8, "0")}.png", exception: true
+
+    # Calculate the image index based on frame duration
+
+    # 0/1000 to 1000/1000 for example, result between 0 and 1
+    fraction_in = (frame_num.to_f / total_frames)
+
+    # if 50 images, between 0 and 50
+    orig_fraction_in = fraction_in *= imgs.size
+    fraction_in = fraction_in.floor
+
+    # Get the image file to overlay based on the image index
+
+    if shuffle_all_images == "y"
+      puts "SHUFFLE ALL IMAGES"
+      image_file = imgs.sample
+    else
+      image_file = imgs[fraction_in]
+      image_file = images.last if image_file.nil?
+    end
+    puts "#{frame_num} / #{total_frames} #{image_file} #{orig_fraction_in}"
+
+    require "colored"
+
+    # Overlay the image onto the frame
+    system "convert #{THREADS}  frame_#{frame_num.to_s.rjust(8, "0")}.png #{image_file} -gravity center -composite frame_#{frame_num.to_s.rjust(8, "0")}.png"
+  end
+
+  # Create the video from generated frames using FFmpeg
+  video_cmd = "ffmpeg -framerate #{frame_rate} -i frame_%08d.png -c:v libx264 -pix_fmt yuv420p -t #{duration_seconds} -y #{output_file}"
+
+  system(video_cmd)
+
+  # Merge video and audio using FFmpeg with a specified start time
+  merged_output_file = "merged_video.mp4"
+  merge_cmd = "ffmpeg -ss #{start_time_seconds} -i #{audio_file.shellescape} -i #{output_file.shellescape} -c:v copy -c:a aac -strict experimental -shortest #{merged_output_file.shellescape}"
+
+  system(merge_cmd)
+
+  # Clean up temporary frames
+  Dir.glob("frame_*.png").each { |f| File.delete(f) }
+
+  # Clean up intermediate video
+  File.delete(output_file)
+
+  # Rename the merged video
+  File.rename(merged_output_file, output_file)
+
+  system "#google-chrome #{output_file}"
+end
+
+options = {}
+
+ARGV.empty? && begin
+  ARGV.push "-h"
+end
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: #{File.basename(__FILE__)} [options] outputfile duration-seconds width height song-to-play image-folder fps\nFor phone content, set the width to 1080x1920, and you can have a pulsating banner on top or side or both.\n\n\n"
+
+  opts.on("-t", "--text-post-folder FOLDER", "Optional text post folder for text posts. Folder should contain text files.") do |text_post_folder|
+    options[:text_post_folder] = text_post_folder
+  end
+  opts.on("-s", "--start-time SECONDS", "Start time in seconds for audio") do |start_time|
+    options[:start_time] = start_time
+  end
+  opts.on("-e", "--shuffle (y/n)", "Frame shuffle (not recommended).") do |mode|
+    options[:shuffle] = mode
+  end
+  opts.on("-f", "--shuffle-all-images (y/n)", "Shuffle the new files in resize directory (y or n, default n)") do |mode|
+    options[:shuffle_all_images] = mode
+  end
+  opts.on("-r", "--images-repeat-times N", "Number of times to repeat the image set [1, 2, 3] => [1, 2, 3] * N") do |mode|
+    options[:repeat_times] = mode
+  end
+  opts.on("--height-adjustment-pixels px", "Amount of pixels to have pulsate on top.") do |mode|
+    options[:height_adjustment_pixels] = mode
+  end
+  opts.on("--width-adjustment-pixels px", "Amount of pixels to have pulsate on sides.") do |mode|
+    options[:width_adjustment_pixels] = mode
+  end
+  opts.on("-h", "--help", "Amount of pixels to have pulsate on sides.") do
+    puts opts
+    exit
+  end
+end.parse!
+
+options[:start_time] ||= 0 # Default start time is 0 seconds
+options[:text_post_folder] ||= "" # Default start time is 0 seconds
+options[:shuffle] ||= "n" # Default start time is 0 seconds
+options[:shuffle_all_images] ||= "n" # Default start time is 0 seconds
+options[:repeat_times] ||= "1" # Default start time is 0 seconds
+options[:height_adjustment_pixels] ||= "0" # Default start time is 0 seconds
+options[:width_adjustment_pixels] ||= "0" # Default start time is 0 seconds
+
+puts ARGV.inspect
+
+generate_generative_video_with_audio(
+  *ARGV,
+  options[:start_time], options[:text_post_folder], options[:shuffle], options[:shuffle_all_images], options[:repeat_times],
+  options[:height_adjustment_pixels],
+  options[:width_adjustment_pixels],
+)

@@ -1,0 +1,23 @@
+Recursively replaces text.
+
+Verbosely tells you everything that happens.
+
+Non-regex.
+
+Example
+
+rsub my_email@site.com my_second_email@site.com
+
+Would replace an email recursively in a directory.
+
+It tries to skip non-text files and hidden files.
+
+rsub find replace [optional list of files instead of recursive search]
+
+If a file is “-” or stdin, read from stdin and output to stdout.
+
+-n, -r, rename files instead of replacing contents of files. find and replace in file and dir names instead
+
+-v, verbose mode
+
+-- Indicate end of options.

@@ -1,0 +1,14 @@
+#!/bin/bash
+rm -f *.gem nohup.out
+PATH=bin:$PATH
+
+
+echo -n 1.0. | blue
+cat VERSION_NUMBER | t i.to_i | blue
+echo Incrementing | blue
+(cat VERSION_NUMBER; echo 1) | add | squeeze 0 0 VERSION_NUMBER
+version=1.0.`cat VERSION_NUMBER | t i.to_i`
+echo $version | red
+echo Success | green
+gem build ./*.gemspec --verbose  || exit 1
+gem push *.gem --verbose; #google-chrome rubygems.org/gems/democracy

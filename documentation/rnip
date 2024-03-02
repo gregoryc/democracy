@@ -1,0 +1,11 @@
+Replace Not In Place
+
+This is like gsub, but for strings, not for regular expressions
+
+Example
+
+echo .......... | rnip foo bar
+
+See also
+
+gsub

@@ -1,0 +1,52 @@
+#!/usr/bin/env   node
+module.paths.push(["/usr/local/lib/node_modules"]);
+function output(te) {
+  console.log(te);
+}
+
+const translate = require("google-translate-extended-api");
+
+const a1 = process.argv[2];
+const a2 = process.argv[3];
+
+exit = process.exit;
+
+
+async function translate_sentence(sentence) {
+ var langs = Object.keys(translate.languages);
+  var results = {};
+  //console.log(sentence)
+  for (var l of langs) {
+    if (l == "auto" || l == "getCode" || l == "isSupported"||(a2  && l != a2)      ) continue;
+    async function a() {
+      var res = "";
+      for (const s of sentence.split(/\s*(\.|\n)(\s*|$)/)) {
+  //    	console.log("F");
+        if (s.trim() == "") continue;
+        const b = s + ". ";
+        //process.stderr.write(b);
+        const r = ((await translate(b, "en", l)).translation || "") + " ";
+        res += r;
+        process.stderr.write(r);
+//        if (argv[1] !== undefined) break;
+      }
+      return res;
+//      return res.trim(;
+    }
+    const res = await a();
+    results[l] = res;
+    if (a2) break;
+  }
+ // process.stderr.write("]\n");
+  output(results);
+}
+
+function main_() {
+  ts(a1);
+}
+
+function ts(s) {
+  translate_sentence(s);
+}
+
+main_();

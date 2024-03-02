@@ -1,0 +1,63 @@
+#!/usr/bin/ruby
+require "json"
+
+class String
+
+def lines_of_words
+	split(/\s+/).select {           |qual| qual          =~ /^[A-Za-z]+$/ }
+end
+end
+
+def main
+	a = `find /home/a/love/word_files -type f`.strip.split("\n")
+
+#puts a
+
+
+
+
+
+
+
+	(ARGV[0]).to_i.times do |no|
+	#i = 0
+
+	no += 1
+	File.open("ranges/output_file_of_range_0_dot_dot_#{no}", "w") do |file|
+	a.each do |file_of_word|
+		STDERR.puts file_of_word
+#		lin
+		map = {} of String => UInt64
+#		p file_of_word
+		
+		File.open(file_of_word).gets_to_end.lines_of_words.each do |word|
+			#map[word] += 1 if !(map[word].nil?)
+
+			if !map.has_key?(word)#.nil?
+				map[word] = 1
+			else
+				map[word] += 1
+			end
+		end
+
+		map2 = map.invert
+
+		no.times do |number|
+			map2.delete(number)
+		end
+#		p map2.length
+		f = file_of_word.split("/")[-1]
+
+		hash = {"name": f, "data": map2.to_a.sort.reverse.to_h}
+
+		file.puts hash.to_json
+
+		
+		
+#			ma
+	end
+	end
+end
+end
+
+main

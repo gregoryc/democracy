@@ -1,0 +1,57 @@
+“t” is incredibly useful.
+
+It can be used many, many times every day by computer power users.
+
+It is kind of like “sed,” or perl, python or ruby.
+
+It's the ULTIMATE shell “glue” tool.
+
+t reads every line from the standard input, and for every line, it evaluates a ruby expression
+
+t a + 2
+
+would add 2 to every line
+
+Number automatically get converted to numbers in Ruby.
+
+So one doesn't have to worry about that.
+
+The “value” of the line of STDIN is any letter of the alphabet.
+
+So choose any letter to do operations on and it will work.
+
+You can also do
+
+t a + 2 if a % 2 == 0
+
+And you get a Python list comprehension sort of thing from the command line
+
+It is a lot simpler and easier than using awk, Ruby, Perl or Python
+
+You could also have loops
+
+echo “One line” | t a while true
+
+The second line, again is a Ruby expression.
+
+You can have really complex expressions on the second line.
+
+You can even import modules.
+
+cat /usr/share/dict/words | t 'a + “ is a good word.”' 
+
+That processes every word in the dictionary, and says that every word “is a good word.”
+
+There are other programs in this software project like “t.”
+
+But if you do command line text filtering, t might be the best tool that you will find.
+
+See also
+
+gsub
+
+gsubip
+
+<div style=padding-bottom:100px>
+.
+</div>

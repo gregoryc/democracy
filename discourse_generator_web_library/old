@@ -1,0 +1,181 @@
+<html>
+        <head>
+                <style type="text/css">
+                @keyframes fade-in {
+                    from {opacity: 0.5; transform: scale(1, 1) rotate(30deg); position: relative; left: 0px; top: 0px; }
+                    to {opacity: 0; transform: scale(300, 300) rotate(30deg); position: relative; left: 0px; top: 600px; }
+                }
+                        body {
+                                                display: inline-block;
+                                                animation-timing-function: ease-in-out;
+                                                text-align: center;
+
+                                background-color: white;
+//                              background-image: url("https://cdn.pixabay.com/photo/2019/11/20/20/02/couple-4641033_960_720.jpg");
+
+font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell",
+    "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+                        }
+
+                        em {
+                                color: #0000CC;
+                        }
+
+                        sensibleness input {
+                                border-radius: 10px;
+                                padding: 10px;
+                             //   font-family: Times New Roman;
+                                border: 1px solid white;
+                                background-color: lightblue;
+                                width: 300px;
+                                /*text-align: center;*/
+                        }
+                        sensibleness {
+//                              background-image: url("https://cdn.pixabay.com/photo/2013/12/17/20/10/bubbles-230014_960_720.jpg");
+background: rgb(170,0,0);
+background: -moz-linear-gradient(90deg, rgba(170,0,0,1) 0%, rgba(255,255,255,1) 100%);
+background: -webkit-linear-gradient(90deg, rgba(170,0,0,1) 0%, rgba(255,255,255,1) 100%);
+background: linear-gradient(90deg, rgba(170,0,0,1) 0%, rgba(255,255,255,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#aa0000",endColorstr="#ffffff",GradientType=1);
+                                position: absolute;
+                                z-index: 1000;
+                                background-color: white;
+                                top: 0px;
+                                left: 0px;
+                                box-shadow: 0px 0px 30px black;
+                                border-bottom-left-radius: 30px;
+                                border-bottom-right-radius: 30px;
+                                width: 100%;
+                                text-align: center;
+                        }
+
+                        sensibleness #help {
+                        float: right;
+                        padding: 30px;
+                        font-size:11px;
+                        font-style: italic;
+                        display: inline-block;
+                        }
+
+                        ct {
+                                padding: 30px;
+                        }
+
+                        button {
+                                background-color:lightblue;
+                                border-radius: 30px;
+//                              posot
+                                color: white;
+                                text-shadow: 0px 0px 10px black;
+                                box-shadow: 3px 3px 3px black;
+                                position: absolute;
+                                bottom: 0px;
+                                border: 0px;
+                        }
+
+                        sensibleness img {
+                                position: absolute;
+                                top: 0px;
+                                left: 0px;
+                                padding: 30px;
+                        }
+
+
+                </style>
+                <title>Example of this new liberal goal! :)</title>
+        </head>
+
+        <body>
+                <sensibleness style="opacity: 0;">
+                        <div id="ct">
+                                <img src="/home/a/Desktop/close.png" alt="X" onclick="var e = document.querySelector('sensibleness'); e.style.animationName = 'fade-in'; e.style.animationDuration =  '1.4s'; e.style.opacity = 0;;"/>
+
+                                <button onclick="foo(true);">Generate comment to clipboard</button>
+
+                                <div id="help">
+                                        Sensible, modern, democratic
+                                </div>
+                        </div>
+
+                </sensibleness>
+                <button onclick="document.querySelector('sensibleness').style.opacity = 1; foo(false);" style="font-size: 70px">CRAFT REPLY...</button> <br/><br/><br/>
+
+<h1> Old site was moved to ethicify.online/index2.html<br/>New site will get better immediate results</h1>
+
+                <script type="text/javascript">
+                        madeelements = false;
+                        function lower(s) {
+                                return s.charAt(0).toLowerCase() + s.slice(1);
+                        }
+
+                        function makeelem(parent, value,l) {
+                                if (e = document.getElementById(`TOP_${l}`)) {
+                                        return lower(e.value);
+                        } else {
+                                var t = `TOP_${l}`;
+//                              parent.appendChild(document.createElement
+                                var label = document.createElement("label");
+                                label.setAttribute("for", t);
+                                label.textContent = l;
+                                parent.appendChild(label);
+
+                                var a = document.createElement("input");
+                                a.type = "text";
+                                a.id=t;
+                                a.value=value;parent.appendChild(a);
+
+
+                                parent.appendChild(document.createElement("br"))
+                                // = value;
+//                              document.
+
+
+//parent.appendChild(a);
+                                return lower(a.value);
+                        }
+                        }
+
+
+                        function gc(str, l) {
+//                              var a = document.que
+
+
+                                var a = document.querySelector("sensibleness");
+
+                                return makeelem(a, str,l);
+//
+//                              return makeelem(str);
+                        }
+
+                        function makeNode(i, size=40) {
+                                var e = document.createElement("div");
+                                e.innerHTML = i;
+                                e.style.fontSize = size;
+                                return e;
+                        }
+
+                        function $$(a) {
+                                return document.querySelector(a);
+                        }
+
+                        function addText(i) {
+                                $$("sensibleness").appendChild(makeNode(i));
+                        }
+
+                        function foo(copy) {
+                                (i = `I disagree with your statement that ${gc           (      '', '[Statement that you disagreed with, followed by reason why]')}; however, I do agree ${gc('',       '[Statement you both agree with]')}. Everyone knows that ${gc  (    '', '[Bipartisan reason for agreement]')}.`);
+                                if (copy) {
+                                        navigator.clipboard.writeText(i);
+                                        addText("Copied to clipboard");
+                                        addText(i);
+                                        addText("Enjoy speaking your mind <em>to its fullest!</em> :)");
+                                }
+
+
+                        }
+                </script>
+
+        </body>
+</html>

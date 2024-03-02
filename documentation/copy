@@ -1,0 +1,5 @@
+copy copies the standard input
+
+Example
+
+ls | copy

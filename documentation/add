@@ -1,0 +1,7 @@
+See the sub example
+
+add adds integers from the standard input
+
+(echo 1; echo 2; echo 3) | add
+
+The result would be 6

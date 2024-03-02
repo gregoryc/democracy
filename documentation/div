@@ -1,0 +1,7 @@
+Divides numbers
+
+Example
+
+(echo 5000; echo 100) | div
+
+=> 50

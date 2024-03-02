@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+
+a = ("a".."z").to_a
+a += ("A".."Z").to_a
+a += (0..9).to_a
+foo = (((0..199).to_a.map do |i|
+  a.sample.to_s
+end).join)
+
+main_text = <<EOF
+From: <gregorycohen2@gmail.com>
+To: gregorycohen2@gmail.com
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="#{foo}"
+
+--#{foo}
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit\n\nMessage\n
+EOF
+
+for arg in ARGV; file_text = File.read arg
+  if file_text == foo
+  raise
+end
+  main_text += <<EOF
+
+--#{foo}
+Content-Disposition: attachment; filename="#{arg}"
+Content-Type: text/plain
+
+#{file_text}
+
+EOF end
+
+main_text += "--#{foo}--"
+puts main_text
+
+IO.popen("himalaya send", "w") do |f|
+  f.print main_text.gsub("\n", "\r\n")
+end

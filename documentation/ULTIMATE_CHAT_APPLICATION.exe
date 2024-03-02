@@ -1,0 +1,16 @@
+![UCA](./images/2.png) 
+
+There is so much potential with this program.
+
+This is a non-AI chatbot. It's not based on generative AI or AI of any sort.
+
+It is self-explanatory, it tries to give a better answer.
+
+Still a work in progress.
+
+Source code is in PP.rb
+
+Generates a hyper optimized C program that is able to respond to prompts locally as fast as theoretically possible using switch statements
+
+See also
+	Chat Rb

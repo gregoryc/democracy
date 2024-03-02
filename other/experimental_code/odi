@@ -1,0 +1,6 @@
+cd
+
+for i in Desktop/*; do
+	gio set -t string "$i" metadata::caja-icon-position 00,00
+	caja -q &>/dev/null
+done

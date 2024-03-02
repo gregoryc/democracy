@@ -1,0 +1,15 @@
+#!/bin/bash
+
+cd ..
+set -e
+set -x
+export GIT_ASKPASS="$HOME/commit"
+git checkout --orphan latest_branch
+git add -A
+git commit -am "~"
+git branch -D main
+git branch -m main
+git push -f origin main
+git gc --aggressive --prune=all
+git push --set-upstream origin main
+push

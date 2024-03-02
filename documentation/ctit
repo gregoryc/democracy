@@ -1,0 +1,14 @@
+Capitalize Title
+
+A work in progress.
+
+Capitalizes arguments and treats them like a title.
+
+ctit this is my heading
+==> This Is My Heading for a Document
+
+You can also do
+
+ctit .... | copy
+
+To copy the title to your clipboard

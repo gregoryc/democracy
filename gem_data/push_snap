@@ -1,0 +1,30 @@
+#!/bin/bash
+
+set -x
+set -e
+
+if [[ $2 = "" ]]; then
+	red_bold_underline OLD
+	nth 3 < *yaml | red_bold
+	red_bold VERSION AND REVISION ARE ARGS
+	exit 1
+fi
+
+rm -rf *snap democracy* 2>/dev/null
+
+
+
+gsubip "1\.0\.\d+" 1.0.$1 snapcraft.yaml
+
+
+cp /home/a/democracy -r             .  &>/dev/null
+cd democracy
+rm -fr .git
+cd ..
+tar cfz democracy.tar.gz democracy
+
+snapcraft
+
+snapcraft push democracy*snap
+
+snapcraft release democracy $2 stable

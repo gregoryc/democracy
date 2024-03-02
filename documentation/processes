@@ -1,0 +1,11 @@
+Processes lists all processes with a certain name
+
+For example
+
+processes sh
+
+processes bash
+
+processes ruby
+
+processes gsub

@@ -1,0 +1,16 @@
+Turns quotes in text into good text and makes text presentable.
+
+Example
+
+$ echo 'Joe said,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"One two three".' | quot
+Joe said, “One two three.”
+
+Example 2
+
+quot < essay
+
+Example 3
+
+(Quote the file and output it)
+
+quot text_file

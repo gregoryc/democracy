@@ -1,0 +1,9 @@
+A compiler for C += 2. If you want to use C++ with Python syntax, you can use this.
+
+Usage is like g++
+
+Example
+
+g+ a.cpp -o out
+
+See also README file & emerald-browser and its source

@@ -1,0 +1,78 @@
+
+
+
+require "fileutils"
+
+txt = "$array = {"
+Dir.glob("/home/a/democracy/documentation/" + "*").each do |i|
+	doc = File.read i
+	i = File.basename i
+	txt<< <<~A
+	      "#{i}" => ["#{i}", "[#{i}] [arguments]", #{doc.strip.dump}],
+	A
+end;
+
+txt<<"}"
+
+
+eval txt
+
+
+def iter(arg)
+#  warn arg
+  FileUtils.mkdir_p("../_compilation")
+  name, args = arg.scan(/^def\s+(.+)(\(.*\))\s*$/)[0]
+  args_split = args[1..-2].strip.split(",")
+  if name == "lines"
+  #abort args_split.to_s
+  end
+
+  optional = args.count '='
+  len = args_split.length
+
+  min = len - optional
+  max = len
+  
+  invoke_function = if args_split.empty?
+      name
+    else
+      "#{name}(#{["", "ARGV[0]?", "ARGV[0]?, ARGV[1]?",
+                  "ARGV[0]?, ARGV[1]?, ARGV[2]?"][len]})"
+    end
+
+  File.open("../_compilation/#{name}", "w") do |file|
+  	cond = if min == 0
+  	"size > #{max}"
+  	elsif min == max; "size != #{max}"
+  	else
+  	"size < #{min} || size > #{max}"
+  	end
+    file << (File.read("functions.cr")) << text = <<CR
+
+
+def main
+  size = ARGV.size
+  
+  if #{cond}
+    Funcs.argument_data(#{$array[name].to_s[1..-2]})
+    exit 1
+  end
+
+  begin
+  	#{invoke_function}
+  rescue e : Exception
+  	puts e
+  end
+end
+
+
+main
+CR
+  end
+end
+
+File.read("functions.cr").each_line.reject do |i|
+  !i.start_with?("def ")
+end.each do |arg|
+  iter(arg.strip)
+end

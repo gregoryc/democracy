@@ -1,0 +1,29 @@
+clock is useful
+
+clock is a command line alarm clock
+
+It wakes you up at 8:14, or at a time specified
+
+Usage
+
+clock
+
+Runs clock
+
+clock 15 30
+
+Sets an alarm clock for 3:30pm
+
+clock 9 0
+
+Sets an alarm clock for 9 in the morning
+
+It uses flite to wake you up
+
+It speaks with a bunch of voices
+
+To stop it
+
+Run this command
+
+clock stop

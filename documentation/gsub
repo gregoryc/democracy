@@ -1,0 +1,13 @@
+Gsub is very powerful.
+
+Usage
+
+gsub [regular expression] [replacement text] 
+
+Example
+
+cat text | gsub man dog
+
+cat text | gsub 'man|boy|cat|dog' food
+
+ls | gsub Desktop cat

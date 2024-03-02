@@ -1,0 +1,201 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+# BSD 2-Clause License
+# 
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+   # list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+   # this list of conditions and the following disclaimer in the documentation
+   # and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+require 'English'
+NUM = 3
+`killall ruby dictate` if rand < 0.5
+
+subs = '
+
+
+class String
+	def gsubs(list)
+		text = self
+		list.each do |k, v|
+			text = text.gsub(k, v)
+		end
+
+		text
+	end
+end
+GMAIL_ALTS = ["gee mail",    "hemale", "female", "email",        "the math", "yeah", "kayla", "he math", "chemo", "he", "the", "the gina", "now", "humor", "the know", "she now", "gina", "the now", "you", "he now"]
+
+Dir.chdir Dir.home
+
+def f_print arg
+	require "colored"
+	print arg.green
+	o = File.open("output_code__", "a")
+	o.print arg
+	o.close
+end
+
+def subs(a)
+	require "shellwords"
+	def puts i
+		fork do
+			system "notify-send dictate #{i.to_s.shellescape}  &"
+		end
+	end
+	b = ENV["BROWSER"] || false  ||  "google-chrome"
+	e = a.gsubs({"dot" => "."})
+	if ENV["C_MODE"] == "yes"
+				if e.split.length == 1
+					exit 0
+				return ""
+			end
+		if ARGV[0].to_i%' + NUM.to_s + ' ==0
+			f_print e.dump + " arguments "
+			exit 1
+			f_prin
+			f_prin
+			split = e.split /argus|args|arguments|august/
+			e = split[0]
+			arguments = split[1]
+			e = e.split.reject { |i| i == "the" or i == "or" or i == "and"   }
+			puts e.inspect
+
+			nop="function" + " " + (e[0..].join("_") || "") +( "(" + (arguments||"").split.join(", ") || "/* void */") + ")"
+			if ARGV[0].to_i%2 == 0||1
+				return ""
+			end
+		elsif ARGV[0].to_i % ' + NUM.to_s + '   == 1 	;
+			f_print e.dump
+			exit 1
+		end
+		e = e.gsubs ({/in the|and to | on | common | comma |and|into|p.+? / => "|"})
+		e = e.split(/\s*\|\s*/); e = e.reject(&:empty?)
+		s = ""
+		e.each_with_index do |i, index|
+			s += "/*#{index}*/res = #{i.split.join("_")}(result); ";
+		end
+		s = s.dump
+		s = " " + s
+		f_print s
+		return ""
+	else
+	end
+	e = e.split.join.split "."
+	if e.size != 1; e.pop; end
+
+	if GMAIL_ALTS.include? e.join
+		e = ["gmail"]
+	end
+	e = e.join(".") + ".com"
+
+	if b != "open" and (c = `curl -sL #{e} 2>&1 1>/dev/null; echo $?`) != "0\n"
+		puts "<b>" + e + "</b>" + "  is not a site."
+		system "nmcli networking off; nmcli networking on &"
+		puts "Restarting network... "
+		return ""
+	else
+		puts "Opening #{e.dump} ...   #{%x[echo smile  heart | emoji]}"
+		((b) + " " + e.split.join.shellescape + " >/dev/null 2>/dev/null & ")
+	end
+
+
+end
+'.tr("\n", ';')
+
+# .gsub(/^(.+?)#.+$)/, "")
+require 'colored'
+count = 0
+begin
+  # count
+
+  str = 'Welcome, to the easy programming '.tr "\n", ' '
+  'Where your thoughts count!!!!'
+
+  $old_str = ''
+  def speak(str)
+    return if ENV['C_CODE'].nil?
+
+    #	if ENV["C_CODE
+    #	if
+    str.prepend 'Thank you. '
+    puts str.bold.green
+    #	requi
+    return if $old_str == str
+
+    $old_str = str
+
+    system "echo '#{str}' | flite -voice slt  "
+  end
+
+  speak str
+
+  loop do
+    Dir.chdir Dir.home
+    Dir.chdir 'nerd-dictation'
+    res = %x[
+./nerd-dictation begin --vosk-model-dir=`printf "%s\n" ./vosk-model-small-en-us* | head -n 1` --timeout 1.0 2>&1  --output STDOUT | \
+  ruby -e 'require "shellwords"; require "colored"; #{subs} q= (s = STDIN.read).bold.underline;   if s.downcase =~ /no text found in the audio/; exit 0;  end;   `notify-send \#{s.shellescape}`;  sleep 3; s.split(#{!ENV['C_MODE'].nil?} &&        (s+" ") || /\s+and\s+/) do |w| system subs(w); end; exit 1' #{count}
+]
+    # puts res
+    count += $CHILD_STATUS.exitstatus
+    # count += $?.e.to_i
+    if ENV['C_CODE']
+      system 'tput reset'
+      puts 'Re'
+    end
+    c = count / NUM
+    str = %w[st nd rd th][[c, 3].min]
+    require 'shellwords'
+    str = (1 + c).to_s + str
+    def str.s(word)
+      t = "Enter the #{self} #{word} :)     "
+
+      speak t
+    end
+
+    case count % NUM
+    when 0
+      str.s :function.to_s
+    when 1
+      str.s :condition.to_s
+    when 2
+      str.s 'Logic'
+      #	puts "enter the logic"
+      #	puts "enter the logic"
+    end
+
+    # EOF
+  end
+  # EOF
+rescue Object => e
+  puts e
+end
+
+$stdout.print File.read('../output_code__')
+# puts File.read("out
+
+def rb
+  # require "shellwords"; require "colored"; q= (s = STDIN.read).bold.underline; if s =~ /chrome/; system "google-chrome &"; exit; end; if s =~ /now|male|mail|out/; system "google-chrome gmail.com &"; exit; end; if s =~ /bbc/; system "google-chrome bbc.com   &"; exit; end  ;  if s.downcase =~ /no text found in the audio/; exit;  end;   puts q;  s.split(/\s+and\s+/) do |w| system "open " + w.shellescape + ".com"
+end
+
+# `killall dictate`

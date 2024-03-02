@@ -1,0 +1,7 @@
+prepend prepends input taken from the standard input to a file
+
+Usage
+
+prepend [file]
+
+This is text to be prepended

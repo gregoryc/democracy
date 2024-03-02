@@ -1,0 +1,120 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+# BSD 2-Clause License
+# 
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+   # list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+   # this list of conditions and the following disclaimer in the documentation
+   # and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+GREGORYS_USERNAME = 'a'
+if File.basename(Dir.home) == GREGORYS_USERNAME
+  PERSON = 'Gregory'
+  EMAIL = 'gregorycohen2@gmail.com'
+else
+  abort "Needs configuring in #{__FILE__} on line #{__LINE__}"
+end
+
+abort 'No himalaya Install from here https://github.com/soywod/himalaya' if `which himalaya`.empty?
+
+def main
+  done = false
+
+  while `ping -c 1 example.com 2>&1`.match('not known')
+    system 'nmcli networking on'
+    system "notify-send 'Waiting for connectivity to email'" unless done
+    done = true
+  end
+
+  system "notify-send 'Connectivity established'" if done
+  next_is_attachment = false
+  attachments = []
+  args = ARGV.reject do |i|
+    if next_is_attachment
+      next_is_attachment = false
+      attachments.push i
+      true
+    else
+      next_is_attachment = (i == '-a')
+    end
+  end
+
+  args = case args.length
+         when 0
+           ["From #{PERSON}"] + args + [EMAIL.to_s]
+         when 1
+           ["From #{PERSON}"] + args
+         else
+           args
+         end
+
+  subject = args[0]
+
+  from = "#{PERSON} <#{EMAIL}>"
+  begin
+    content = $stdin.read
+  rescue Object
+    print '  '
+    exit 1
+  end
+  require 'tempfile'
+  raise if args.empty?
+
+  loop do
+    args[1..-1].each do |arg|
+      text = <<~EOF
+        To: <#{arg}>
+        From: #{from}
+        Subject: #{subject}
+
+        #{content.strip}
+      EOF
+      Tempfile.open do |file|
+        puts attachments
+        require 'shellwords'
+        attachment_shell = (attachments.map { |i| "-a #{i.shellescape}"; }).join(' ') # .to_a.join
+        a = IO.popen(
+          "himalaya send 2>&1 #{attachment_shell} | grep -viE '(^\s*$)|cannot|could not|folder|missing|caused by'   1> #{file.path}", 'w'
+        ) do |h|
+          h.puts text
+        end
+        return if File.read(file.path).strip == ''
+
+        begin
+        Dir.chdir __dir__
+        Kernel.warn "Resending email to #{arg.shellescape}"
+        require 'shellwords'
+        system "notify-send 'Resending email to #{arg.shellescape}'"
+        exec __FILE__; rescue Object; end
+      end
+    end
+  end
+end
+
+def call
+  yield
+end
+EXIT_SUCCESS = 0
+func = ENV['BG'] == 'true' ? :fork : :call
+send func do
+  main
+end
+exit EXIT_SUCCESS

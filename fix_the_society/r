@@ -1,0 +1,64 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+RAPPERS = "JSXI
+B La B
+Sam Lachow".strip.split "\n"
+raise unless RAPPERS.length == 3
+
+base = ARGV[0].to_i || 1
+z = (Dir.glob('/home/a/ub/*mp4').size / 2) + 1
+while z < 100_101
+z+=1
+  [1, 21].each do |y|
+    system "echo /home/a/democracy/fix_the_society/songs/#{y}-#{z}.txt | red"
+
+    data = `cat /home/a/democracy/fix_the_society/songs/#{y}-#{z}.txt`.strip.split("\n")[4..-2].select do |i|
+      !i.strip.empty? && !%w[CHORUS VERSE].include?(i.strip)
+    end
+    # puts data.size
+    raise if data.empty?
+
+    three = [data[0..23], data[24..24 + 16 - 1], data[(24 + 16)..24 + 16 + 16 - 1]].map do |i|
+      if i.nil?
+        []
+      else
+        i
+      end
+    end
+
+    require 'colored'
+    system 'sh -c "google-chrome https://app.uberduck.ai/rap 2>/dev/null 1>/dev/null & " &'
+
+    # unless true
+    if 1
+      $stdin.readline
+
+      # system
+      `       xdotool mousemove 600 630 click 1 mousemove 680 750 click 1               `
+      sleep 0.5
+      ` xdotool keydown alt key Tab keyup Alt mousemove 880 240 click 1 `
+    end
+
+    three.each_with_index do |i, _in_|
+      _in_ += 1
+      _in_ = "\n\n#{z}. #{y}. #{_in_} of 3"
+
+      print _in_.bold.green.underline, "\n"
+
+      $stdin.readline
+      IO.popen('xclip -selection c', 'w') do |f|
+        val = i.join "\n"
+        f << val
+        $stdout << val
+      end
+    end
+    puts RAPPERS.sample.red.bold.underline
+
+    2.times { puts }
+    #    system "google-chrome tiktok.com/upload?lang=en"
+    puts 'Continue... '.red.bold.underline
+
+    $stdin.readline
+  end
+end

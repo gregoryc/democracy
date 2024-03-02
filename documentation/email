@@ -1,0 +1,23 @@
+<b>This currently doesn't work for gmail since 2022 due to policy changes.</b>
+
+A simple and practical tool to email people using Himalaya
+
+Himalaya needs to be installed first
+
+You would need to configure the script by changing its source code.
+
+Modes
+
+email [no arguments]
+
+email [yourself]
+
+email [addr]
+
+email one email address
+
+email [Subject] [addr] [option more addrs]
+
+Example
+
+email 'Gregory, I love your software!' gregorycohen2@gmail.com my_friend@outlook.com person@example.com

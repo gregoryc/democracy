@@ -1,0 +1,7 @@
+Replace In Place
+
+rip tool replaces a string, not a regular expression, with another string
+
+Example
+
+rip cat dog file

@@ -1,0 +1,3 @@
+Dictate opens web pages in emerald browser, or in any browser (depending on the environment variable set), by you speaking, instead of typing.
+
+There is a mode called c_mode, that allows you to make code from speaking.

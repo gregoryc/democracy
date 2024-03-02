@@ -1,0 +1,11 @@
+This program is excellent.
+
+It's essentially a mix of ChatGPT and a shell, such as bash or ZSH.
+
+It has a bunch of features.
+
+It can display a file or change to a folder just by mentioning it.
+
+It outputs chatgpt data to an output folder in home folder and copies it to clipboard
+
+To run a shell command, prefix things with “c,” such as c gcc.....

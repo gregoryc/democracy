@@ -1,0 +1,1 @@
+(cat VERSION_NUMBER; echo 1) | add | squeeze 0 0 VERSION_NUMBER

@@ -1,0 +1,531 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+# BSD 2-Clause License
+# 
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+   # list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+   # this list of conditions and the following disclaimer in the documentation
+   # and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+def fix_whitespace(array)
+  v = array
+  old_num_whitespace_characters = 0
+  num_whitespace_characters = 0
+  size_of_block = 0
+  new_text = ''
+
+  v.each_line do |line|
+    line = line.chomp
+    line_stripped = line.strip
+    if line_stripped.start_with?('//', '#')
+      new_text += "#{line}\n"
+      size_of_block += 1
+      next
+    end
+
+    if line_stripped.empty?
+      size_of_block += 1
+      next
+    end
+    num_whitespace_characters = line.scan(/^\s*/)[0].length
+
+    i = 0
+    $regex_map = [
+      /^\s*(if|while|for|do)\s*(.+?){*?$/, '\\1 (\\2)',
+      /^\s*(.+)decl&(\s+)(.+)\s*$/, ' auto&\\2\\1 = \\3',
+      # /^\s*([a-zA-Z0-9_:<>]+)\s+([^=,]*)$/, "\\1(\\2)",
+      /^\s*(.+)decl(\s+)(.+)\s*$/, ' auto\\2\\1 = \\3',
+
+      # "\\1..\2\\1(\\2)"
+
+      /^\s*main\s*$/, 'int main(int argc, char **argv)',
+      /^\s*([a-zA-Z_][a-zA-Z0-9_]+)\s*$/, 'for (auto i : \\1 )'
+
+      # /^\s$/
+      # /^\s$/
+
+    ]
+
+    while i < $regex_map.length
+      line.gsub! $regex_map[i], $regex_map[i + 1]
+      i += 2
+    end
+
+    if old_num_whitespace_characters != num_whitespace_characters
+      if old_num_whitespace_characters > num_whitespace_characters
+        new_text += end_block(old_num_whitespace_characters - num_whitespace_characters)
+        size_of_block = 0
+      elsif old_num_whitespace_characters == num_whitespace_characters
+        if size_of_block > 40
+          $stderr.print "Blocks can only be 40 lines max\n"
+        else
+          size_of_block += 1
+          new_text += continue_block
+          # (size_of_block += 1)
+        end
+      else
+        new_text += start_block
+      end
+    end
+
+    old_num_whitespace_characters = num_whitespace_characters
+
+    new_text += "#{line}\n"
+    line
+  end
+
+  new_text += "\n"
+
+  new_text += end_block old_num_whitespace_characters if old_num_whitespace_characters.positive?
+  new_text.gsub!(/^\s*(.+?)\s*$/, "\\1\n")
+  puts new_text
+
+  s = "\\1\\2\n\\3\n"
+  new_text = new_text.gsub(/^(.*?)({)[{\s]+?(.*?)$/, s)
+  new_text = new_text.gsub(/^(.*?)(})[}\s]+?(.*?)$/, s)
+  new_text = new_text.gsub(/^(.*)(;)[\s;]+?$/, s)
+  s = "\\1(\\2)\\3\\4\n"
+  new_text.gsub(/^((?:if|while|for|do)\s*)\s*\([(\s]*(.+?)\s*\)(\s*)[\s)]*(.*)$/, s)
+end
+
+def start_block
+  "\n{\n"
+end
+
+def continue_block; end
+
+def end_block(d)
+  "\n}\n" * d
+end
+
+class String
+  def includes?(a)
+    include? a
+  end
+end
+
+def change_b(b, function)
+  if function.nil? || (function.length != 4)
+    puts "Malformed function #{function}"
+    exit 1
+  end
+  b = b.gsub("\n\n", "\n")
+  b = b.gsub('Hash', '*(new std::unordered_map<std::string, std::string>)')
+  b = b.gsub('HashSI', '*(new std::unordered_map<std::string, unsigned long long>)')
+  b = b.gsub('HashIS', '*(new std::unordered_map<unsigned long long, std::string>)')
+  b = b.gsub('HashO',  '*(new std::unordered_map<unsigned long long, void*>)')
+  # b = b.gsub (   /^\s*([a-zA-Z0-9]+)\s*>\s*([^\n]+)\s*;/m, "write_file(  (\"\\1\"), \\2);")
+  # b = b.gsub (   /^\s*([a-zA-Z0-9]+)\s*\|\s*([^\n]+)\s*;/m, "popen(  \\1, \"\\2\");")
+  b = b.gsub(/^\s*([a-zA-Z0-9]+)\s*<\s*([^\n]+)\s*$/, 'read_file(\\1, \\2);')
+  # b = b.gsub /^\s*([a-zA-Z0-9]+)\s*<\s*([^\n]+)\s*;/m, "append_t_file(  \\1, \"\\2\");")
+  b = b.gsub(/^\s*([a-zA-Z0-9]+)\s*>\s*([^\n]+)\s*$/, 'write_file(\\1, \\2,"w");')
+  b = b.gsub(/^\s*([a-zA-Z0-9]+)\s*>\s*([^\n]+)\s*$/, 'write_file(\\1, \\2,"a");')
+
+  # b = b.gsub (   /^\s*([a-zA-Z0-9]+)\s*>>\s*([^\n]+)\s*;/m, "append_to_file(  std::regex(\"\\1\"), \"\\2\");")
+  b = b.gsub(/^(.+)&\s*$/,
+             "{\n\tauto thread = #{THREAD_CONS}(\\1);\n\t__GLOBAL_VECTOR.emplace_back(thread);\n#{THREAD_CLASS == 'std::thread' ? "\n" : "thread->start();\n"}  \n\n\n}\n\n             \n")
+  # }  \n\
+  # }\n"\n\n\\n\n\n\n\n\n\n"
+  # "};"
+  b = b.gsub(/^\s*([a-zA-Z0-9_]+)!(.+)->(.*)$/,
+             '\\1 = std::regex_replace(  \\1, toregex("\\2"), "\\3");')
+  # "
+
+  # b = b.gsub (   /(.*?)\s*iter_as\s*([a-zA-Z0-9]+)\s*\{/, "for (int \\2 = 0; \\2 < \\1; ++\\2) {")
+  b.gsub(b, "#{function[0]}{#{b}}\n\n")
+end; b = []
+bs = []
+functions = []
+topmosts = []
+
+i = 0
+# str = S || ""#.gets_to_end
+file = ARGV.reject { |i| i[0] == '-' or i.end_with? '.o' or i.start_with? '/usr/' }
+# file = ARGV.reject { |i|  i[0] == '-' or i.ends_with? ".o" or i.stars_with? "/usr/" }
+raise if file.size != 1
+
+file_to_output_to = file[0]
+
+str = fix_whitespace(File.read(file[0]))
+p str
+# exit
+# exit
+list = [['']]
+str.each_line do |line|
+  list.push []
+  list[-1] = if (a = line.scan(/^auto&? (.+) =/))[0].nil?
+
+               list[-2]
+             else
+               list[-2] + [a[0][0].strip] # .strip + "|"
+             end
+end
+
+line = ''
+line_number = 1
+
+statement = ''
+# ln = 1
+vars = '(?:)'
+lines = str.split "\n"
+MACROS = lines.select { |i| i[0] == '#' }
+if MACROS.join.include? 'QApplication'
+  THREAD_CLASS = 'QThread'
+  THREAD_CONS = 'QThread::create'
+  QT = true
+else
+  QT = false
+  THREAD_CONS = THREAD_CLASS = 'new std::thread'
+end
+# else
+
+# puts lines
+# exit
+# lines = str.split "\n"; line_
+# p list
+# exit
+
+def fix(lines, list)
+  lines.each_with_index do |line, i|
+    list[i][1..-1].each do |var|
+      #		puts var.red
+      #		puts
+      if true
+        #			p [list[-1]]
+        #			exit
+      end
+
+      unless line.start_with?(var) && line[var.length] =~ /\s/ && line =~ /^[0-9'"()a-zA-Z_\s:]+$/
+        next
+      end
+
+      # '
+      #	p (line+var).white + "!!!!"
+      # p [line+var]
+      # exit
+      #		lines[i[ ]
+      a = line.split
+      #			p line; exit
+      #			p line << "+"
+      #	p a.white
+      c = a[0..(a.length == 2 ? -1 : -2)].join('.')
+      if a.length != 2
+        c += "(#{a[-1]})"
+        p c
+        #	exit
+      end
+      #	puts c
+      #	exit
+      lines[i] = c
+      File.open('OUT', 'a') do |file|
+        file.puts c
+      end
+      #		c += b
+      #			lines[i] =
+      #		b = a[]
+      # return
+    end
+  end
+end
+
+# < system "reset "
+fix lines, list
+# exit
+# str = lines.join("\n")
+# system "reset	"
+# p str
+# exit
+(str = lines.join("\n")).each_char do |c|
+  # macros = str.selec
+
+  # vars = list[line_number]
+  #	vars = list[ln]
+  line += c
+  statement += c
+
+  if c == "\n"
+    line_number += 1
+    vars = list[line_number]
+    line = ''
+  end
+
+  if c == '{'
+  end
+
+  #	vars.each do |var
+
+  # p [line, vars[line_number], c]
+  if '}{<>:'.includes?(c) ||	%w[class namespace struct].include?(statement.strip)
+    # or 		["class", "namespace", "struct"].include? statement #1
+    s = statement
+    unless s.includes?('<') || s.includes?('>') || s.includes?(':') || bs.size.positive? || (
+                                                                                                       %w[class namespace struct].include? statement.strip) # statement == "class"
+      # new_a = [] of String
+      # put sstate
+      # a =  statement.scan(/^\s*(([a-zA-Z0-9]+)\s+([a-zA-Z0-9]+)\s*\(([a-zA-Z0-9*,\s\[\]\<\> ]*)\)\s*[^\{]+)/m); puts statement
+      a = statement.scan(/^\s*(([a-zA-Z0-9_]+)\s+([a-zA-Z0-9_]+)\s*\(([a-zA-Z0-9_*:&\s,\[\]<>]*)\)\s*[^{]+)/m)
+      # puts statement
+      if a.size.positive?
+        new_a = []
+
+        a = a[0].to_a
+
+        #			new_a = [] of String
+
+        a.each do |el|
+          # el.push
+          next if el.nil?
+
+          new_a << el
+        end
+        functions.push new_a
+        if new_a.nil? || (new_a.length != 4)
+          puts "Bug: function is #{p.inspect}"
+          exit
+        end
+
+      end
+    end
+
+    statement = ''
+  end
+  #	puts c
+  if c == '{'
+    #		puts "Br"
+    bs.push [i + 1, -1]
+  end
+  if c == '}'
+    bs[-1][1] = i - 1
+    new_block = str[bs[-1][0]..bs[-1][1]]
+    # p new_block
+    b.push new_block
+    bs.pop
+    topmost = bs.empty?
+
+    topmosts.push b.size - 1 if topmost
+  end
+
+  i += 1
+end
+p functions
+if functions.empty? || (functions.count { |i| i } != functions.size)
+  p functions.red
+  exit 1
+end
+
+topmosts.each_with_index do |n, i|
+  b[n] = change_b(b[n], functions[i])
+end
+
+code = "#{MACROS.join("\n")}\n"
+
+# end
+
+code += topmosts.map do |t|
+  p b[t]
+  l = []
+  i = 0
+  require 'colored'
+
+  b[t].each_line do |line|
+    l.push line
+    if i.zero?
+      i = 1
+      next
+    end
+    if (line.size == 1) || (line[-2] == '{') || line =~ (/^(?:for|do|while|if)/)
+    #			require 'colored'
+
+    #		p line.red
+    #			exit
+    else
+      l[-1][-1] = ';'
+      l[-1] += "\n"
+    end
+  end
+
+  l.join
+end.to_a.join
+
+# puts code
+# puts tp
+# exit
+# code = "#include <fstream>\n" + code
+
+# if code.includes? "ifstream"
+# code = "#include <fstream>" + code
+# end
+
+# if code.includes? "ostringstream"; code = "#include <sstream>\n#{code}"; end
+#	code + "#i"
+# code =
+
+# def preprocess
+def include_default_libraries(code)
+  # code = "\n" + code
+
+  code = "#include <fstream>\n#{code}" if code.includes?('ifstream') || code.includes?('ofstream')
+  if code.includes?('ostringstream') || code.includes?('ostringstream')
+    code = "#include <sstream>\n#{code}"
+  end
+  code = "#include <iostream>\n#{code}" if code.includes?('cout') || code.includes?('cin')
+  code = "#include <iomanip>\n#{code}" if code.includes?('quoted') || code.includes?('iomanip')
+  if code.includes?('std::map') || (code.includes?('using namespace std;') && code.includes?('map'))
+    code = "#include <map>\n#{code}"
+  end
+  if code.includes?('std::string') || (code.includes?('using namespace std;') && code.includes?('string'))
+    code = "#include <string>\n#{code}"
+  end
+  if code.includes?('std::string_view') || (code.includes?('using namespace std;') && code.includes?('string_view'))
+    code = "#include <string_view>\n#{code}"
+  end
+  if code.includes?('std::thread') || (code.includes?('using namespace std;') && code.includes?('thread'))
+    code = "#include <thread>\n#{code}"
+  end
+  code = "#include <QThread>\n#{code}" if code.includes?('QThread')
+
+  if code.includes?('std::vector') || (code.includes?('using namespace std;') && code.includes?('vector'))
+    code = "#include <vector>\n#{code}"
+  end
+  if code.includes?('std::array') || (code.includes?('using namespace std;') && code.includes?('array'))
+    code = "#include <array>\n#{code}"
+  end
+  if code.includes?('std::regex') || (code.includes?('using namespace std;') && code.includes?('regex'))
+    code = "#include <regex>\n#{code}"
+  end
+  if code.includes?('std::unordered_map') || (code.includes?('using namespace std;') && code.includes?('unordered_map'))
+    code = "#include <unordered_map>\n#{code}"
+  end
+  # puts code
+  if code.includes?('execl') || code.includes?('execv') || code.includes?('fork')
+    code = "#include <unistd.h>\n#{code}"
+  end
+  code
+end
+
+# code = "#include <sstream>\n" + code if code.incl
+
+# v
+# code = "#include <unistd.h>\n#include <stdlib.h>\n" + code   if   code.includes?("fork") #|| (code.includes?( "using namespace std;") && code.includes?( "unordered_map")); #puts code
+# code = "#include <unordered_map>\n" + code   if   code.includes?("std::unordered_map") || (code.includes?( "using namespace std;") && code.includes?( "unordered_map")); #puts code
+if code.includes? 'thread' # && code.includes? "QA
+  func = if QT
+           # if code.includes? "QApplication"
+           'wait'
+         #	klass = "QThread"
+         else
+           'join'
+           #	klass = "thread"
+         end
+
+  vector = 'std::vector'
+
+  literal = \
+    "
+#{vector}< #{THREAD_CLASS}* > __GLOBAL_VECTOR;
+
+static void exit_function() {
+	for (auto i : __GLOBAL_VECTOR) {
+		i->#{func}();
+		delete i;
+	}
+}
+
+
+"; code = literal + code
+
+  code = code.gsub(/(^int main.+?\{)/m, "\\1\natexit(exit_function);        \n")
+end
+
+if code.includes? 'write_file'
+  literal = <<~EOF
+
+
+    // These functions were included because they are necessary
+    static inline void write_file(
+    std::string_view filename,
+    std::string_view string_view	,
+    const char *  const mode
+    ) {
+    FILE*const fl=fopen(filename.data(), mode);
+    if (f1) {
+    	if (fwrite(string_view.data(), string_view.size(), 1, fl) != -1) {
+    		fclose(fl);
+    	}
+    }
+    }
+
+  EOF
+
+  code = literal + code
+end
+
+if code.includes? 'read_file'
+  literal = <<~EOF
+    static inline void read_file(std::string& variable, std::string_view  filename) {
+     std::ifstream in(filename.data(), std::ios::in | std::ios::binary);
+      if (in)
+      {
+        std::ostringstream contents;
+        contents << in.rdbuf();
+        variable = contents.str();
+        in.close();
+        //return(contents.str());
+      }
+    }
+  EOF
+
+  code = literal + code
+end
+
+if code.includes? 'std::regex'
+
+  literal = <<~EOF
+    static inline const std::regex toregex(const char* i) {
+    //	std::regex r(i);
+
+    	std::regex regex(i);
+    	return regex;
+    }
+
+  EOF
+
+  code = literal + code
+end
+code = include_default_libraries(code)
+
+thread = if code.includes? 'std::thread'
+           '-lpthreads'; else
+                           ''; end
+begin
+  File.open(out = "/tmp/ruby#{Process.pid}code", 'w') do |file|
+    file.print code
+    puts code
+  end
+  (system "`which g++-11 g++-10 g++-9 | head -n 1` -Wall -Wextra   -s  -xc++ -std=c++20 #{thread}  #{out}    " + ARGV.join(' ').gsub(
+    file_to_output_to, ' '
+  ) + '   2>&1 ')
+rescue StandardError
+end
+
+# File.unlink "/tmp/ruby#{Process.pid}code"

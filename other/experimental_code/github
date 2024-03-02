@@ -1,0 +1,55 @@
+#!/usr/bin/env ruby
+require 'colored'
+ARGV[0] || raise
+a=<<EOF
+
+googler --np '#{ARGV[0]} linux git download' | fgrep http | head -n 10 | xargs curl -sL | grep -Ev '.\{400\}' | grep -Eo 'https?://[^>]*com[^>]*\\.git' | grep -Ev 'href|src|aria-label="' | uniq
+
+EOF
+
+begin
+system "tput civis"
+system "clear"
+IO.popen(a) do |file|
+	program = file.readline
+
+
+	puts "Downloading...".green
+	puts program.green
+
+	program = program.chomp
+
+	#system a
+	
+
+		begin
+
+
+program.chomp! ".git"
+
+
+			#system (folder = "cd #{
+
+			f = File.basename(program.chomp("/").chomp(".git"))
+
+	system "echo Downloading #{f} from ghit hub. | (padsp flite -voice awb || espeak || say)"
+
+	system "notify-send 'Downloading #{f}'"
+	IO.popen("git clone #{program} #{f}") do |download|
+		p ((([program] + file.read.split("\n")) ).uniq)[1..]
+	end
+		rescue
+		end
+		p f + "*"
+
+		
+#			system ("cd #{f}*")
+	system "cd #{f} && ./configure && cmake && make  && sudo make install && reset && #{f} --version && #{f} --help && tput cnorm"
+#system a
+end
+system "bash -c 'tput cnorm'"
+
+rescue Exception
+#raise
+system "bash -c 'tput cnorm'"
+end

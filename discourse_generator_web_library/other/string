@@ -1,0 +1,48 @@
+# frozen_string_literal: true
+
+class Object
+  def in?(_array)
+    false
+  end
+
+  def shellescape
+    to_s.shellescape
+  end
+end
+
+class String
+  begin
+    require 'shellwords'
+    require 'colored'
+  rescue LoadError
+  end
+
+  def puts
+    Kernel.puts self
+    self
+  end
+
+  def print
+    Kernel.print self
+    self
+  end
+  # end
+end
+
+# Cross-platform way of finding an executable in the $PATH.
+#
+#   which('ruby') #=> /usr/bin/ruby
+class Array
+  def which
+    each do |cmd|
+      exts = ENV['PATHEXT'] ? ENV['PATHEXT'].split(';') : ['']
+      ENV['PATH'].split(File::PATH_SEPARATOR).each do |path|
+        exts.each do |ext|
+          exe = File.join(path, "#{cmd}#{ext}")
+          return exe if File.executable?(exe) && !File.directory?(exe)
+        end
+      end
+      nil
+    end
+  end
+end

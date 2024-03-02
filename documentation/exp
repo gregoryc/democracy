@@ -1,0 +1,9 @@
+exp is an exponentiation tool
+
+(echo 5; echo 3) | exp
+
+=> 125
+
+(echo 2; echo 10) | exp
+
+=> 1024

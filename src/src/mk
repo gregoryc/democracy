@@ -1,0 +1,40 @@
+#!/bin/bash
+set -e
+
+COMPILATION=_compilation
+PROGRAMS=programs
+
+if [[ $(basename $(pwd) >/dev/null) -eq src ]]; then
+	echo 'In the correct folder'
+fi
+
+cd ..
+rm -rf $COMPILATION
+mkdir -p $PROGRAMS
+cd src
+ruby code
+cd ../$COMPILATION
+
+lines=$(lines)
+echo "Checking the Syntax of $lines programs"
+for i in *; do
+	true
+
+	#crystal build --no-codegen $i -o ../utilities/$i &
+done
+
+#wait
+
+for i in *; do
+	echo -n "$i "
+	#	echo "Compiling $i with 30 threads  ..."
+	test -x ../$PROGRAMS/$i || (
+		echo
+		find /usr/share/wallpapers/ -type f | grep -E 'jpg|png' | shuf | head -n 1 | args viu
+		(crystal build --release $i --threads 30 -o ../$PROGRAMS/$i && strip ../$PROGRAMS/$i)
+	)
+	#	rm -rf $i
+	# -rf
+done
+clear
+echo -e "\n\n\n\e[32mALL DONE\e[0m"

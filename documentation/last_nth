@@ -1,0 +1,7 @@
+Last nth gets the last n lines from input
+
+For example
+
+last_nth 3
+
+Would get the 3rd from the last line

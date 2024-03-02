@@ -1,0 +1,271 @@
+DEBUG enabled.
+Optimizing for speed.
+Tokens in statement:
+    main
+Subroutine offset: 0
+Number of mid-level-instructions: 1
+
+Tokens in statement:
+    foo
+    (
+    2.0
+    )
+
+Subroutines in scope hash table:
+
+Number of mid-level instructions in block statement: 3
+Length of block statement: 34 bytes
+Tokens in statement:
+    foo
+    (
+    f
+    number
+    )
+Subroutine offset: 102
+Arguments: TYPE_FLOAT
+Number of mid-level-instructions: 6
+
+Tokens in statement:
+    number
+    <
+    10.0
+Number of mid-level-instructions: 9
+
+Tokens in statement:
+    output
+    number
+Tokens in statement:
+    foo
+    (
+    number
+    +
+    1.0
+    )
+
+Subroutines in scope hash table:
+
+Number of mid-level instructions in block statement: 6
+Length of block statement: 129 bytes
+
+Subroutines in scope hash table:
+
+Number of mid-level instructions in block statement: 9
+Length of block statement: 196 bytes
+
+Subroutines in scope hash table:
+
+   foo =>  Subroutine {
+              code_offset = 102,
+              line_declared_on = 23
+           }
+
+   main =>  Subroutine {
+               code_offset = 0,
+               line_declared_on = 20
+            }
+
+
+Mid-level instructions:
+        add_main_subroutine_starting_instructions 8 (stack offset)
+        mov_fvar_fval (internal compiler variable [stack offset: 0]), 2
+        push_argument (internal compiler variable [stack offset: 0])
+        call_subroutine 102
+        add_main_subroutine_ending_instructions 8 (stack offset)
+        add_subroutine_starting_instructions 48 (stack offset)
+        mov_fvar_fvar (internal compiler variable [stack offset: 8]), number [stack offset: 16]
+        cmp_lt_fvar_fval (internal compiler variable [stack offset: 8]), 10
+        test_and_jmp_if_zero_fvar_memaddr (internal compiler variable [stack offset: 8]), 129 (bytes after this instruction)
+
+        send_output_float_message_to_ui 16 (stack offset), number [stack offset: 16]
+        mov_fvar_fvar (internal compiler variable [stack offset: 40]), number [stack offset: 16]
+        add_fvar_fval (internal compiler variable [stack offset: 40]), 1
+        mov_fvar_fvar (internal compiler variable [stack offset: 32]), (internal compiler variable [stack offset: 40])
+        push_argument (internal compiler variable [stack offset: 32])
+        call_subroutine 102
+        add_subroutine_ending_instructions 1 (the number of arguments)
+
+
+generated_code:
+    main:
+        ; Save all the GPR's except rsp.
+        push rax rcx rdx rbx rbp rsi rdi r8 r9 r10 r11 r12 r13 r14 r15
+
+        nop
+        nop
+        nop
+        nop
+        nop
+        mov ebp, 8
+        sub rsp, rbp
+
+        ; (internal compiler variable [stack offset: 0]) = 2
+        nop
+        nop
+        nop
+        fld qword[rip + 2374]
+
+        ; store st0 on the stack
+        fstp qword[rsp]
+
+        ; push argument
+        xor r11, r11
+        add r11, rsp
+        mov rax, qword[r11]
+        push rax
+
+        nop
+        nop
+        nop
+        nop
+        nop
+        mov edi, 38449654
+        call rdi
+
+        mov ebp, 8
+        add rsp, rbp
+
+        ; Restore all the GPR's except rsp, which was never saved.
+        pop r15 r14 r13 r12 r11 r10 r9 r8 rdi rsi rbp rbx rdx rcx rax 
+
+        ret
+
+    some_subroutine:  ; 38,449,654
+        nop
+        nop
+        nop
+        nop
+        nop
+        push rbp
+        mov ebx, 48
+        mov rbp, rsp
+        sub rsp, rbx
+
+        ; (internal compiler variable [stack offset: 8]) = number [stack offset: 16]
+        mov r11, rbp
+        mov r12d, 16
+        add r11, r12
+        fld qword[r11]
+        ; (internal compiler variable [stack offset: 8]) = (float)((internal compiler variable [stack offset: 8]) < 10)
+        mov r11d, 38453312
+        fld qword[r11]
+        fcomip st1
+        fstp st
+        jbe short $ + 4
+        fld1
+        jmp short $ + 2
+        fldz
+
+        ; store st0 on the stack
+        fstp qword[rsp + 8]
+
+        ; if (!(internal compiler variable [stack offset: 8])) goto after_if;
+        mov r11, rsp
+        mov r12d, 8
+        add r11, r12
+        fld qword[r11]
+        fldz
+        fcomip st1
+        fstp st
+        je near $ + 129
+
+        ; send message ‘output_float’ (message code 1) to the ui
+
+        ; setup 3 of the 4 Linux system call registers
+        mov eax, 1    ; syscall #1 is write()
+        mov edi, 1    ; 1 = STDOUT_FILENO
+        mov edx, 10   ; 2 (length of opcode) + sizeof(f)
+
+        ; rsi = rsp + 16 (the stack offset)
+        mov rsi, rsp
+        mov r11d, 16
+        add rsi, r11
+
+        ; *rsi = 2 (the UI message number)
+        mov r12d, 2
+        mov qword[rsi], r12
+
+        ; rsi += 2
+        add rsi, 2
+
+        ; *rsi = *((char*)rbp + variable_stack_offset)
+        mov r12d, 16    ; the variable stack offset
+        add r12, rbp
+        mov r12, qword[r12]
+        mov qword[rsi], r12
+
+        ; rsi -= 2
+        sub rsi, 2
+        syscall
+
+        ; (internal compiler variable [stack offset: 40]) = number [stack offset: 16]
+        mov r11, rbp
+        mov r12d, 16
+        add r11, r12
+        fld qword[r11]
+        ; (internal compiler variable [stack offset: 40]) += 1
+        fld1
+        faddp
+
+        ; store st0 on the stack
+        fstp qword[rsp + 40]
+
+
+        ; (internal compiler variable [stack offset: 32]) = (internal compiler variable [stack offset: 40])
+        mov r11, rsp
+        mov r12d, 40
+        add r11, r12
+        fld qword[r11]
+
+        ; store st0 on the stack
+        fstp qword[rsp + 32]
+
+        ; push argument
+        mov r11d, 32
+        add r11, rsp
+        mov rax, qword[r11]
+        push rax
+
+        nop
+        nop
+        nop
+        nop
+        nop
+        mov edi, 38449654
+        call rdi
+
+        ; put the return address in rax...
+        mov rbx, rbp
+        add rbx, 8
+        mov rax, qword[rbx]
+
+        ; increment the stack pointer so that it is right above
+        ; the parameters that were passed to this function...
+        mov rsp, rbp
+        pop rbp
+        mov ebx, 16
+        add rsp, rbx
+
+        ; and jump to the return address
+        jmp rax
+
+Freed the free list; number of nodes = 13
+
+Shiltiumcomp successfully compiled code.
+
+Generated program code section size: 339
+Shiltiumcomp successfully ran code.
+
+Float literals hash table:
+{
+   2 => 38,451,968
+   10 => 38,453,312
+}
+
+String literals hash table:
+{
+   Unimplemented
+}
+
+Number of assert_comparison macro calls: 7,245
+All blocks were freed.
+Heap usage: 114 allocs, 114 frees, 22,720 bytes allocated

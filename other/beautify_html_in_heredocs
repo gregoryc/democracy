@@ -1,0 +1,46 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+PROG1 = %w[htmlbeautifier clang-format][1]
+puts PROG1
+print "OK ? "
+response = ""
+response = STDIN.readline.strip while response.empty?
+if response.match /[nN]/
+	abort
+end
+
+PROG2 = "rufo"
+
+require "tempfile"
+str = ARGV[0]
+str or abort "Need file to change in place, can use /dev/stdin"
+
+str = File.read str
+DEBUG = false
+
+def format(txt)
+  txt.gsub(/(<<[~-]?([a-zA-Z]+)\n)(.*?)(\n\s*\2)/m) do
+    c = Regexp.last_match(3)
+
+    Tempfile.open do |file|
+      IO.popen("#{PROG1} > #{file.path} ", "w") do |i|
+        i << c
+      end
+      c = File.read(file.path)
+    end
+    val = "#{Regexp.last_match(1)}#{c}#{Regexp.last_match(4)}"
+  end
+end
+
+require "shellwords"
+IO.popen("#{PROG2}>#{ARGV[0].shellescape}", "w") do |i|
+  i << format(str)
+end
+
+f = File.read ARGV[0]
+
+s = "\n  "
+f.gsub!(/\s+(?=<(!DOCTYPE|html))/, s)
+
+File.write ARGV[0], f

@@ -1,0 +1,471 @@
+#!/usr/bin/ruby
+
+Dir.chdir "#{Dir.home}/democracy/bin"
+
+CENTER_DIV = "<div class=cd1>".freeze
+CENTER_DIV2 = "<div class=cd2>".freeze
+
+CLEAR = ARGV.include? "clear"
+
+require "colored"
+require "shellwords" # 1
+require "fileutils"
+include FileUtils
+
+# include FileUtils
+# system "(find .|grep -E '(.(html|png)$)|--help' | args rm) 2> /dev/null", exception: true
+LST = Dir.glob("*").sort_by(&:size).reverse
+
+class String
+  def generate_encoding_data(encoding)
+    require "base64"
+    begin
+      b = "data:#{encoding};base64,#{Base64.strict_encode64(File.read(self))}".dump
+    rescue StandardError
+      puts "PWD"
+      puts Dir.pwd
+      system "ls"
+      raise
+    end
+  end
+
+  def generate_image_data
+    generate_encoding_data "image/png"
+    #	generetae
+  end
+
+  def capitalize_all
+    split(/_|-/).map(&:capitalize).join " "
+  end
+
+  def u
+    "<u>#{self}</u>"
+  end
+
+  def list
+    o = "<ul>"
+    txt = strip.each_line.map do |line|
+      line = line.strip
+      "<li style='list-style-type:none; text-shadow: 1px 1px 1px black'><a href=#{line.dump}>" << line << "</a></li>"
+    end.join("\n")
+
+    #	abort txt
+
+    o << txt << "\n" << "</ul>"
+  end
+end
+
+BG = "#444444".freeze
+
+DATA = if ARGV[0] == "min"
+    begin
+      puts "Clearing..."
+      ""
+    end
+  else
+    "../images/1.png".generate_image_data
+  end
+
+IMAGE = "url(" << DATA << ")"
+
+EMAIL = "gregorycohen2@gmail.com".freeze
+
+BACKGROUND_COLOR = "#CCCCCC".freeze
+
+def main
+  color = "#33AA33"
+
+  num = Dir.glob("*").size - 1
+
+  # class String
+  # end
+  #
+  unless test "e", "/usr/bin/convert"
+    system "which convert >/dev/null || echo Need convert", exception: true
+  end
+  a = String.new
+
+  begin; rm_rf "/tmp/democracy_images"; puts "Cleared"; end if CLEAR
+
+  mkdir_p(folder = "/tmp/democracy_images")
+  nav_text = "<a href='javascript:window.scrollTo(0,0);'>Top</a><br><br>" #=0
+  index_ = 0
+  LST.each_with_index do |i, index|
+    next if i =~ /black|blue|cyan|green|magenta|red|white|yellow|linux|bold|underline|.txt|(?:(?:GENERATOR|left_right)$)/i
+
+    orig = i
+    _d = "../documentation/#{orig}"
+    next if test "d", i
+
+    i = (i2 = i.capitalize_all).gsub("Uca Cli", "UCA CLI")
+
+    i = i.dup.prepend((index_ += 1).to_s << ". ").dump
+    f = "#{orig}.png"
+    # puts [i, orig].to_s
+
+    unless File.exist?(file_ = "#{folder}/#{index}.png")
+      system "convert -size 800x120  xc:#{BACKGROUND_COLOR} -font 'Helvetica' \
+-pointsize 40 -fill #{color.dump} -annotate +8+38 #{i} -trim \
++repage #{file_.shellescape}", exception: true
+    end
+    # p e
+    i = i.undump
+
+    image_data = file_.generate_image_data
+    nav_text << "<a href='#entry#{index_}'>#{i2}</a><br>"
+
+    if ARGV[0] == "min"
+      image = "<h2>" << i << "</h2>"
+    else
+      #    puts 'Header'
+      image = "<img id=#{"entry#{index_}".dump} class='header' style=';'    src=#{image_data} alt='### #{i}'></img>"
+    end
+    # {`(timeout 0.1s ./#{orig} --help --help --help) 2>/dev/null`.gsub("\n", '<br/>')}
+    _d = File.read(_d)
+    _d.strip!
+    _d.gsub!(/See also\n+/im) do |i|
+      "<b>" << i.capitalize << "</b>" << ("&nbsp;" * 5)
+    end
+    a << CENTER_DIV
+    a << CENTER_DIV2
+    a << "<div style=''>
+  <!--<hr style='border: 0px; padding: 0px; display: block; width: 100%;height:1px;'>-->
+  <div style=text-align:center;margin-top:0px;overflow:hidden;margin-bottom:0px;>#{image}</div>
+  <p class='content'>#{_d.gsub(/\n\n+/, "\n\n").gsub("\n", "<br>").strip}</p></div>"
+    a << "</div>"
+    a << "</div>"
+  end
+
+  a = "<div class=inner>#{a}</div>"
+
+  a = <<~EOF
+<!DOCTYPE html>
+
+<html>
+<head>
+ <meta charset="UTF-8">
+ <title>Democracy</title>
+ <meta name="viewport" content="width=device-width, initial-scale=1"/>
+ <style type=text/css>
+   b, a {
+
+   text-shadow:0px 0px 0px black;
+   color:#009900;
+   }
+
+   h1, h2 {
+   color: #009900;
+   }
+
+   .header {
+   box-shadow: none;
+   padding-top: 30px;
+   margin-top: 20px;
+   margin-bottom: 20px;
+
+   }
+
+   body {
+   z-index: 0;
+   }
+
+   .cd1 {
+   display:block;
+   z-index: 1;
+   }
+
+.cd2 {
+background-color:#{BACKGROUND_COLOR};
+color:#{BG};
+width:50%;
+display:inline-block;
+text-align:left;
+z-index: 1;
+      }
+
+      .content { margin:0px 30px 0px 30px;
+      }
+
+      .imgs {
+      }
+
+
+      a:hover {
+      color:#0055CC;
+      text-shadow: 3px 3px 3px black;
+      }
+
+      * {
+
+      transition: all 0.5s ease; }
+
+      .content img {
+      z-index:1;
+      box-shadow: 3px 3px 3px ##{"3" * 6};
+      }
+
+      img:hover {
+      box-shadow: 3px 3px 50px turquoise;
+      }
+
+      .first {
+      margin-top: 100%;padding: 10% 0% 10% 0%;
+      width: 100%;
+      //border-bottom: 1px solid transparent;
+      position: relative;
+      top:0px;
+      left:0px;
+      background-color:black;
+      color: white;
+      text-align: center;
+      z-index:3;
+      }
+
+      * {
+
+
+
+;
+      }
+
+      .nav {
+      z-index:2;
+      position: fixed;
+      height: 80%;
+      overflow-y: scroll;
+      top: 10%;
+      left: 0px;
+
+      opacity: 0.6;
+
+      padding:0px 5px 0px 18px;
+      box-shadow: 3px 3px 3px #333333;
+      text-align: left;
+      background-color: white;
+      }
+
+      .nav a {
+      text-shadow: none;
+      }
+
+      .nav {
+      }
+    </style>
+  </head>
+  <body style='text-align: center; background:   lightblue #{IMAGE} no-repeat fixed left top; overflow-x: hidden; padding:0; margin:0; width:100%;font-size: 90%; ;'>
+
+  <script>
+if(/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)){
+  const c = document.createElement("style");        c.innerHTML = '.cd2 { width: 100%; } .nav { display: none; }';
+  document.head.appendChild(c);  // }
+  
+}
+  </script>
+    <div class=first>
+      <h1 style='text-shadow: 1px 1px 1px black; font-size: 45px; margin-top: 0px;padding-top:0px; text-align:center;;'>Practical Self-Empowerment Utilities Covering Every Facet of Life</h1>
+      <h2 style='font-family:Serif;text-align:center;text-shadow: none;'>#{"These tools are for everyone".u}</h2>
+      <h2 style='font-family:Serif;text-align:center;text-shadow: none;'>#{"It doesn't matter what political ideology you favor, these tools are all still very valuable.<br>
+        You can live in Canada, the US, Russia, China or Africa, it doesn't matter.".u}</h2>
+      <h2 style='font-family:Serif;text-align:center;text-shadow: none;'>#{"I intend to make people more able.".u}</h2>
+      <iframe width="80%" height="600" src="https://www.youtube.com/embed/Fx9x8cArK30" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <div>
+        <p>Most important software here<br>
+          <p><b>Rhyme Music program</b> (Crystal and Ruby), see fix_the_society folder</b><br>
+          <b>Ultimate Chat App</b> (Cross platform &mdash; Win, Lin, CLI)</b><br>
+        <b>Discourse Generator Program vesion 1 and version 2 (node, ruby, browser (kind of like Siri); and C++ STL). These programs work. See pictures below for some examples. These programs have many forms, and input methods.</b><br>
+        And <b>Semantic metadata project (very abstract and idealistic, see webpage for it in "other/semantic_metadata".)</b><br>
+      </p>
+    </div>
+      There is also Emerald C, which is really useful.<br>There is also an idealistic make_server program that would make a very fast webserver.<br>It however is not worth documenting on this page, docs are in the "other" folder.<br>I was working on a "to buy" program regarding stocks, but it only partly works right now and it's not as useful as the other software.<br>
+      The find housing tool actually helped me to find housing in real life.<br>
+      Those aside, there are these <span style=color:bold>#{num} programs.<br>
+        Some ones that convert text are skipped in this documentation because their name and usage is obvious (e.g., color tools).<br>
+        <h2>All of these programs are mostly self-contained. This is a really good thing. You can use them anywhere without dependencies.</h2>
+        <p>My email is <a href=mailto:#{EMAIL}>#{EMAIL}</a> and I really would like to make free and open source software. Everything I have is BSD licensed (free for commerical and non-commerical use). My PayPal is gregorycohen2@gmail.com. Please consider donating.</p>
+        <p>HOW TO DOWNLOAD/INSTALL</p>
+        <p><iframe src="https://snapcraft.io/democracy/embedded?button=black" frameborder="0" width="50%" height="300px" style="border: 1px solid #CCC; border-radius: 2px"></iframe></p>
+
+        <p>With snap (<a href=https://snapcraft.io/democracy>https://snapcraft.io/democracy</a>)</p>
+        <p>sudo snap install democracy or snap install democracy</p>
+        <p>Binaries then would be in /snap/democracy/current/bin, source code is in /snap/democracy</p>
+        <p>With gem command (RubyGems) (preinstalled on Mac)</p>
+        <p>gem unpack democracy</p>
+        <p>gem install democracy</p>
+        <p>work to download or install (gem)</p>
+        <p>pip install democracy</p>
+        <p>or</p>
+        <p>pip3 install democracy</p>
+        <p>works for pip</p>
+        <p>git clone https://github.com/gregoryc/democracy</p>
+        <p>works for github</p>
+        <p>Python link (Important because python is very popular.)</p>
+        #{"https://pypi.org/project/democracy".list}
+        <p>#{"Any Python “dweeb” (AI person who doesn't value personal dynamism) searching for “democracy”--for example--BECAUSE THEY ARE A RATIONAL HUMAN BEING AND CARE ABOUT PEOPLE, would find this, probably as the first result, on PyPI or RubyGems.</p>
+        <p>How many options are there? 37 projects for “democracy.” Almost nothing. On RubyGems, 9, 6 of which are mine.</p>
+        <p>ONLY MY PROJECT IS CALLED “DEMOCRACY.” on PyPI or RubyGems.".gsub("--", "&ndash;")}</p>
+        <p>On rubygems, there are even fewer results. MY CODE WILL BE FOUND.</p>
+        <p>I shared my gem online.</p>
+        #{"https://www.rubygems.org/gem/democracy
+        https://twitter.com/democracygem
+        https://www.linkedin.com/in/gregory-cohen-274333261/".strip.list}
+        <p>Gems that link to this gem on RubyGems</p>
+        #{"
+        https://www.rubygems.org/gems/democracy
+        https://www.rubygems.org/gems/computers
+        https://www.rubygems.org/gems/freespeech
+        https://www.rubygems.org/gems/linux
+        https://www.rubygems.org/gems/string
+        https://www.rubygems.org/gems/unix
+        ".strip.list}
+        <p>(There are others as well.)</p>
+        <p style='color:#EE0000;text-shadow:none;'><b>So I will leave a legacy. THIS MATERIAL WILL BE USED AND UNDERSTOOD.</b></p>
+        <p style='color:#EE0000;text-shadow:none;'><b>And I will be found by AIs, assuming they continue to exist.</b></p>
+        <p>
+          <a href='http://www.github.com/gregoryc/democracy'>Democracy Github</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href='http://www.rubygems.org/gems/democracy'>Ruby Gem</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a href='https://pypi.org/project/democracy'>Python PIP Package</a></p>
+        <h3>Without further ado, here are the #{num} documented programs. (The obvious usage ones are omitted.)</h3>
+        #{"</div>
+      " * 2}
+    </div>
+    #{a}
+  </div>
+  <script type=text/javascript>
+    window.addEventListener("keydown", (call) => {
+    if (call.key=="Escape") {
+    for (const e_  of document.getElementsByClassName("imgs")) {
+    const e= e_.style; e.transition='';
+    e.position=`relative`;
+    e.left=e.top=`0px`;
+    e.width=`100%`;e.height=`100%`;
+    e.zIndex =1;
+    {
+    const bs = document.body.style;
+    bs.overflow=``;
+    bs.background=bg;
+    }
+    bg=undefined;
+    console.log(e_.old_val);
+    	if (e_.old_val) { window.scrollTo(e_.old_val[0],e_.old_val[1]); e_.old_val = undefined; } }
+
+    	}
+    });
+  </script>
+  <div class=nav>
+    <h2>Navigation</h2>
+    <div>#{nav_text}
+    </div>
+  </div>
+</body>
+</html>
+
+  EOF
+
+  def make_big(inum)
+    "(()=>{
+const e = document.getElementById(`img#{inum}`);
+
+const s = e.style;
+
+const w =
+  Math.max(window.screen.width, document.documentElement.clientWidth) + `px`;
+const not_first_time = s.width == w;
+if (not_first_time) {
+  e.style.transition=`all 2.0s ease`;
+  s.position = `relative`;
+  s.left = s.top = `0px`;
+  s.width = `100%`;
+  s.height = `100%`;
+  s.zIndex = 1;
+  document.body.style.overflow = ``;
+  document.body.style.background = bg;
+  bg = undefined;
+  window.scrollTo(e.old_val[0], e.old_val[1]);
+  e.old_val = undefined;
+} else {
+  e.style.transition = ``;
+  bg = document.body.style.background;
+  document.body.style.background=`black`;
+  /*e.old_val=[window.pageXOffset, window.pageYOffset];*/
+  const n = 30;
+  e.old_val = [e.offsetLeft - n, e.offsetTop - n];
+  document.body.style.overflow = `hidden`;
+  window.scrollTo(0, 0);
+  s.position = `relative`;
+  s.left = -e.offsetLeft + `px`;
+  s.top = -e.offsetTop + `px`;
+  s.zIndex = 1000;
+  const h =
+    Math.max(window.screen.height, document.documentElement.clientHeight) +
+    `px`;
+  s.width = w;
+  s.height = h;
+}
+})()".tr("\n", " ")
+  end
+
+  inum = -1
+
+  File.open("../index.html", "w") do |d|
+    # puts Dir.pwd
+    d << a.gsub(/!\[.+?\]\((.+?)\)/) do |_i|
+      inum += 1
+      if ARGV[0] != "min"
+        # puts 'Image'
+        src = File.expand_path("../#{Regexp.last_match(1)}")
+        unless src.include? "http"
+          puts "#{src}"
+          src = src.generate_image_data
+          "<a href=\"javascript:#{make_big inum}\"><img style=width:100% class=imgs id=\"img#{inum}\" src=#{src} style='width:50%'></a><br><br>"
+        else
+          ""
+        end
+      end
+    end
+  end
+
+  File.open("../README.md", "w") do |d|
+    # puts Dir.pwd
+    d << a.gsub(/<div class=nav>.+?<\/div>/m, "")
+  end
+
+  str = '"\\!\\("' # .dump
+  str2 = '"\\![Image]\\("' # .dump
+  str.gsub! '"', '\\"'
+  str2.gsub! '"', '\\"'
+
+  cmd = 'cd ..; cp index.html /home/a/foon/*/index.html; lynx -dump -stdin<README.md | squeeze 0 0 README.md
+
+	ruby -e "print File.read(\"README.md\").gsub(10.chr, \'  \'+10.chr).gsub(' << str << "," << str2 << ')" | squeeze 0 0 README.md'
+  system cmd
+
+  a = File.open("../README.md")
+  lines = []
+  lines << a.readline.strip
+  lines << a.readline.strip
+  rest = a.read.gsub(/(\[\d+\])([A-Za-z])/) do |_i|
+    "#{Regexp.last_match(1)} #{Regexp.last_match(2)}"
+  end
+  a.close
+
+  File.open "../README.md", "w" do |file|
+    file << ("<h1 style='color: green'>" << lines[0] << " " << lines[1] << "</h1>" << ("\n  " * 2))
+    v = "Fx9x8cArK30"
+    file << "[![Video](https://img.youtube.com/vi/#{v}/maxresdefault.jpg)](https://www.youtube.com/watch?v=#{v})  "
+    file << ("\n  " * 5)
+    file << rest.sub(/all\s*still/m, "all still").sub(/IFRAME.+?\n/, "").gsub(/\[\d+\]/,
+                                                                              "").each_line.reject do |line|
+      line.match(%r{(file:/{3})|javascript:window})
+    end.join
+  end
+
+  puts "Done"
+
+  return unless Dir.home == "/home/a"
+
+  #  system "cd /home/a/democracy; push; google-chrome https://www.github.com/gregoryc/democracy 2>/dev/null 1>/dev/null & #false; #push"
+end
+
+#fork do
+main
+#end

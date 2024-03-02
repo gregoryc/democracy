@@ -1,0 +1,180 @@
+#!/usr/bin/ruby
+# frozen_string_literal: false
+
+# BSD 2-Clause License
+#
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+require "English"
+
+class Copier < IO
+  def initialize
+    @text = ""
+  end
+
+  def puts(a)
+    if SETTINGS.copy
+      #			puts IO
+      @text += "#{a}\n"
+    else
+      $stdout.puts a
+    end
+  end
+
+  def print(a)
+    if SETTINGS.copy
+      @text += a.to_s
+    else
+      $stdout.print a
+    end
+  end
+
+  def close
+    numbers = []
+    100.times do
+      numbers << [(rand * 10).to_i]
+    end
+
+    # puts numbers
+    file = "/tmp/ruby_tempfile#{numbers.join}"
+    # p file
+    # puts file
+
+    File.open(file, "w") do |file|
+      # puts "Text #{@text}"
+      #			$stdout.puts @text
+      file.print @text
+    end
+
+    spawn("xclip -selection c #{file} > /dev/null") # /dev/ null is needed otherwise it will hang
+
+    # File.unlink(file)
+    return if SETTINGS.silent # if !SILENT
+
+    $stdout.print @text
+
+    #			$stdout.flush
+    #			$stdout.close
+
+    # Kernel.exit
+  end
+end
+
+class SETTINGS_
+  SPEAK_OPTION, COPY_OPTION, SILENT_OPTION = (ARGV.empty? || ARGV[0].include?("-") ? ["\0"] * 3 : "ecs".chars)
+  @@argv = ARGV
+  @@argv = [""] if @@argv.empty?
+
+  def speak
+    @@argv[0].include? SPEAK_OPTION
+  end
+
+  def copy
+    @@argv[0].include? COPY_OPTION
+    #	return @@copy
+  end
+
+  def silent
+    @@argv[0].include? SILENT_OPTION
+    #	return @@copy
+  end
+end
+
+SETTINGS = SETTINGS_.new
+
+begin
+  require "gemoji"
+rescue StandardError
+  system "sudo gem install gemoji"
+  require "gemoji"
+end
+
+def e(word)
+  if word.nil?
+    word = %w[The man walked down the street and saw some cute cats and dogs. The dogs were fun and
+             baked nice cakes. Japan is cool]
+  end
+
+  end_ = ""
+
+  word.sub!(/[\.?!]+$/) do |i|
+  	end_ = i
+  	String.new
+  end
+
+#  abort word
+  	
+
+  text = (Emoji.find_by_alias(word)&.raw or
+    Emoji.find_by_alias(word.downcase)&.raw or
+    Emoji.find_by_alias(word.downcase.capitalize)&.raw or
+    Emoji.find_by_alias(word.chomp("s"))&.raw or
+    Emoji.find_by_alias(word.downcase.chomp("s"))&.raw or
+    Emoji.find_by_alias(word.downcase.capitalize.chomp("s"))&.raw or
+    Emoji.find_by_alias(word.chomp("'s"))&.raw or
+    Emoji.find_by_alias(word.downcase.chomp("'s"))&.raw or
+    Emoji.find_by_alias(word.downcase.capitalize.chomp("'s"))&.raw \
+      or word) + end_
+
+
+  if SETTINGS.speak
+  	require 'shellwords'
+    system "espeak '#{word.join(" ").shellescape}'"
+  end
+  text
+end
+
+module Kernel
+  def puts(a)
+    COPIER.puts a
+  end
+
+  COPIER = Copier.new
+end
+
+def main
+  iter = ($stdin.each_char.chunk do |i|
+    !!(i.match /[^\s]/)
+  end)
+
+  print (iter.map do |state, val|
+          case state
+          when true
+            e(val.join)
+          when false
+            val.join
+          else
+            puts "WTF"
+            abort
+          end
+        end).join
+
+  #  $stdin.each_line do |line|
+  #   puts e(line.split(/\s+/))
+  # end
+end
+
+main
+COPIER.close

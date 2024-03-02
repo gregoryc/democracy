@@ -1,0 +1,85 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: false
+
+require 'English'
+# loop do
+i = 0
+`find -type f`.split("\n").reject { |i| false and i.include?('.') }.each do |file|
+  file = file.strip
+  $stdin = File.open(file)
+  require 'English'
+  begin
+    until $stdin.readline.strip.start_with? 'module'
+    end
+  rescue StandardError => e
+    next
+  end
+
+  class Array
+    def add_nl
+      map do |e|
+        "#{e}\n"
+      end
+    end
+
+    def prepend_each(a)
+      map do |i|
+        a + i
+      end
+    end
+  end
+
+  def require_statements(lines)
+    #    puts "require_relative " +       lines.
+
+    [lines.scan(/(.+?)::\1/).uniq.sort.flatten.map { |i| ('./' + i.downcase + "").dump + "\n" }.prepend_each('require_relative ').join, lines.split("\n").reject do |i|
+                                                                                                                                  i.strip.start_with?('require') or i.strip[0] == "#"
+                                                                                                                                end.join("\n")].reverse.reverse.join
+  end
+
+  # ; $stdin.close
+
+  # $stdin.close
+
+  # text = $_
+  rest_of_lines = $stdin.read
+  #  rest_of_lines.join
+
+  $stdin.close
+  t = <<~EOF
+    #!/usr/bin/env ruby
+    #
+    # Democracy software compilation VERSION 0.0.#{`cat ../VERSION_NUMBER`.strip}, created on #{Time.new}
+    # Get all of this code, and all of these files, with
+    # gem install democracy
+    # #{`uname         `.strip} #{`ruby --version`.strip}
+    #
+    # Permission to use, copy, modify, and/or distribute this software for any purpose with or without fee is hereby granted.
+    #
+    # THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+
+
+
+  EOF
+
+  last = '# Feedback and donation to gregorycohen2@gmail.com (money transfer or Paypal)'
+
+  i += 1
+  t << "\n# #{i} of #{`find -type f -name "*.rb"`.count "\n"} source files\n"
+  #    t << $LAST_READ_LINE + "\n"
+  t << ($LAST_READ_LINE + "require_relative \"str\"\n #{require_statements(rest_of_lines)}\n\n\n\n\n#{last}")
+
+  t = t.gsub(last, "")
+  t << last
+
+  File.write file, t
+#  spawn "rubocop -A #{file}"
+
+  # rest_of_lines = STDIN
+  #  end
+end
+
+# system "
+# s

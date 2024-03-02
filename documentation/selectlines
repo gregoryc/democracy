@@ -1,0 +1,11 @@
+selectlines shows all nonblank lines from the input
+
+Example
+
+cat file | selectlines
+
+(echo 2; echo; echo; echo) | selectlines
+
+=> 2
+
+The result would be 2, with no blank lines after that

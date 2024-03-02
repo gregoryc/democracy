@@ -1,0 +1,12 @@
+Generates a video from command line arguments.
+
+Arguments
+
+Usage:
+
+	outputfile duration-seconds width height song-to-play image-folder fps
+
+Optional -s to state the start time of the song.
+
+Example ./gen_video -s 30 file.mp4 60 1920 1080 ./mp3.mp3 ./images 30
+

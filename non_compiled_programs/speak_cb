@@ -1,0 +1,27 @@
+#!/usr/bin/ruby
+times_int = 0
+
+begin
+  while true
+    lines = `xclip -selection -c -o`.tr("\n,", " ").split(/(,|\?|\.|  | and )+/)
+
+    for i in lines
+      require "shellwords"
+      i = i.strip.shellescape.gsub("\\ ", "+").gsub(/(?<=)\\(–|')/, "").gsub("Ill", "I will") #.gsub(".", "").strip; '
+      puts i
+      if i.match /^(''|\.)$/; next; end
+      system <<~EOF
+
+               IFS=+; mplayer -speed #{ARGV[0] || 1} -ao alsa -really-quiet -noconsolecontrols "http://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q=#{i}&tl=en" 2>/dev/null 1>/dev/null
+
+
+             EOF
+    end
+  end
+rescue Interrupt
+  times_int += 1
+  if times_int > 10
+    exit
+  end
+  retry
+end

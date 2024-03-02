@@ -1,0 +1,150 @@
+#!/usr/bin/ruby
+USE_GPT4 = false
+
+begin
+  require "ruby/openai"
+rescue Exception
+  puts "Error. Please run sudo gem install ruby-openai tiktoken_ruby colored on your computer (Mac or Linux), on Mac maybe maybe remove sudo."
+  abort
+end
+require "tiktoken_ruby"
+
+#platfom.openai.com/docs/models
+ENCODINGS = {
+  "gpt-3.5-turbo-1106" => [Tiktoken.encoding_for_model("gpt-3.5-turbo-1106") || (raise "Error"), 16_385],
+  "gpt-3.5-turbo-16k" => [Tiktoken.encoding_for_model("gpt-3.5-turbo-16k") || (raise "Error"), 4096],
+  "gpt-4-1106-preview" => [Tiktoken.encoding_for_model("gpt-4-1106-preview") || (raise "Error"), 128_000],
+}
+
+#l=enc.encode(l2=File.read("/usr/share/dict/words")).length
+#l2 = l2.size
+#puts ENCODINGS.values[0][0]
+raise unless ENCODINGS.values[0][0].encode("Hello world").length == 2
+#puts ENCODINGS.values[1][0]
+raise unless ENCODINGS.values[1][0].encode("Hello world").length == 2
+#puts ENCODINGS.values[2][0]
+raise unless ENCODINGS.values[2][0].encode("Hello world").length == 2
+
+class Object
+  def toksize(model)
+    ENCODINGS[model][0].encode(to_s).length
+  end
+end
+
+def run_gpt(user, system = "")
+  puts user.to_s[0..50] + "..." #.red
+  puts "gpt()"
+  cont = nil
+  data = (user + system).strip
+
+  max_token_size = if USE_GPT4
+    128_000
+  else
+    16_385
+  end - 20 # For "user" and "system", presumably.
+  model = "gpt-3.5-turbo-1106"
+
+  if toksiz = data.toksize(model) <= 16_385 - 20
+  else
+    if USE_GPT4
+      model = "gpt-4-1106-preview"
+    end
+  end
+
+  toksiz = 2 ** 64
+  while toksiz > max_token_size
+    unless toksiz == -1
+      puts "Really big #{toksiz}"
+    end
+
+    if toksiz > max_token_size * 3
+      data = data[0..((data.size - 1) * (1.0 / 3.0) - 1)]
+    elsif toksiz > max_token_size * 2
+      data = data[0..((data.size - 1) * (1.0 / 2.0) - 1)]
+    elsif toksiz > max_token_size * 1.5
+      data = data[0..((data.size - 1) * (1.0 / 1.5) - 1)]
+    end
+
+    data = data[0..((data.size - 1) * 0.95 - 1)]
+
+    toksiz = data.toksize(model)
+  end
+
+  puts "Str size is %s Token size is %s" % [data.size, toksiz]
+  $key ||= File.read("/home/a/GREGORY_KEY").strip rescue abort("Change settings of script file.")
+  key = $key
+  $client ||= OpenAI::Client.new(access_token: key)
+
+  msg = []
+
+  if system.strip != ""
+    msg << { "role" => "system", "content" => system }
+  end
+
+  if user.strip != ""
+    msg << { "role" => "user", "content" => user }
+  end
+
+  while cont.nil?
+    begin
+      cont = ($client.chat(
+        parameters: {
+          model: model, # Required.
+          messages: msg,
+        },
+      ))
+    rescue StandardError
+      sleep 1
+      retry
+    end
+
+    if cont.nil?
+      puts "NIL"; sleep 20
+    end
+
+    begin
+      cont = (cont["choices"].map do |i|
+        i["message"]
+      end.sort do |a, b|
+        a["content"].size <=> b["content"].size
+      end).to_a[-1]["content"]
+
+      if cont.nil?
+        puts "Cont is nil"
+        next
+      end
+
+      return cont
+      #	     end
+    rescue StandardError
+      puts cont.to_s.red
+      cont = nil
+    end
+  end
+
+  abort "ERROR"
+end
+
+glob, new_folder, prompt = ARGV[0], ARGV[1], ARGV[2]
+if ARGV.size != 3
+  puts "gptmap\n"
+  puts "Usage: [glob] [new folder] [prompt for data of each file]\n\n"
+  puts "gptmap"
+  puts "Maps all files in [glob] to chatgpt, and makes a new folder"
+  exit 1
+end
+
+puts "Dir.glob #{glob.dump}, #{new_folder.dump}"
+prompt.strip!
+Dir.glob glob do |i|
+  i = File.basename i
+  if prompt.empty?
+    q = File.read(i)
+    prompt_ = q
+  else
+    q = File.read i
+    q = q.dump
+    prompt_ = "%s: %s" % [prompt, q]
+  end
+  File.write new_folder = "#{new_folder}/#{i}", run_gpt(prompt_)
+end

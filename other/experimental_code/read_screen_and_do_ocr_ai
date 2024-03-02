@@ -1,0 +1,38 @@
+#!/usr/bin/ruby
+
+# Dependencies: tesseract-ocr imagemagick scrot
+i = 0
+system "rm /home/a/texts/*"
+puts "Starting.... "
+begin
+
+
+while true
+cmd= <<EOF
+#select tesseract_lang in eng rus equ ;do break;done
+# Quick language menu, add more if you need other languages.
+set -e
+cd /home/a/texts
+
+
+SCR_IMG=#{i += 1}
+
+rm *png -f
+scrot $SCR_IMG.png -q 100
+# increase quality with option -q from default 75 to 100
+# Typo "$SCR_IMG.png000" does not continue with same name.
+
+
+#mogrify -modulate 100,0 -resize 400% $SCR_IMG.png 
+#should increase detection rate
+
+tesseract -l eng $SCR_IMG.png $SCR_IMG 2> /dev/null 1>/dev/null
+#find -size 0 -exec rm {} \;
+EOF
+system cmd, exception: true
+end
+
+
+rescue StandardError
+	puts "Do ai work"
+end

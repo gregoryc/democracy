@@ -1,0 +1,88 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: false
+
+# BSD 2-Clause License
+# 
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice, this
+   # list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+   # this list of conditions and the following disclaimer in the documentation
+   # and/or other materials provided with the distribution.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+require 'colored'
+
+str = 'Enter '
+
+$old_str = ''
+def puts__(str, ack = false)
+  # def puts.old_str
+  return unless ENV['C_CODE'].nil?
+  #	if ENV["C_CODE
+  #	if
+  #	requi
+  return if $old_str == str
+
+  str = str.to_s
+  def str.colorify
+    bold.send ''.colors.sample
+  end
+
+  def str.ack
+    ['Thank you. '][0]
+  end
+
+  str.prepend str.ack if ack == true
+  print "#{str.colorify}\n"
+
+  system "echo '#{str}' | flite -voice slt  "
+end
+
+alias :say puts__
+
+count = 0
+# speak str
+
+def $stdin.readline
+  Dir.chdir Dir.home
+  Dir.chdir 'nerd-dictation'
+  res = ''
+  while res.strip == ''
+    res = %x(
+  ./nerd-dictation begin --vosk-model-dir=`printf "%s\n" ./vosk-model-small-en-us* | head -n 1` --timeout 1.0 2>&1  --output STDOUT)
+
+    res = '' if res.downcase.include?('no text')
+    #	STDOUT.print res
+  end
+  res
+end
+
+loop do
+  puts__ ARGV[0], ack = false
+  $text = $stdin.readline
+
+  class Object
+    def eval(*_args)
+      text = $text
+      Kernel.eval to_s
+    end
+  end
+
+  ARGV[1..-1].map(&:eval)
+end

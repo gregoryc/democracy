@@ -1,0 +1,159 @@
+#!/usr/bin/env node
+LENGTH_OF_PROGRAM_NAME = 1;
+LENGTH_OF_NODE_PROGRAM = 1;
+
+
+// puppeteer-extra is a drop-in replacement for puppeteer,
+// it augments the installed puppeteer with plugin functionality
+const puppeteer = require('puppeteer-extra')
+
+// add stealth plugin and use defaults (all evasion techniques)
+//const StealthPlugin = require('puppeteer-extra-plugin-stealth')
+//puppeteer.use(StealthPlugin())
+  	
+//  }
+//arg = process.argv[i];
+
+if (process.argv.length < 1 + 1 + 1) {
+console.error("Need 3 or more args");
+return 0;
+//	console.log("need 3 or 
+}
+// puppeteer usage as normal
+//args = process.argv
+puppeteer.launch({
+	headless: process.argv[2] == "true" ? false : true,
+}).then(async browser => {
+//puppeteer.launch({ headless:
+//     (process.argv[2])  /* true*/  }).then(async browser => {
+var a = 1 + LENGTH_OF_PROGRAM_NAME + LENGTH_OF_NODE_PROGRAM
+
+
+
+/*
+	var length_of_program_name
+	var a = 0;
+/	++a;
+	++a;*/
+
+for (;; ++a) {
+	if (a == process.argv.length) {
+		await browser.close();
+		return 0;
+	}
+    var page = await browser.newPage()
+    //console.error(browser.pages.length);
+    var i = 0;
+    
+        async function clickWait(selector) {
+        
+        if (i++) { await page.screenshot({ path: String(++i) + String(Math.random() * 100000000) + '.png', fullPage: true }); }
+        
+        await page.click(selector);
+        if (i != 1) { await page.waitForNavigation(); }
+    }
+    var click = async (x, a) => { await page.click(x, a); }
+    var type = async (x, a) => {await page.type(x, a); }
+
+    
+    async function gotoWait(url) {
+        
+        if (i++) { await page.screenshot({ path: ++i + '.png', fullPage: true }); }
+        
+        await page.goto(url);
+        if (i != 1) { await page.waitForNavigation(); }
+    }
+    
+
+
+
+ // i = 0;
+ // page=await browser.newPage();
+//  console
+function puts(a) {
+	console.log(a);
+}
+
+async function f(page) {
+	 page.on("load", async function() {
+    let result;
+while (true) {
+    try {
+    result_ = await page.evaluate( async () => {
+//  	return window.document.querySelector("html a"  );
+
+  	return document.querySelector("html").innerHTML;
+});} catch (e) {} // 		return [...document.querySelectorAll("html a")].map(function(i) { return i.href + "\n"; })//toString();
+
+try {
+   console.log(result_);
+   break;
+   } catch (e) {}
+  }
+ }
+);
+}
+
+//  await page.waitForNavigation();
+ try {
+while (true) {
+try {
+		 await page.goto('https://www.google.com/');
+} catch (e) {
+}
+
+ try {
+	  await page.type('input[type="text"]', process.argv[a]);
+	  break;
+} catch (e) {
+	
+}
+}
+while (true) {
+ try {
+
+  await Promise.all([page.click('input[type="submit"]')]);
+ // brea
+  break;
+  }
+  catch (e) {
+  	
+  }
+ }
+  f(page);
+
+ while (true) {
+  try {
+ 
+//   await Promise.all([page.click('input[type="submit"]')]);
+     await page.waitForNavigation();
+
+  // brea
+   break;
+   }
+   catch (e) {
+   	
+   }}
+   //    f();
+     //  await page.reload();
+      } 
+      catch (e) {throw e;}
+//  });
+//   }
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//await sleep(30);
+
+ //   f();
+ // ]);
+  //f();
+
+//  });
+//	await console.log(divCount.join(""));
+//});
+//	  await page.close();});
+;}
+})

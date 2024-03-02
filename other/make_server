@@ -1,0 +1,252 @@
+make_server is powerful.
+
+
+make_server takes expressions, either Javascript or C++, and generates a resultant program from that.
+
+The Javascript mode currently doesn't work.
+
+
+
+Not only is a program made, the resultant program is an entire webserver, that uses FastCGI to run really fast code.
+
+
+The arguments work in an interesting way.
+
+
+make_server  [function_name] [iterable] [condition, it can be “true” to do the following argument always]   [code list separated by semicolons, the last statement is an expression, and is returned by the function]   [function_name2]  ...
+
+
+You have to give 4 arguments every time.
+
+
+
+There was an “otherwise” mode as an “else”, but I don't think that's a part of the program anymore.
+
+It doesn't need to be.
+
+
+You have to give 4 arguments for each function.
+
+
+So you can do
+
+
+
+make_server 4args 4args 4args 4args
+
+
+And pass 16   arguments
+
+
+The “iterable” has to be a list.
+
+
+
+
+What is powerful is that it converts JSON into completely native C++. It is very efficient.
+
+
+It doesn't need to be a JSON expression though.
+
+
+There is a test file.
+
+
+You can run the tests and see if it works for you!!
+
+
+You can also modify the code because it is open source.
+
+
+
+
+
+The program generates a special array object. It is lightweight and makes arrays act in C++ like arrays act in scripting languages, but much faster.
+
+
+The array class also has methods to apply things to every element of an array, like surround
+
+
+array.surround(“<element>”, “</element>”)
+
+
+for example
+
+would surround all of the elements of array with XML tags and return a new list
+
+
+
+This program generates a lightweight Object System, with a BasicObject class and an Object Class.
+
+
+You can subclass these objects.
+
+
+
+You can have Arrays of the Objects
+
+
+
+
+The function argument syntax is really powerful.
+
+
+Oftentimes people want to iterate through iterables or arrays.
+
+Oftentimes people want to check conditions.
+
+
+
+
+Python has list comprehensions.
+
+
+This is kind of like that, but simpler.
+
+
+You can have arguments as one argument, separated by “,,”
+
+
+make_server arg1,,arg2,,arg3,,arg4
+
+
+
+
+
+
+
+
+
+What's the point of using a scripting language when you can use C++?
+
+
+
+
+
+This uses FastCGI, so you can have an ____IDEAL____  webserver.
+
+
+You can have an IDEAL and very affordable website, that in a sense would be faster than Facebook.
+
+
+Facebook  converts PHP to C++ (slow)
+
+
+
+This produces REAL C++, and it is very fast, almost as fast as possible.
+
+
+Native STL classes are used, like  vector.
+
+
+Native STL classes are used, like vector and map
+
+
+Do you not need to run and child processes or do slow, costly things.
+
+
+
+
+
+You should want IDEAL.
+
+
+
+This is free software, and is BSD licensed.
+
+
+
+
+
+The function generation idea allows you to write in 1 line what other people might write in 50   lines.
+
+
+
+
+You do not need to compromise your ideals.
+
+
+You should want fast, efficient, and memory light programs that are not garbage collected (!!!) and that have reliable performance.
+
+
+C++, as everyone knows, delivers that.
+
+
+
+
+
+You should also want to not have to write a lot of code to do things.
+
+
+And you should also want safe, compiled code that checks things at compile time, so that bugs don't appear at run time.
+
+
+This program delivers.
+
+
+It uses NGINX ( a really, really common webserver)    to help with the FastCGI.
+
+
+FastCGI, for the unfamiliar, is like normal CGI, but there aren't child processes.
+
+
+
+
+
+So the entire server could be written in idealistic C++.
+
+
+
+Then you just have to think about scaling.
+
+
+
+There are some relevant links regarding scaling in the “scaling” file in the democracy project
+
+
+
+
+
+1) Speed
+
+2) Ease of writing code
+
+
+3) Memory usage
+
+
+4) Monetary costs
+
+
+5) Elegance
+
+6) Practicalness
+
+
+
+Those are 6 things.
+
+
+
+You don't have to sacrifice on those things.
+
+Contributions on this program would be really appreciated.
+
+
+It is called “make_server” for now.
+
+
+
+There was also a mode to generate javascript.
+
+
+I have to make that work again.
+
+
+The entire program is just one file.
+
+
+
+
+
+My email is gregorycohen2@gmail.com

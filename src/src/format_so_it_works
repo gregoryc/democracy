@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+system "crystal tool format functions.cr"
+a = File.read("functions.cr")
+$stdout = File.open "functions.cr", 'w'
+a.each_line do |l|
+l.chomp!
+print l
+
+if l.match /^\s*def .+[a-zA-Z]{2}$/
+	print "()"
+end
+
+puts
+end
+$stdout.flush
+$stdout.close

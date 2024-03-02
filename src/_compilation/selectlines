@@ -1,0 +1,290 @@
+#!/usr/bin/crystal
+
+CORE_UTIL_STRING = "core_utils"
+
+def prepend_each(arg)
+  STDIN.each_line do |line|
+    puts arg + line
+  end
+end
+
+def append_each(arg)
+  STDIN.each_line do |line|
+    puts line + arg
+  end
+end
+
+def delete(arg)
+  `find -name #{arg}`.each_line do |i|
+    File.delete(i)
+  end
+end
+
+def nth_word(arg)
+  i = arg.to_u64 - 1
+  STDIN.each_line do |line|
+    puts line.split[i] rescue ""
+  end
+end
+
+def trim()
+  STDIN.each_line do |line|
+    puts line.strip
+  end
+end
+
+def lines(folder = ".")
+  if !STDIN.tty?
+    puts STDIN.gets_to_end.count('\n')
+  else
+    res = `find #{folder}`.count('\n') - 1
+    puts res
+  end
+end
+
+def args(arg1)
+  sections = Process.parse_arguments(arg1)
+  program, args = sections[0], sections[1..]
+
+  sections = Process.parse_arguments(arg1)
+
+  program = Process.find_executable(program)
+  if program.nil?
+    puts "Can't find program #{arg1}"
+    raise "Error"
+  end
+
+  lines = STDIN.gets_to_end.strip
+  lines = lines.split "\n"
+  times = (lines.size % 2000000 == 0) ? 2 : 1
+
+  times += lines.size // 2000000
+  n = 0
+  times.times do
+    prog_args = args
+
+    prog_args += lines[n..(n + 2000000 - 1)]; n += 2000000
+
+    if (p = Process.fork).nil?
+      Process.exec(
+        program,
+        prog_args
+      )
+    else
+      p.wait
+    end
+  end
+end
+
+def mul()
+  t = STDIN.read_line.to_f64
+
+  i = 0f64; STDIN.each_line do |line|
+    t *= line.to_f64
+  end
+
+  puts t
+end
+
+def add()
+  t = STDIN.read_line.to_f64
+
+  i = 0f64; STDIN.each_line do |line|
+    t += line.to_f64
+  end
+
+  puts t
+end
+
+def div()
+  t = STDIN.read_line.to_f64
+
+  i = 0f64; STDIN.each_line do |line|
+    t /= line.to_f64
+  end
+
+  puts t
+end
+
+def sub()
+  t = STDIN.read_line.to_f64
+
+  i = 0f64; STDIN.each_line do |line|
+    t -= line.to_f64
+  end
+
+  puts t
+end
+
+def floor()
+  puts STDIN.read_line.to_f64.to_i64
+end
+
+def abs()
+  STDIN.each_line do |l|
+    l = l.to_f64.abs
+    puts l
+  end
+end
+
+def exp()
+  t = STDIN.read_line.to_f64
+
+  STDIN.each_line do |line|
+    t **= line.to_f64
+  end
+
+  puts t
+end
+
+def nth(arg1)
+  end_ = arg1.to_u64
+  i = 0u64; STDIN.each_line do |line|
+    i += 1
+    if i == end_
+      puts line
+      break
+    end
+  end
+end
+
+def last_nth(arg1)
+  end_ = arg1.to_u64
+  i = 0u64
+  t = STDIN.gets_to_end
+  if t[-1] == '\n'
+    t = t[0..-2]
+  end
+
+  t.split("\n").reverse_each do |line|
+    i += 1
+    if i == end_
+      puts line
+      break
+    end
+  end
+end
+
+def gsubip(arg1, arg2, arg3)
+  regex = Regex.new(arg1)
+  text = File.read(arg3).gsub(/#{arg1}/m, arg2)
+  File.open(t = File.tempname(CORE_UTIL_STRING, "_tmp"), "w", File.info(arg3).permissions) do |h|
+    h.print text
+  end
+  begin
+    File.rename t, arg3
+  rescue
+    File.delete t
+  end
+end
+
+def rip(arg1, arg2, arg3)
+  text = File.read(arg3).gsub(arg1, arg2)
+  File.open(t = File.tempname(CORE_UTIL_STRING, "_tmp"), "w", File.info(arg3).permissions) do |h|
+    h.print text
+  end
+  begin
+    File.rename t, arg3
+  rescue
+    File.delete t
+  end
+end
+
+def gsub(arg1, arg2)
+  print STDIN.gets_to_end.gsub(/#{arg1}/m, arg2)
+end
+
+def rnip(arg1, arg2)
+  print STDIN.gets_to_end.gsub(arg1, arg2)
+end
+
+def selectlines()
+  STDIN.each_line do |line|
+    if line.strip.size > 0
+      puts line
+    end
+  end
+end
+
+def swap(file1, file2)
+  [file1, file2].each do |f|
+    File.exists?(f) || abort("No file named #{f.dump}")
+  end
+  t = File.tempname(CORE_UTIL_STRING, "_tmp")
+
+  File.rename file1, t
+  File.rename file2, file1
+  File.rename t, file2
+end
+
+def prepend(file)
+  file_data = File.read(file)
+  new_data = STDIN.gets_to_end
+  File.open(t = File.tempname(CORE_UTIL_STRING, "_tmp"), "w", File.info(file).permissions) do |h|
+    h << new_data + file_data
+  end
+
+  begin
+    File.rename t, file
+  rescue
+    File.delete t
+  end
+end
+
+def append(file)
+  file_data = File.read(file)
+  new_data = STDIN.gets_to_end
+  File.open(t = File.tempname(CORE_UTIL_STRING, "_tmp"), "w", File.info(file).permissions) do |h|
+    h << file_data + new_data
+  end
+  begin
+    File.rename t, file
+  rescue
+    File.delete t
+  end
+end
+
+class Funcs
+  def self.argument_data(program, usage, long_desc)
+    if !(STDOUT.tty?)
+      text = "<div style='border-radius: 50px; border: 10px dotted cyan; padding: 30px;'>\n"
+    else
+      text = ""
+    end
+
+    text += ("NAME") + "\n\t" + program
+    text += " - "
+    text += program + "\n" * 2 + ("SYNOPSIS") + "\n"
+    #	tebold_("SYNOPSIS_")# + bold("SYNOPSIS")
+    text += "\t"
+    text += (program) + " "
+    text += usage + "\n\n"
+    text += long_desc + "\n\n"
+
+    if STDOUT.tty? == false
+      text = text.gsub("\n", "<br/>     ").gsub("\t", "&nbsp;" * 5)
+      text += "</div>\n\n"
+    end
+
+    puts text
+  end
+end
+
+
+def main
+  size = ARGV.size
+  
+  if size > 0
+    Funcs.argument_data("selectlines", "[selectlines] [arguments]", "selectlines shows all nonblank lines from the input\n\nExample\n\ncat file | selectlines\n\n(echo 2; echo; echo; echo) | selectlines\n\n=> 2\n\nThe result would be 2, with no blank lines after that")
+    exit 1
+  end
+
+  begin
+  	selectlines
+  rescue e : Exception
+  	puts e
+  end
+end
+
+
+main

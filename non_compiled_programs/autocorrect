@@ -1,0 +1,452 @@
+#!/usr/bin/ruby
+# frozen_string_literal: false
+
+SPECIAL = { "tho" => "though", "cmd" => "command", "unix" => "UNIX", "ln" => "line", "lve" => "love",
+            "dont" => "don't", "wont" => "won't" }.freeze
+
+exc = %w[verb cad Mar Mao ma Mai Mae wag wan T's Th wad cab mad strep pi goo fob foe yo yon fog fop
+         war i coo levy Levy Levi veld Vela Elva Lvov Lea lea catty Catt ma]
+
+# '
+
+ERR = File.open "words", "a" if false
+
+def eputs(*arg)
+#  ERR.puts(*arg)
+#  ERR.flush
+end
+
+def sort_them(keys, c, one = 20, two = 10)
+  def foo(a, b, c)
+    p = 0
+    while p < c.size && p < a.size
+      break if c[p] != a[p]
+
+      p += 1
+    end
+    p2 = 0
+    while p2 < c.size && p2 < b.size
+      break if c[p2] != b[p2]
+
+      p2 += 1
+    end
+
+    [p, p2]
+  end
+
+  val = keys.sort do |a, b|
+    p, p2 = foo(a, b, c)
+
+    if p2 - p >= 1
+      1
+    elsif p2 == p2
+      0
+    elsif p2 - p <= 1
+      -1
+    end
+  end[0..one].sort_by(&:size)[0..two].sort do |a, b|
+    p, p2 = foo(a, b, c)
+
+    if p2 - p >= 1
+      1
+    elsif p2 == p2
+      0
+    elsif p2 - p <= 1
+      -1
+    end
+  end
+end
+
+TTY = $stdin.tty?
+
+def red(t)
+  "\e[31m#{t}\e[0m"
+end
+
+t = [4, 1, 31].map do |i|
+  "\e[#{i}m"
+end.join
+print "\r#{t}AUTOCORRECT\e[0m #{red ">>"} " if TTY
+require "set"
+$ln = Set.new File.read("/usr/share/dict/words").split
+
+exc.each do |i|
+  abort "No #{i}" unless $ln.include?(i)
+end
+
+$ln -= exc
+
+LINES = "\n" << $ln.sort.reverse.join("\n") << "\n"
+
+AMOUNT = 1
+PUNCT = (("!".."@")).map(&:chr).reject do |i|
+  ("0".."9").cover? i
+end
+
+# puts PUNCT.to_a.to_s
+class Enumerator
+  def self.concat(*enumerators)
+    new do |y|
+      enumerators.each do |e|
+        e.each { |x| y << x }
+      end
+    end
+  end
+end
+
+def get_word_(word)
+  eputs word
+  special = SPECIAL[word]
+  if special; return special; end
+  return word if $ln.include? word
+  return word if $ln.include? word.downcase
+  return word.capitalize if $ln.include? word.capitalize
+
+  return "" if word == "\x03"
+
+  c = word.chars
+
+  i = c.size
+
+  def get(c, i)
+    return "" if c.empty?
+
+    while i != 0
+      per = Enumerator.concat(c.uniq.map { |i| [i] }.each, c.permutation(i))
+
+      ["'", ""].each do |apostrophe|
+        [1, 2, 3].each do |amount|
+          per.each do |q|
+            #      	if q == first_len
+            #     		i-=1
+            #    		next
+            #   	end
+            q = q.join
+            len = LINES.scan(reg = /\n#{q}[^\n#{apostrophe}]*/i).map do |i|
+              i[1..-1]
+            end.sort do |a, b|
+              if a[0].downcase? == b[0].downcase?
+                a <=> b
+              else
+                b <=> a
+              end
+            end
+            # puts (len.reject do |i| i.size != 3; end.to_a.to_s)
+            len = sort_them(len, c, 50, 30)
+
+            eputs "\n/#{q}[^\\n#{apostrophe}]*/i"
+            eputs format("permutation of %s chars for %s of %s len of %s", i, c, q, len.inspect)
+            #          return len
+
+            if len.empty? # 3
+              eputs "len is empty"
+              next
+            end
+
+            char_size = c.size
+            #            puts char_size, len[0].size, len.to_s
+            #           sleep
+            # puts len.inspect
+
+            eputs "LEN EACH #{len}"
+
+            len.each do |i|
+              if i.size < char_size - amount || i.size > char_size + amount
+                ERR.print "S" if false
+                next
+              end
+
+              funcs = []
+
+              eputs "Choosing #{i} of #{len} of size #{len.size}"
+              q.chars.each do |i|
+                funcs << if ("A".."Z").cover? i
+                  :upcase
+                else
+                  :downcase
+                end
+              end
+
+              funcs.size.times do |q|
+                i[q] = i[q].send funcs[q]
+              end
+
+              raise if i.nil?
+
+              return i
+            end
+          end
+
+          i -= 1
+        end
+      end
+    end
+
+    "ERROR text is #{c.join.inspect}"
+  end
+
+  if i > 6
+    eputs "MODE@"
+    j = c.join
+
+    #    puts 55
+
+    # (c.size - c.size).times do |n|
+    # n += 1
+    # cont = 0
+    # while cont < c.size
+    # first = j[0..cont - 1]
+    # second = j[cont..cont + n - 1].upcase.clear
+    # third = j[n + cont..-1]
+    # unless third
+    # cont += 1
+    # next
+    # end
+    # first = "" if cont.zero?
+    #
+    # puts first + second + third
+    # cont += 1
+    # end
+    #
+    # puts "DONE"
+    # end
+    #    puts 'DO'
+    att = Time.new
+    char_size = c.size
+
+    l = $ln.reject do |a|
+      c[0] != a[0] || c[1] != a[1] || c[2] != a[2] || c[-1] != a[-1] || a.include?("'") || a.size < char_size - 2 || a.size > char_size + 2 || (c[-1] == "s" && a[-1] != "s")
+    end
+
+    # puts l.size
+    non_skips = []
+    min = 7
+    mins = {}
+
+    l.each do |a|
+      a_list = a.chars
+      size_of_samechars = (c - a_list).size
+      next if size_of_samechars == char_size || size_of_samechars.zero? || size_of_samechars > min
+
+      #      	puts [c - a_list, c, size_of_samechars, min].to_s
+      #      	abort
+      #      	puts "Not next #{a_list} #{a}\r\n"
+
+      #			puts [count, max].to_s
+      mins[a] = [size_of_samechars, c, a_list]
+      min = size_of_samechars
+    end
+
+    ctt = Time.new
+    c_join = c.join[0..3]
+    l.each do |i_|
+      next if i_.size < char_size
+
+      mins[i_] = min if i_[0..3] == c_join
+    end
+    # puts l.size
+
+    val = sort_them(mins.keys, c)[0]
+
+    #    raise [mins].to_s if val.nil?
+    if val.nil?
+      return word
+    end
+
+    btt = Time.new
+
+    # abort [btt - btt, btt - ctt, btt - att].to_s
+
+    val
+  else
+    get(c, i)
+  end
+end
+
+require "io/console"
+
+class Object
+  def end?
+    self == "\r" || self == "\n" || self == "\x03" || self == "\t" || nil?
+  end
+
+  def downcase?
+    !!match(/[a-z]/)
+  end
+end
+
+def _get(end_, tab_)
+  a = nil
+  c = ""
+  while a != " "
+    a = $stdin.getc
+    end_[0] = a.end?
+    if a == "\u007F"
+      $all_text = $all_text[0..-2]
+      c = c[0..-2]
+      print "\e[1D \e[1D" if TTY
+      next
+    end
+
+    if a == "\t"
+      tab_[0] = true
+      break
+    end
+
+    tab_[0] = false
+
+    # puts "$#{$c}!!"
+    c << a unless a.nil?
+    $all_text << a unless a.nil?
+    putc(a) unless end_[0]
+    break if end_[0]
+  end
+
+  c.chomp! " "
+  #  $c.gsub!(/\e\[[A-Z]/, "")
+
+  #  print c.inspect
+
+  if false
+    File.open("words", "a") do |f|
+      f.puts c.inspect
+    end
+  end
+  c
+end
+
+def foo
+  last_char = "."
+  end_ = [false]
+  tab_ = [false]
+  tab_words = []
+  old_i = ""
+  until end_[0] && !tab_[0]
+    end_[0] = false
+    # 	puts "%s %s" % [end_, tab_]
+    #    puts "GET"
+    qi = _get(end_, tab_)
+    if end_[0]
+      qi.chomp!
+    end
+
+    i = qi&.gsub(/\e\[[A-Z]/, "")
+
+    #    puts "I INSPECT %s" % i
+
+    if end_[0] && !tab_[0]
+      #      print "\r\n"
+    end
+
+    if i.empty? && !tab_[0]
+      #    	puts "D"
+      #    	print ' '
+      next
+    end
+
+    # puts "AAAAAA"
+    #	if
+    new_word = ""
+    amount = 0
+    subbed = i.sub(/[[:punct:]]+/, "")
+    if tab_[0]
+      if tab_words.size == 0
+        tab_words = LINES.scan(reg = /\n#{subbed}[^\n]*/i).sort
+
+        #                puts tab_words.inspect
+        #                puts reg
+        amount -= 1
+      else
+        amount += (len_ = tab_words.shift.size) - 1
+        $all_text = $all_text[0..-1 - len_]
+      end
+
+      (new_word = (tab_words[0] || "")[1..] + " ") rescue begin
+        tab_words = LINES.scan(reg = /\n#{subbed}[^\n]*/i)
+        retry
+      end
+      #puts [old_i.size, i.size]
+      #            	amount = old_i.size + 1
+    else
+      tab_words = []
+      new_word = get_word_(subbed)
+    end
+
+    raise if i.nil?
+    raise if new_word.nil?
+
+    unless new_word.empty?
+      new_word += i.match(/[[:punct:]]+$/).to_s
+
+      if PUNCT.include?(last_char)
+        new_word[0] = new_word[0].upcase
+      end
+    end
+
+    #if !tab_[0]
+    amount += i.size + 1
+    old_i = i
+    #end
+
+    #    puts "AAAA"
+
+    # if amount == 0
+    #
+    #	text = ""/
+    # else
+
+    #    puts [new_word, i].to_s
+
+    unless new_word == i
+      other = if end_[0]
+          ""
+        else
+          " "
+        end
+      print "\e[#{amount}D\u001b[0K#{new_word}" << other
+    end
+
+    $all_text = $all_text[0..-(1 + i.size + " ".size)]
+    $all_text << new_word << " "
+    last_char = new_word[-1]
+    #  	end
+
+    #  puts new_word.inspect
+
+    # print "\u001b[0K"
+    # puts "LOOP"
+    # {new_word} "
+  end
+
+  #  puts "END"
+end
+
+# end
+
+str = ""
+$all_text = ""
+
+(TTY && [$stdin.raw do
+  foo
+end, true][1]) || begin
+  foo
+  # STDIN.ungetc ' '
+  # foo
+end
+
+# $all_text << $c
+# system 'tput reset'
+at = nil
+
+# puts "\n\nYour story\n\n"
+if TTY
+  IO.popen("xclip -selection c", "w") do |i|
+    i.print at = $all_text.strip
+  end
+end
+
+if TTY
+  puts "\r\nYOUR STORY COPIED"
+end
+
+puts at if TTY

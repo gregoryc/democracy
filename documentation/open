@@ -1,0 +1,31 @@
+“open” is a very efficient program that searches a query from google, and then opens it in Emerald Browser.
+
+If you ever want something to “just open,” you can use it.
+
+Example
+
+open “cats”
+
+An earlier version of open worked like this
+
+open [site1] [site2] [site3] N
+
+site1, site2, and site3 would all be opened, and the top N queries were all shown in different panes
+
+An even earlier version of this program used Chrome to open the sites.
+
+ The current version can open one or more sites.
+
+Example
+
+open “cats” “dogs” “frogs”
+
+All of those queries would open in Emerald Browser.
+
+Just make sure it is compiled in multipane mode if you want to open multiple new sites at the same time.
+
+See also
+
+emerald-browser
+
+close

@@ -1,0 +1,298 @@
+~~**__*DEMOCRACY*__**~~ GEM
+
+How to install?
+
+gem install democracy
+
+You install democracy, into your life
+
+
+alias make_truly_real='sudo gem install'
+
+make_truly_real democracy
+
+2 parts
+
+ethicify.online is my site
+
+I want to do a lot, OK?!
+
+A lot, man
+
+-----------------
+One part is my new Ruby application. It is going to work in Ruby, Node.js, well-transpiled Javascript (Opal) and probably GTK.
+
+-----------------
+
+The second part, is for man to be free, man has to be able to control his environment.
+
+Computers are the new environments. There is 50% truth in that statement.
+
+So, if man can't control computers, that only can go so far.
+
+I have created around 70 or so tools, some of which are distinctly visual, that can help man to be free, to engage in discourse freely, and to liberate himself and his fellows.
+
+I am not beating around the bush.
+
+I have created a new web browser, a new programming language, and many utilities that are useful like cat, pwd, ls, etc.
+
+I need to document them still.
+
+If you don't try to figure them out, you are probably wasting your time
+
+The discourse generator is extremely invaluable to all men and women.
+
+Paypal transfer to gregorycohen2@gmail.com
+
+Feedback at that email too
+
+
+
+
+
+
+
+
+
+
+
+I have created 57 freedom oriented programs, including a web
+browser based on Chrome but better, and a programming language that
+converts into C++ and looks like Ruby and Python. Most of these programs
+are written in Ruby and Crystal.
+
+It seems that almost all programmers are very left wing, dangerously so.
+
+Could anyone find me high quality peers?
+
+Best regards,
+
+Gregory David Evan Cohen
+gregorycohen2@gmail.com is my email
+
+---------------------------------
+
+The use of Javascript (and possible Ruby) to create a Javascript
+library (and perhaps a Chrome extension and perhaps a command line tool and
+perhaps a GTK or QT program) that helps people (by using textboxes or
+command line prompts) to create high quality communications, would be
+wonderful.
+
+Think of how poor quality responses to communications can be.
+
+Even on here.
+
+If someone created one or more tools that could be easily added on web
+pages, that would augment someone's life to help create goal and value
+oriented responses (or original communications), then there is literally
+nothing that couldn't solve.
+
+This might be the most useful library ever created.
+
+There could be a tool that would help with democracy. Human being +
+augmentive tool = civil discourse, eventually resulting in liberty.
+
+This would enable democracy to work.
+
+Imagine if 50% of all websites used this library.
+
+This would help people to be goal or value oriented, and not be coming up
+with terrible communications that, for example, insult people's mothers or
+education.
+
+I have yet to make this program. My other programs are BSD licensed on my
+server for people who know about my server. I made 61 YouTube videos of my
+software before my old computer died :frowning:
+
+I love Ruby
+
+
+----------------------
+
+
+...
+
+
+My website is ethicify.online/improve_the_world/tools
+
+The idea was that I could create a new GNU coreutils.
+
+I learned yesterday that there is a project called "moreutils" that aims to
+extend UNIX tools.
+
+However, it is not very good. It is really not very good at all, and it is
+very small.
+
+I created around 57 or so different tools in Ruby and Crystal that have
+that same aim.
+
+I can explain them.
+
+Assuming I get enough people on the same page as me, I can re-record videos
+and upload them to YouTube.
+
+One thing about Crystal, it that the startup time of Crystal is VERY, VERY
+fast. It can beat languages like D, for example.
+
+Crystal is an excellent language for creating command line utilities.
+
+I have an emoji converter, a nicer ps, a simpler sed, a simpler in place
+sed, a multi-pane web browser with a different browsing paradigm.
+
+I have a tool that one can use like open 'nice pictures of barcelona' cats
+monkeys 3, then in my web browser would Google all of those queries, then
+show ALL of them, at the same time, in resizable Qt panes.
+
+"open" uses googler, and auto downloads it.
+
+Here's a picture (the theming is a bit weird on my Fedora box)
+
+
+1280×800 312 KB
+The browser is written in C += 2, my "programming language", which is a
+preprocessor for C++, and handles things like multithreading std::thread or
+QThread automatically.
+
+It's written in Ruby. It could be ported to Crystal.
+
+One nice thing about the language is that #includes are automatic. You
+don't have to do #include <stdio.h>
+
+It's a work in progress, but it is sufficient to make a web browser.
+
+The browser depends on QTermWidget and QWebEngine. There is no address bar.
+The "address bar" is a full featured terminal.
+
+Everything is BSD licensed.
+
+...
+
+ethicify.online/improve_the_world/tools
+
+Say you wanted to create a factorial program, that computed factorials. You
+could add a few lines of code to this file
+
+https://ethicify.online/improve_the_world/tools/gregory_coreutils/build/functions
+
+And then a Crystal executable would be generated.
+
+*FOCUS ON INTERFACES.*
+
+*THE BETTER THE INTERFACE, THE FEWER ARGUMENTS THE PROGRAM HAS, THE BETTER
+THE PROGRAM*
+
+
+Emerald-browser
+
+Goals
+
+Not bothersome (person shouldn't be bothered by anything)
+Full control
+To be fully written in C += 2
+
+* Uses the same engine as Chrome, with QWebEngine
+
+Ubuntu and fedora have packages
+
+emerald-browser [number of terminals, default 1]
+
+C += 2 compiler is called "g+". It's a wrapper for g++
+
+Usage
+
+g+ foo.cpp -O3 -Wall -Wextra -o foo
+
+Example C += 2 program
+
+---------------------------------------
+
+main
+    puts("Hello world")
+
+--------------------------------------
+
+(No need for #includes)
+
+g+ is written in Ruby. It could be ported to Crystal
+
+TO DO
+
+1. Make g+ work better
+
+It doesn't support classes, structs or namespaces currently
+
+You can always #include C++ or C files though
+
+C += 2 is, and always will be a PREPROCESSOR FOR MODERN C++. IT CAN DO
+ANYTHING C++ CAN DO AND MORE.
+
+Some things I want to implement
+
+These should be a single unary option buton, like what GNOME 40 or Chrome
+has.
+In that, there should be many options. Maybe even things like Update System
+There should be a close button for panes.
+The source code should be tidied up, but please don't clutter it with too
+much OOP.
+Currently, everything gets googled. There could be a cache of some kind.
+Everything you would want to do on your computer, should be doable in this
+program. Currently, it makes a full-screen widget.
+
+If there could be a Compiz cube for tabs, that would be really interesting.
+
+There was a program that converted Chrome tabs to a filesystem extension.
+Maybe something like this could be added.
+
+Port to Mac.
+
+Port to Windows??? No Terminal then
+
+Port to FreeBSD
+
+Would need to work for certain in X and Wayland
+
+open should be improved
+
+To open tabs, do
+
+open [query1] [query2?]... (number of Google results per query to show in
+panes)
+
+Example
+
+open 'ruby talk' 'ruby docs' 3
+
+That would open 3 google results for ruby talk, and 3 google results for
+ruby docs
+
+googler is used to search Google.
+Googler is used to search google. Googler is automatically installed.
+
+Googler is written in python
+
+* This browser should be as fast or faster than Chrome.
+
+* Downloads don't currently work
+* Fullscreen doesn't currently work
+* Opening pages in new tabs doesn't currently work
+* You currently can't close tabs, only open them
+* The simplest way to close the browser currently is killall emerald-browser
+* Add signal and slot to close program when window closes. This doesn't
+currently happen.
+
+Back and forward buttons should be added, somewhere.
+
+Currently, you can right click, and do navigation
+
+A way to type in addresses manually should be added.
+
+Currently, you can do echo [full url] > /tmp/emerald-browser-fifo
+
+Doing echo '/home/' > /tmp/emerald-browser-fifo should work
+
+* Multiple instances needs to work
+
+* Want installation to be super simple. Download a binary
+
+github.com/gregoryc/democracy
+

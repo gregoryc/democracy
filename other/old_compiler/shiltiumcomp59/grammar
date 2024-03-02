@@ -1,0 +1,16 @@
+declaration_and_assignment_statement = type;
+
+type = "u"|"s"|"f"|"b";
+
+float_literal = base_36_character*, [exponent], [base];
+unsigned_int_literal = number*, [base];
+
+identifier = lower_case_letter | capital_letter, [lower_case_letter | capital_letter | number]*
+base_36_character = number | capital_letter;
+number = "0"|"1"|"2"|"3"|"4"|"5"|"6"|"7"|"8"|"9";
+lower_case_letter = "a"|"b"|"c"|"d"|"e"|"f"|"g"|"h"|"i"|"j"|"k"|"l"|"m"|"n"|"o"|"p"|"q"|"r"|"s"|"t"|"u"|"v"|"w"|"x"|"y"|"z";
+capital_letter = "A"|"B"|"C"|"D"|"E"|"F"|"G"|"H"|"I"|"J"|"K"|"L"|"M"|"N"|"O"|"P"|"Q"|"R"|"S"|"T"|"U"|"V"|"W"|"X"|"Y"|"Z";
+
+exponent = "e", [sign], number*;
+sign = "+" | "-"
+base = ":", number*;

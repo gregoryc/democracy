@@ -1,0 +1,7 @@
+nth_word gets the nth word of each line
+
+For example
+
+nth_word 3
+
+gets the 3rd word of each line

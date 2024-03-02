@@ -1,0 +1,158 @@
+#!/usr/bin/ruby
+# frozen_string_literal: true
+
+# BSD 2-Clause License
+#
+# Copyright (c) 2023, Gregory Cohen
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+# 1. Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following disclaimer in the documentation
+# and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+list = %w[thousand
+          million
+          billion
+          trillion
+          quadrillion
+          quintillion
+          sextillion
+          septillion
+          octillion
+          nonillion
+          decillion
+          undecillion
+          duodecillion
+          tredecillion
+          quattordecillion
+          quindecillion
+          sexdecillion
+          septendecillion
+          octodecillion
+          novemdecillion
+          vigintillion
+          unvigintillion
+          duovigintillion
+          trevigintillion
+          quattorvigintillion
+          quinvigintillion
+          sexvigintillion
+          septenvigintillion
+          octovigintillion
+          novemvigintillion
+          trigintillion
+          untrigintillion
+          duotrigintillion
+          tretrigintillion
+          quattortrigintillion
+          quintrigintillion
+          sextrigintillion
+          septentrigintillion
+          octotrigintillion
+          novemtrigintillion
+          quatrigintillion
+          unquatrigintillion
+          duoquatrigintillion
+          trequatrigintillion
+          quattorquatrigintillion
+          quinquatrigintillion
+          sexquatrigintillion
+          septenquatrigintillion
+          octoquatrigintillion
+          novemquatrigintillion
+          quintigintillion
+          unquintigintillion
+          duoquintigintillion
+          trequintigintillion
+          quattorquintigintillion
+          quinquintigintillion
+          sexquintigintillion
+          septenquintigintillion
+          octoquintigintillion
+          novemquintigintillion
+          sexagintillion
+          unsexagintillion
+          duosexagintillion
+          tresexagintillion
+          quattorsexagintillion
+          quinsexagintillion
+          sexsexagintillion
+          septensexagintillion
+          octosexagintillion
+          novemsexagintillion
+          septuagintillion
+          unseptuagintillion
+          duoseptuagintillion
+          treseptuagintillion
+          quattorseptuagintillion
+          quinseptuagintillion
+          sexseptuagintillion
+          septenseptuagintillion
+          octoseptuagintillion
+          novemseptuagintillion
+          octogintillion
+          unoctogintillion
+          duooctogintillion
+          treoctogintillion
+          quattoroctogintillion
+          quinoctogintillion
+          sexoctogintillion
+          septenoctogintillion
+          octooctogintillion
+          novemoctogintillion
+          nonagintillion
+          unnonagintillion
+          duononagintillion
+          trenonagintillion
+          quattornonagintillion
+          quinnonagintillion
+          sexnonagintillion
+          septennonagintillion
+          octononagintillion
+          novemnonagintillion]
+
+
+def output(line, result, a)
+  puts "#{line} =\n    #{result} =\n    #{a}"
+  IO.popen('espeak', 'w') { |i| i << a }
+end
+
+def main(list)
+  $stdin.each_line do |line|
+    line.strip!
+    a = result = eval(line.gsub('^', '**')).to_i.to_s
+    a = a.reverse.scan(/.?.?.?/).join(',').reverse[1..-1]
+    a = a.reverse
+    list.each do |name|
+      a.sub!(',', " #{name.reverse} ")
+    end
+    a = a.reverse
+
+    if a.include?(',')
+      puts 'Number too big'
+    else
+      output line, result, a
+    end
+  end
+rescue Exception
+  print "\n"
+end
+
+main list

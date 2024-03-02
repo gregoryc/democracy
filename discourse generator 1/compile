@@ -1,0 +1,12 @@
+#!/bin/sh
+
+cat conjunction.rb because.rb evidence.rb however.rb inputreceiver.rb itemlist.rb item.rb neutral.rb negative.rb outputter.rb positive.rb string__.rb PROGRAM.rb  | grep -v require_relative | opal -I . -c>code.js
+
+cp --verbose code.js ../other/site/code.js
+
+
+
+#copy to site directory too
+
+
+#opal -I . PROGRAM.rb -c  > temp_js.js; echo 'import * as std from "std"'|prepend temp_js.js; qjsc temp_js.js -o elf

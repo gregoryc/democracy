@@ -1,0 +1,3 @@
+xdotool mousemove 1020 780 click 1 mousemove restore key Up Return
+
+watch -n 0.05 'sh -c "ls $HOME/*.mp4"'
