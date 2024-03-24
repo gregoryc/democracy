@@ -4462,7 +4462,7 @@ FOUNDATIONAL_LIB_FUNC char *shellescape(const char *input)
     for (size_t i = 0; i < input_len; ++i)
     {
         // Escape special characters
-        if (input[i] == ' ' || input[i] == '\t' || input[i] == '\n' || input[i] == '*' || input[i] == '?' || input[i] == '\'' || input[i] == '"' || input[i] == '\\' || input[i] == '$' || input[i] == '`' || input[i] == '(' || input[i] == ')' || input[i] == '&' || input[i] == ';' || input[i] == '|' || input[i] == '>' || input[i] == '<')
+        if (!isalpha(input[i]) && !isdigit(input[i]))
         {
             escaped[j++] = '\\';
         }
@@ -9156,7 +9156,7 @@ FOUNDATIONAL_LIB_FUNC void reduce(void *array, size_t size, size_t elem_size, vo
  *   // Example usage:
  *   int my_array[] = {1, 2, 3, 4, 5};
  *   int filtered_array[5]; // Assuming the worst case where all elements
- * satisfy the condition size_t num_filtered = filter_(my_array, 5, sizeof(int),
+ * satisfy the condition size_t num_filtered = filter(my_array, 5, sizeof(int),
  * filtered_array, 5, is_even_condition);
  *   // After the call, filtered_array will contain {2, 4}, and num_filtered
  * will be 2
