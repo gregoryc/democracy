@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+set -x
+set -e
+
+
+gcc -O2 -s -Wall -Wextra -fwhole-program terminal_spreadsheet_app.c -lcurses -o terminal_spreadsheet_app
+
+
+echo Compiled

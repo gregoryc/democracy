@@ -1,6 +1,0 @@
-==13869== Memcheck, a memory error detector
-==13869== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==13869== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
-==13869== Command: ./a
-==13869== 
-[?1049h[22;0;0t[1;24r(B[m[4l[?7h[39;49m[?25l[?1h=[39;49m[37m[40m[H[2J[2d 
