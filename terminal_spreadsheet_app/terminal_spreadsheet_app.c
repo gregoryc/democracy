@@ -1,8 +1,9 @@
 // Spreadsheet program. Public domain.
 // TODO: add numbers, make sure a big spreadsheet works, etc.
-#include "./foundationallib.h"
+#include <assert.h>
 #include <curses.h>
 #include <time.h>
+#include "./foundationallib.h"
 
 typedef struct {
   char *string;
@@ -56,8 +57,6 @@ static inline void drawSpreadsheet(WINDOW *win, String data[NUM_ROWS][NUM_COLS],
 
           char *cat = concatenate_three_strings("echo -n ", esc,
                                                 "|xclip -selection c &");
-          //       puts(cat);
-          //         exit(0);
           free(esc);
 
           if (system(cat) != 0) {
@@ -95,47 +94,87 @@ static inline void drawSpreadsheet(WINDOW *win, String data[NUM_ROWS][NUM_COLS],
 
   wrefresh(win);
 }
-int main(int argc, char**argv) {
-{
-size_t foo;
-split(",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",&foo, "FOO", 0, 1);
+
+static void unescape_csv(char **array, size_t lines,
+                         String data[NUM_ROWS][NUM_COLS]) {
+  printf("CSV %zu lines\n\n", lines);
+  for (size_t i = 0; i < lines - 1; ++i) {
+    size_t num_cells;
+    size_t len_of_line = strlen(array[i]);
+    if (len_of_line) {
+      //array[i][len_of_line - 1] = 0;
+    }
+
+    char **cells = split(array[i], &num_cells, ",", 0, 1);
+
+    for (size_t j = 0; j < num_cells; ++j) {
+
+      printf("\tLine %zu, `%s'\n", i + 1, cells[j]);
+      size_t len_of_cell = strlen(cells[j]);
+      if (len_of_cell) {
+      	// Get rid of comma
+      	--len_of_cell;
+      }
+      data[i][j].string = malloc(data[i][j].alloc_size = len_of_cell+sizeof(""));
+
+
+      memcpy(data[i][j].string, cells[j], len_of_cell);
+      data[i][j].string[len_of_cell]='\0';
+
+      data[i][j].len = len_of_cell;
+    }
+
+    puts("");
+  }
+
+  /*
+    char *output;
+    size_t new_len;
+    size_t num_matches;
+    int should_free_after_use;
+
+    // "," => "\,"
+    replace_all_with_lens(file_string, file_size, "\\,", 1, ",", 1, &output,
+                          &new_len, &should_free_after_use, 0, &num_matches);
+
+    char *output2;
+    size_t new_len2;
+    size_t num_matches2;
+    int should_free_after_use2;
+    // "\" => "\\"
+    replace_all_with_lens(output, new_len, "\\\\", 1, "\\", 1, &output2,
+                          &new_len2, &should_free_after_use2, 0, &num_matches2);
+
+    if (should_free_after_use) {
+      free(output);
+    }
+    return output2;*/
 }
 
-if(argc>1) {
-	char* load_file=argv[1];
-
-
-
-	size_t lines;
-	char **array = read_file_into_array(load_file,"\n",&lines);
-//printf("%s %s\n",string_to_json(array[30]), "FOO");
-
-	for (size_t i = 0; i < lines; ++i) {
-		size_t size;
-		puts(string_to_json(array[i]));
-		char**array = split(array[i],   &size,"FOO",0,1);
-return;
-
-		for (     size_t i = 0; i < size; ++i) {
-			puts(array[i]);
-		}
-
-		free_string_array(array, size);
-
-	}
-
-
-
-
-
-	free_string_array(array, lines);
+void error(const char* str) {
+puts(str);
+exit(1);
 }
+int main(int argc, char **argv) {
+  String data[NUM_ROWS][NUM_COLS];
+
+  memset(data, 0, sizeof(data));
+
+  if (argc > 1) {
+    char *load_file = argv[1];
+
+    size_t lines;
+
+    char **array = read_file_into_array(load_file, "\n", &lines);
+    unescape_csv(array, lines, data);
+    free_string_array(array, lines);
+  }
+
   global_status =
       strdup("SPREADSHEET THAT IS 2-DIMENSION FROM TERMINAL THAT AUTO "
              "COPIES TEXT - FUCK YEAH!!");
 
   // No aggressive die in program.
-  FOUNDATIONAL_LIB_set_aggressive_die(1);
   initscr();
   start_color();
   init_pair(1, COLOR_GREEN, COLOR_BLACK);
@@ -149,16 +188,16 @@ return;
       newwin(NUM_ROWS + 2, NUM_COLS * CELL_WIDTH + 2, 1, 1);
   keypad(spreadsheetWin, true);
 
-  String data[NUM_ROWS][NUM_COLS];
-
   for (int i = 0; i < NUM_ROWS; ++i) {
     for (int j = 0; j < NUM_COLS; ++j) {
       // printf("%d %d\n",       i, j);
+      if (!data[i][j].alloc_size) {
       data[i][j].string = (char *)malloc(2);
       data[i][j].string[0] = '~';
       data[i][j].string[1] = '\0';
       data[i][j].alloc_size = 2;
-      data[i][j].len = 1;
+      data[i][j].len=1;
+      }
     }
   }
 
@@ -198,13 +237,16 @@ return;
 
     drawSpreadsheet(spreadsheetWin, data, currentRow, currentColumn);
   }
-//  ex();
+  //  ex();
   endwin();
   free(global_status);
 
+  puts("BYE");
+  
   const size_t alloc_size = NUM_COLS * NUM_ROWS;
 
-  String str = {.string=malloc(alloc_size), .alloc_size=alloc_size,.len=0};
+  String str = {
+      .string = (char *)malloc(alloc_size), .alloc_size = alloc_size, .len = 0};
 
   for (int i = 0; i < NUM_ROWS; ++i) {
     for (int j = 0; j < NUM_COLS; ++j) {
@@ -216,21 +258,49 @@ return;
       size_t new_len;
       size_t num_matches;
       int should_free_after_use;
-      replace_all_with_lens(cell_str, cell_len, ",", 1, "\\,", 1, &output,
+
+      // "\" => "\\"
+      replace_all_with_lens(cell_str, cell_len, "\\", 1, "\\\\", 1, &output,
                             &new_len, &should_free_after_use, 0, &num_matches);
 
-      append_string_to_string(&str.string, &str.len, &str.alloc_size, output+1,
-                              new_len-1);
-      append_string_to_string(&str.string, &str.len, &str.alloc_size, ",", 1);
-      free(cell->string);
+      char *output2;
+      size_t new_len2;
+      size_t num_matches2;
+      int should_free_after_use2;
+
+      // "," => "\,"
+      replace_all_with_lens(output, new_len, ",", 1, "\\,", 1, &output2,
+                            &new_len2, &should_free_after_use2, 0,
+                            &num_matches2);
       if (should_free_after_use) {
         free(output);
       }
+
+      char *output3;
+      size_t new_len3;
+      size_t num_matches3;
+      int should_free_after_use3;
+      // "\n" => "\\\n"
+      replace_all_with_lens(output2, new_len2, "\n", 1, "\\\n", 1, &output3,
+                            &new_len3, &should_free_after_use3, 0,
+                            &num_matches3);
+      if (should_free_after_use2) {
+        free(output2);
+      }
+
+      if (append_string_to_string(&str.string, &str.len, &str.alloc_size,
+                              output, new_len) == -1) error("WTF");
+      if (append_string_to_string(&str.string, &str.len, &str.alloc_size, ",", 1) == -1) error("WTF2");
+      free(cell->string);
+
+      if (should_free_after_use3) {
+        free(output3);
+      }
     }
-      append_string_to_string(&str.string, &str.len, &str.alloc_size, "\n", 1);
+
+    // Embedded newlines become slash newline, these newlines are for the rows.
+    if (append_string_to_string(&str.string, &str.len, &str.alloc_size, "\n", 1)==-1)error("WTF3");
   }
-
-
 
   time_t tim = time(NULL);
 
@@ -238,14 +308,14 @@ return;
 
   utoa(tim, number);
 
-  char *file =  concatenate_three_strings("output",number,".csv");
+  // char *file = concatenate_three_strings("output", number, ".csv");
+  char *file = "csv.csv";
 
-  write_to_file_with_mode(file,str.string, str.len, "w");
-  write_to_file_with_mode("/dev/stdout",str.string, str.len, "w");
-  printf("\n\nWrote to file `%s'\n",file);
-
-  free(file);
-  
+  write_to_file_with_mode(file, str.string, str.len, "w");
+  write_to_file_with_mode("/dev/stdout", str.string, str.len, "w");
+  printf("\n\nWrote to file `%s'\n", file);
+puts("RETURN 0");
+  //free(file);
 
   return 0;
 }

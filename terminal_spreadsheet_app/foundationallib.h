@@ -8431,7 +8431,6 @@ FOUNDATIONAL_LIB_FUNC int replace_memory(void *source, size_t source_len, void *
 
         ++matches;
         p += find_len;
-        puts("FOR");
     }
 
     // Let's assume that it's 'likely' to find a match.

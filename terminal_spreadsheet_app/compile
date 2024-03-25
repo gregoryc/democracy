@@ -5,7 +5,7 @@ set -x
 set -e
 
 
-gcc -O2 -s -Wall -Wextra -fwhole-program terminal_spreadsheet_app.c -lcurses -o terminal_spreadsheet_app
+gcc -g -Wfatal-errors -Wall -Wextra terminal_spreadsheet_app.c -lcurses -o terminal_spreadsheet_app
 
 
 echo Compiled
