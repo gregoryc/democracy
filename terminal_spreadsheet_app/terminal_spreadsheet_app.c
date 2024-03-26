@@ -1,9 +1,12 @@
 // Spreadsheet program. Public domain.
 // TODO: add numbers, make sure a big spreadsheet works, etc.
+
+// All cells start with ~
+
+#include "./foundationallib.h"
 #include <assert.h>
 #include <curses.h>
 #include <time.h>
-#include "./foundationallib.h"
 
 typedef struct {
   char *string;
@@ -33,7 +36,7 @@ void centered_print(WINDOW *win, int y, const char *text) {
 
 static char *global_status;
 
-static inline void drawSpreadsheet(WINDOW *win, String data[NUM_ROWS][NUM_COLS],
+static inline void drawSpreadsheet(WINDOW *win, String** data,
                                    int currentRow, int currentColumn) {
   wclear(win);
   box(win, 0, 0);
@@ -96,32 +99,36 @@ static inline void drawSpreadsheet(WINDOW *win, String data[NUM_ROWS][NUM_COLS],
 }
 
 static void unescape_csv(char **array, size_t lines,
-                         String data[NUM_ROWS][NUM_COLS]) {
+                         String ** data) {
   printf("CSV %zu lines\n\n", lines);
   for (size_t i = 0; i < lines - 1; ++i) {
     size_t num_cells;
     size_t len_of_line = strlen(array[i]);
     if (len_of_line) {
-      //array[i][len_of_line - 1] = 0;
     }
 
     char **cells = split(array[i], &num_cells, ",", 0, 1);
 
     for (size_t j = 0; j < num_cells; ++j) {
 
-      printf("\tLine %zu, `%s'\n", i + 1, cells[j]);
-      size_t len_of_cell = strlen(cells[j]);
+      size_t len_of_cell = sizeof(char) + strlen(cells[j]);
       if (len_of_cell) {
-      	// Get rid of comma
-      	--len_of_cell;
+        // Get rid of comma
+        --len_of_cell;
       }
-      data[i][j].string = malloc(data[i][j].alloc_size = len_of_cell+sizeof(""));
+      assert(sizeof(char) == 1);
+      data[i][j].alloc_size = len_of_cell + sizeof("");
+      data[i][j].string =
+          malloc(data[i][j].alloc_size);
+      data[i][j].string[0] = '~';
 
-
-      memcpy(data[i][j].string, cells[j], len_of_cell);
-      data[i][j].string[len_of_cell]='\0';
+      memcpy(data[i][j].string + sizeof(char), cells[j], len_of_cell);
+      data[i][j].string[len_of_cell] = '\0';
 
       data[i][j].len = len_of_cell;
+
+      printf("\tLine %zu, `%s'\n", i + 1, data[i][j].string);
+            
     }
 
     puts("");
@@ -151,30 +158,12 @@ static void unescape_csv(char **array, size_t lines,
     return output2;*/
 }
 
-void error(const char* str) {
-puts(str);
-exit(1);
+void error(const char *str) {
+  puts(str);
+  exit(1);
 }
-int main(int argc, char **argv) {
-  String data[NUM_ROWS][NUM_COLS];
 
-  memset(data, 0, sizeof(data));
-
-  if (argc > 1) {
-    char *load_file = argv[1];
-
-    size_t lines;
-
-    char **array = read_file_into_array(load_file, "\n", &lines);
-    unescape_csv(array, lines, data);
-    free_string_array(array, lines);
-  }
-
-  global_status =
-      strdup("SPREADSHEET THAT IS 2-DIMENSION FROM TERMINAL THAT AUTO "
-             "COPIES TEXT - FUCK YEAH!!");
-
-  // No aggressive die in program.
+static void setup_curses(void) {
   initscr();
   start_color();
   init_pair(1, COLOR_GREEN, COLOR_BLACK);
@@ -183,6 +172,40 @@ int main(int argc, char **argv) {
   cbreak();
   noecho();
   curs_set(0);
+}
+
+int main(int argc, char **argv) {
+  String ** data = calloc(NUM_ROWS*NUM_COLS, sizeof(String));
+  for (int i = 0; i < argc; ++i) {
+  	puts(argv[i]);
+  }
+  print_string_array(argv, argc);puts(" <<");
+
+  if (argc > 1) {
+    char *load_file = argv[1];
+  print_string_array(argv, argc);puts(" <<2");
+    size_t lines;
+  print_string_array(argv, argc);puts(" <<3");
+    char **array = read_file_into_array(load_file, "\n", &lines);
+  print_string_array(argv, argc);puts(" <<4");  
+    printf("%d\n", argc);
+    print_string_array(array, lines);
+
+    unescape_csv(array, lines, data);
+    printf("%d\n", argc);
+    print_string_array(argv, argc);puts(" <<5");
+      free_string_array(array, lines);
+  print_string_array(argv, argc);puts(" <<6");
+
+    }
+  print_string_array(argv, argc);puts(" <<1");
+
+  global_status =
+      strdup("SPREADSHEET THAT IS 2-DIMENSION FROM TERMINAL THAT AUTO "
+             "COPIES TEXT - FUCK YEAH!!");
+
+  setup_curses();
+
 
   WINDOW *spreadsheetWin =
       newwin(NUM_ROWS + 2, NUM_COLS * CELL_WIDTH + 2, 1, 1);
@@ -190,13 +213,14 @@ int main(int argc, char **argv) {
 
   for (int i = 0; i < NUM_ROWS; ++i) {
     for (int j = 0; j < NUM_COLS; ++j) {
+      printf("`%s'\n", (data[i][j].string));
       // printf("%d %d\n",       i, j);
-      if (!data[i][j].alloc_size) {
-      data[i][j].string = (char *)malloc(2);
-      data[i][j].string[0] = '~';
-      data[i][j].string[1] = '\0';
-      data[i][j].alloc_size = 2;
-      data[i][j].len=1;
+      if (data[i][j].len <= 1) {
+        data[i][j].string = (char *)malloc(2);
+        data[i][j].string[0] = '~';
+        data[i][j].string[1] = '\0';
+        data[i][j].alloc_size = 2;
+        data[i][j].len = 1;
       }
     }
   }
@@ -207,6 +231,7 @@ int main(int argc, char **argv) {
   drawSpreadsheet(spreadsheetWin, data, currentRow, currentColumn);
   while (!((ch = wgetch(spreadsheetWin)) == 'q' && currentRow == 0 &&
            currentColumn == 0)) {
+    //    printf("`%c'\n", ch);
     switch (ch) {
     case KEY_LEFT:
       currentColumn = (currentColumn - 1 + NUM_COLS) % NUM_COLS;
@@ -222,9 +247,8 @@ int main(int argc, char **argv) {
       break;
     default:
       if (ch == KEY_BACKSPACE &&
-          (data[currentRow][currentColumn].len > 1)) { // Handle backspace
-        data[currentRow][currentColumn]
-            .string[data[currentRow][currentColumn].len - 1] = 0;
+          (data[currentRow][currentColumn].len>1)) { // Handle backspace
+        data[currentRow][currentColumn].string[data[currentRow][currentColumn].len - 1] = 0;
         --data[currentRow][currentColumn].len;
       } else if (ch >= 32 && ch <= 126) { // Accept printable ASCII characters
         String *str = &data[currentRow][currentColumn];
@@ -241,13 +265,10 @@ int main(int argc, char **argv) {
   endwin();
   free(global_status);
 
-  puts("BYE");
-  
   const size_t alloc_size = NUM_COLS * NUM_ROWS;
 
   String str = {
       .string = (char *)malloc(alloc_size), .alloc_size = alloc_size, .len = 0};
-
   for (int i = 0; i < NUM_ROWS; ++i) {
     for (int j = 0; j < NUM_COLS; ++j) {
       String *cell = &data[i][j];
@@ -288,9 +309,11 @@ int main(int argc, char **argv) {
         free(output2);
       }
 
-      if (append_string_to_string(&str.string, &str.len, &str.alloc_size,
-                              output, new_len) == -1) error("WTF");
-      if (append_string_to_string(&str.string, &str.len, &str.alloc_size, ",", 1) == -1) error("WTF2");
+      if (new_len != 1) /* ~ */ {
+        append_string_to_string(&str.string, &str.len, &str.alloc_size,
+                                output + 1, new_len - 1);
+      }
+      append_string_to_string(&str.string, &str.len, &str.alloc_size, ",", 1);
       free(cell->string);
 
       if (should_free_after_use3) {
@@ -298,24 +321,24 @@ int main(int argc, char **argv) {
       }
     }
 
-    // Embedded newlines become slash newline, these newlines are for the rows.
-    if (append_string_to_string(&str.string, &str.len, &str.alloc_size, "\n", 1)==-1)error("WTF3");
+    // Embedded newlines become slash newline, these newlines are for the
+    // rows.
+    append_string_to_string(&str.string, &str.len, &str.alloc_size, "\n", 1);
   }
 
   time_t tim = time(NULL);
-
   char number[FOUNDATIONAL_LIB_SIZE_STRING_OF_NUMBER_SIZE_PLUS_ZERO_TERMINATOR];
 
   utoa(tim, number);
 
-  // char *file = concatenate_three_strings("output", number, ".csv");
-  char *file = "csv.csv";
 
+  char *file = (argc > 1) ? argv[1]:concatenate_three_strings("output", number, ".csv");
+  puts(file);
   write_to_file_with_mode(file, str.string, str.len, "w");
   write_to_file_with_mode("/dev/stdout", str.string, str.len, "w");
   printf("\n\nWrote to file `%s'\n", file);
-puts("RETURN 0");
-  //free(file);
+  puts("RETURN 0");
+  free(file);
 
   return 0;
 }
