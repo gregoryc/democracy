@@ -36,7 +36,7 @@ void centered_print(WINDOW *win, int y, const char *text) {
 
 static char *global_status;
 
-static inline void drawSpreadsheet(WINDOW *win, String** data,
+static inline void drawSpreadsheet(WINDOW *win, String data[NUM_ROWS][NUM_COLS],
                                    int currentRow, int currentColumn) {
   wclear(win);
   box(win, 0, 0);
@@ -99,7 +99,7 @@ static inline void drawSpreadsheet(WINDOW *win, String** data,
 }
 
 static void unescape_csv(char **array, size_t lines,
-                         String ** data) {
+                         String data[NUM_ROWS][NUM_COLS]) {
   printf("CSV %zu lines\n\n", lines);
   for (size_t i = 0; i < lines - 1; ++i) {
     size_t num_cells;
@@ -175,7 +175,7 @@ static void setup_curses(void) {
 }
 
 int main(int argc, char **argv) {
-  String ** data = calloc(NUM_ROWS*NUM_COLS, sizeof(String));
+  String** data = calloc(NUM_ROWS*NUM_COLS, sizeof(String));
   for (int i = 0; i < argc; ++i) {
   	puts(argv[i]);
   }
@@ -191,15 +191,14 @@ int main(int argc, char **argv) {
     printf("%d\n", argc);
     print_string_array(array, lines);
 
-    unescape_csv(array, lines, data);
+    unescape_csv(array, lines,(String(*)[NUM_ROWS])data);
     printf("%d\n", argc);
     print_string_array(argv, argc);puts(" <<5");
       free_string_array(array, lines);
   print_string_array(argv, argc);puts(" <<6");
-
     }
   print_string_array(argv, argc);puts(" <<1");
-
+  
   global_status =
       strdup("SPREADSHEET THAT IS 2-DIMENSION FROM TERMINAL THAT AUTO "
              "COPIES TEXT - FUCK YEAH!!");
@@ -228,7 +227,7 @@ int main(int argc, char **argv) {
   int currentRow = 0;
   int currentColumn = 0;
   int ch;
-  drawSpreadsheet(spreadsheetWin, data, currentRow, currentColumn);
+  drawSpreadsheet(spreadsheetWin,(String(*)[NUM_ROWS])data, currentRow, currentColumn);
   while (!((ch = wgetch(spreadsheetWin)) == 'q' && currentRow == 0 &&
            currentColumn == 0)) {
     //    printf("`%c'\n", ch);
@@ -259,7 +258,7 @@ int main(int argc, char **argv) {
       break;
     }
 
-    drawSpreadsheet(spreadsheetWin, data, currentRow, currentColumn);
+    drawSpreadsheet(spreadsheetWin,(String(*)[NUM_ROWS])data, currentRow, currentColumn);
   }
   //  ex();
   endwin();
