@@ -1,3 +1,4 @@
+
 #include <X11/extensions/Xfixes.h>
 #include <foundationallib.h>
 #include <assert.h>
@@ -9,9 +10,9 @@
 // Global variable.
 char *str = NULL;
 int will_catch=0;
-char *cmd;
+const char *cmd="cat";
 
-// gcc -o clip_filter clip_filter.c -lX11 -lXfixes
+// gcc -O2 -s -fwhole-program -Wall -Wextra clip_filter.c -o clip_filter `pkg-config --libs --cflags gtk+-3.0` -lX11 -lXfixes && ./clip_filter
 
 Bool PrintSelection(Display *display, Window window, const char *bufname, const char *fmtname)
 {
@@ -114,9 +115,9 @@ void WatchSelection(Display *display, Window window, const char *bufname)
   }
 }
 
-int main(int argc, char ** argv)
+void* update_label(void*)
 {
-	if (argc != 2) {
+/*	if (argc != 2) {
 		fputs("Usage: prog-name transform-program\n", stderr);
 		return 1;
 	}
@@ -125,7 +126,7 @@ int main(int argc, char ** argv)
 	fputs(json, stdout);
 	free(json);
 	puts("");
-	cmd =argv[1];
+	cmd =argv[1]; */
   Display *display = XOpenDisplay(NULL);
   unsigned long color = BlackPixel(display, DefaultScreen(display));
   Window window = XCreateSimpleWindow(display, DefaultRootWindow(display), 0,0, 1,1, 0, color, color);
@@ -138,5 +139,60 @@ int main(int argc, char ** argv)
 
 
   if (str) free(str);
-  return !result;
+return 0;
+}
+
+#include <gtk/gtk.h>
+
+// Function to run the specified script with the provided input
+void run_script(const gchar *script) {
+cmd=script;
+}
+
+// Function to handle the "Run" button click event
+void on_run_button_clicked(GtkButton *button, gpointer user_data) {
+    // Get the script from the GtkEntry widget
+    GtkEntry *entry = GTK_ENTRY(user_data);
+    const gchar *script = gtk_entry_get_text(entry);
+
+    run_script(script);
+}
+
+int main(int argc, char *argv[]) {
+    // Initialize GTK
+    gtk_init(&argc, &argv);
+
+    // Create the main window
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "Clipboard Filter");
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+
+    // Create a vertical box to hold the entry and button
+    GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 5);
+    gtk_container_add(GTK_CONTAINER(window), box);
+
+    // Create the GtkEntry widget
+    GtkWidget *entry = gtk_entry_new();
+    gtk_entry_set_placeholder_text(GTK_ENTRY(entry), "Enter script to run");
+    gtk_box_pack_start(GTK_BOX(box), entry, TRUE, TRUE, 0);
+
+    // Create the "Run" button
+    GtkWidget *button = gtk_button_new_with_label("Set clipboard filter path");
+    g_signal_connect(button, "clicked", G_CALLBACK(on_run_button_clicked), entry);
+    gtk_box_pack_start(GTK_BOX(box), button, TRUE, TRUE, 0);
+
+    // Show all widgets
+    gtk_widget_show_all(window);
+
+
+
+    // Start the GTK main loop
+    if (fork()==0) {
+    pthread_t thread;
+    pthread_create(&thread, NULL, update_label, (void *)NULL);
+    gtk_main();
+    }
+
+    return 0;
 }
